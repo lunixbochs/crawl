@@ -1005,6 +1005,11 @@ static int _shatter_walls(coord_def where, int pow, actor *)
         chance = pow / 4;
         break;
 
+    case DNGN_TREE:
+    case DNGN_SWAMP_TREE:
+        chance = pow / 4;
+        break;
+
     case DNGN_GREEN_CRYSTAL_WALL:
         chance = 50;
         break;
