@@ -3923,9 +3923,13 @@ random_var melee_attack::player_unarmed_speed()
                 (rv::roll_dice(1, 10) +
                  div_rand_round(rv::roll_dice(2, attacker_body_armour_penalty), 20)));
 
-    // Unarmed speed. Min delay is 10 - 270/54 = 5.
+    // Unarmed speed scales linearly with skill. Delay is 270 / (27 + skill)
     if (you.burden_state == BS_UNENCUMBERED)
-        unarmed_delay -= div_rand_round(constant(you.skill(SK_UNARMED_COMBAT, 10)), 54);
+    {
+        unarmed_delay = div_rand_round(unarmed_delay * 270,
+                                      you.skill(SK_UNARMED_COMBAT, 10) + 270);
+    }
+
     // Bats are faster (for what good it does them).
     if (player_in_bat_form())
         unarmed_delay = div_rand_round(constant(3)*unarmed_delay, 5);
