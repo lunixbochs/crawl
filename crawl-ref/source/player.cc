@@ -3978,7 +3978,6 @@ static string _attack_delay_desc(int attack_delay)
 static void _display_attack_delay()
 {
     melee_attack attk(&you, NULL);
-    const int delay = attk.calc_attack_delay(false, false);
 
     // Scale to fit the displayed weapon base delay, i.e.,
     // normal speed is 100 (as in 100%).
@@ -3987,7 +3986,7 @@ static void _display_attack_delay()
     if (weapon && is_range_weapon(*weapon))
         avg = launcher_final_speed(*weapon, you.shield(), false);
     else
-        avg = 10 * delay;
+        avg = attk.calc_attack_delay(false);;
 
     // Haste shouldn't be counted, but let's show finesse.
     if (you.duration[DUR_FINESSE])

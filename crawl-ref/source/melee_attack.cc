@@ -268,7 +268,7 @@ bool melee_attack::handle_phase_attempted()
     // Set delay now that we know the attack won't be cancelled.
     if (attacker->is_player())
     {
-        you.time_taken = calc_attack_delay();
+        you.time_taken = div_rand_round(calc_attack_delay(), 10);
         if (weapon)
         {
             if (weapon->base_type == OBJ_WEAPONS)
@@ -299,7 +299,7 @@ bool melee_attack::handle_phase_attempted()
             ASSERT(delay > 0);
 
             attacker->as_monster()->speed_increment
-                -= div_rand_round(energy * delay, 10);
+                -= div_rand_round(energy * delay, 100);
         }
 
         // Statues and other special monsters which have AT_NONE need to lose
@@ -3767,33 +3767,31 @@ int melee_attack::calc_to_hit(bool random)
  * the same base methods so we still have to check the atype of the attacker
  * and fork on the logic.
  *
- * @param random deterministic or stochastic calculation(s)
  * @param apply haste/finesse scaling
  */
-int melee_attack::calc_attack_delay(bool random, bool scaled)
+int melee_attack::calc_attack_delay(bool scaled)
 {
     if (attacker->is_player())
     {
-        random_var attack_delay = weapon ? player_weapon_speed()
-                                         : player_unarmed_speed();
+        int attack_delay = weapon ? player_weapon_speed()
+                                  : player_unarmed_speed();
         // At the moment it never gets this low anyway.
-        attack_delay = rv::max(attack_delay, constant(3));
+        attack_delay = max(attack_delay, 30);
 
         // Calculate this separately to avoid overflowing the weights in
         // the random_var.
-        random_var shield_penalty = constant(0);
+        int shield_penalty = 0;
         if (attacker_shield_penalty)
         {
-            shield_penalty = div_rand_round(rv::min(rv::roll_dice(1, attacker_shield_penalty),
-                                                    rv::roll_dice(1, attacker_shield_penalty)),
-                                            20);
+            shield_penalty = div_rand_round(min(roll_dice(1, attacker_shield_penalty),
+                                                roll_dice(1, attacker_shield_penalty)),
+                                            2);
         }
         // Give unarmed shield-users a slight penalty always.
         if (!weapon && player_wearing_slot(EQ_SHIELD))
-            shield_penalty += rv::random2(2);
+            shield_penalty += rv::random2(20);
 
-        int final_delay = random ? attack_delay.roll() + shield_penalty.roll()
-                                 : attack_delay.expected() + shield_penalty.expected();
+        int final_delay = attack_delay + shield_penalty;
         // Stop here if we just want the unmodified value.
         if (!scaled)
             return final_delay;
@@ -3810,17 +3808,17 @@ int melee_attack::calc_attack_delay(bool random, bool scaled)
         dprf(DIAG_COMBAT, "Weapon speed: %d; attack time: %d",
              final_delay, you.time_taken);
 
-        return max(2, div_rand_round(you.time_taken * final_delay, 10));
+        return max(20, div_rand_round(you.time_taken * final_delay, 10));
     }
     else
     {
         if (!weapon)
-            return 10;
+            return 100;
 
-        int delay = property(*weapon, PWPN_SPEED);
+        int delay = property(*weapon, PWPN_SPEED) * 10;
         if (damage_brand == SPWPN_SPEED)
-            delay = (delay + 1) / 2;
-        return random ? div_rand_round(10 + delay, 2) : (10 + delay) / 2;
+            delay /= 2;
+        return (100 + delay) / 2;
     }
 
     return 0;
@@ -3886,48 +3884,42 @@ void melee_attack::player_stab_check()
 
 // TODO: Unify this and player_unarmed_speed (if possible), then unify with
 // monster weapon/attack speed
-random_var melee_attack::player_weapon_speed()
+int melee_attack::player_weapon_speed()
 {
-    random_var attack_delay = constant(15);
+    int attack_delay = 150;
 
     if (weapon && is_weapon(*weapon) && !is_range_weapon(*weapon))
     {
         // Weapon speed grows linearly with skill.
         // delay = base_delay / (1 + (skill * base_delay) / 27)
 
-        attack_delay = constant(property(*weapon, PWPN_SPEED));
-        attack_delay = div_rand_round(attack_delay * 10, 10 +
-               div_rand_round(constant(you.skill(wpn_skill, 100)) * attack_delay,
-                              2700)); // Changing this constant changes the slop
-                                     // of the formula.
+        attack_delay = property(*weapon, PWPN_SPEED) * 10;
+        attack_delay = attack_delay * 100 /
+                       (100  + you.skill(wpn_skill, 10) * attack_delay / 270);
+        // Changing this constant (270) changes the slop of the formula.
 
         // never go faster than speed 3 (ie 3.33 attacks per round)
-        attack_delay = rv::max(attack_delay, 3);
+        attack_delay = max(attack_delay, 30);
 
         if (weapon->base_type == OBJ_WEAPONS && damage_brand == SPWPN_SPEED)
-            attack_delay = (attack_delay + constant(1)) / 2;
+            attack_delay = (attack_delay + 1) / 2;
     }
 
     return attack_delay;
 }
 
-random_var melee_attack::player_unarmed_speed()
+int melee_attack::player_unarmed_speed()
 {
-    random_var unarmed_delay =
-        rv::max(constant(10),
-                (rv::roll_dice(1, 10) +
-                 div_rand_round(rv::roll_dice(2, attacker_body_armour_penalty), 20)));
+    int unarmed_delay = max(100, roll_dice(1, 100)
+               + div_rand_round(roll_dice(2, attacker_body_armour_penalty), 2));
 
     // Unarmed speed scales linearly with skill. Delay is 270 / (27 + skill)
     if (you.burden_state == BS_UNENCUMBERED)
-    {
-        unarmed_delay = div_rand_round(unarmed_delay * 270,
-                                      you.skill(SK_UNARMED_COMBAT, 10) + 270);
-    }
+        unarmed_delay = unarmed_delay * 270 / (you.skill(SK_UNARMED_COMBAT, 10) + 270);
 
     // Bats are faster (for what good it does them).
     if (player_in_bat_form())
-        unarmed_delay = div_rand_round(constant(3)*unarmed_delay, 5);
+        unarmed_delay = div_rand_round(3 * unarmed_delay, 5);
     return unarmed_delay;
 }
 
