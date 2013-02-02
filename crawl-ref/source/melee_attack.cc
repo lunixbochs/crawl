@@ -3896,11 +3896,6 @@ random_var melee_attack::player_weapon_speed()
         // delay = base_delay / (1 + (skill * base_delay) / 27)
 
         attack_delay = constant(property(*weapon, PWPN_SPEED));
-        random_var sk = you.skill(wpn_skill, 10);
-        random_var sk_delay = constant(you.skill(wpn_skill, 10)) * attack_delay;
-        random_var divider = 1 +
-                div_rand_round(constant(you.skill(wpn_skill, 10)) * attack_delay,
-                               270);
         attack_delay = div_rand_round(attack_delay * 10, 10 +
                div_rand_round(constant(you.skill(wpn_skill, 100)) * attack_delay,
                               2700)); // Changing this constant changes the slop
