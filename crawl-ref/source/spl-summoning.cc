@@ -1189,52 +1189,41 @@ bool can_cast_malign_gateway()
 
 coord_def find_gateway_location(actor* caster)
 {
-    coord_def point = coord_def(0, 0);
+    vector<coord_def> points;
 
     bool xray = you.xray_vision;
     you.xray_vision = false;
 
-    unsigned compass_idx[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-    random_shuffle(compass_idx, compass_idx + 8);
-
-
     for (unsigned i = 0; i < 8; ++i)
     {
-        coord_def delta = Compass[compass_idx[i]];
+        coord_def delta = Compass[i];
         coord_def test = coord_def(-1, -1);
 
-        bool found_spot = false;
-        int tries = 8;
-
-        for (int t = 0; t < tries; t++)
+        for (int t = 0; t < 11; t++)
         {
-            test = caster->pos() + (delta * (2+t+random2(4)));
+            test = caster->pos() + (delta * (2+t));
             if (!in_bounds(test) || !feat_is_malign_gateway_suitable(grd(test))
-                || actor_at(test) || count_neighbours_with_func(test, &feat_is_solid) != 0
+                || actor_at(test)
+                || count_neighbours_with_func(test, &feat_is_solid) != 0
                 || !caster->see_cell(test))
             {
                 continue;
             }
 
-            found_spot = true;
-            break;
+            points.push_back(test);
         }
-
-        if (!found_spot)
-            continue;
-
-        point = test;
-        break;
     }
 
     you.xray_vision = xray;
 
-    return point;
+    if (points.empty())
+        return coord_def(0, 0);
+
+    return points[random2(points.size())];
 }
 
 spret_type cast_malign_gateway(actor * caster, int pow, god_type god, bool fail)
 {
-    fail_check();
     coord_def point = find_gateway_location(caster);
     bool success = (point != coord_def(0, 0));
 
@@ -1242,6 +1231,8 @@ spret_type cast_malign_gateway(actor * caster, int pow, god_type god, bool fail)
 
     if (success)
     {
+        fail_check();
+
         const int malign_gateway_duration = BASELINE_DELAY * (random2(5) + 5);
         env.markers.add(new map_malign_gateway_marker(point,
                                 malign_gateway_duration,
@@ -1267,12 +1258,14 @@ spret_type cast_malign_gateway(actor * caster, int pow, god_type god, bool fail)
             // Messages the same as for SHT, as they are currently (10/10) generic.
             lose_stat(STAT_INT, 1 + random2(3), false, "opening a malign portal");
         }
+
+        return SPRET_SUCCESS;
     }
     // We don't care if monsters fail to cast it.
-    else if (is_player)
+    if (is_player)
         mpr("A gateway cannot be opened in this cramped space!");
 
-    return SPRET_SUCCESS;
+    return SPRET_ABORT;
 }
 
 
@@ -2440,7 +2433,9 @@ spret_type cast_arcane_familiar(int pow, god_type god, bool fail)
             coord_def empty;
             if (empty_surrounds(you.pos(), DNGN_FLOOR, 3, false, empty)
                 && familiar->move_to_pos(empty))
+            {
                 recalled = true;
+            }
         }
 
         if (recalled)
@@ -2450,7 +2445,7 @@ spret_type cast_arcane_familiar(int pow, god_type god, bool fail)
 
         familiar->number = min(20, (int) familiar->number
                                    + 4 + random2(pow + 10) / 10);
-        you.increase_duration(DUR_ARCANE_FAMILIAR, 7 + roll_dice (2, pow), 50);
+        you.increase_duration(DUR_ARCANE_FAMILIAR, 7 + roll_dice(2, pow), 50);
     }
     else
     {
@@ -2468,8 +2463,8 @@ spret_type cast_arcane_familiar(int pow, god_type god, bool fail)
 
         if (familiar)
         {
-            mpr ("You conjure a globe of magical energy.");
-            you.increase_duration(DUR_ARCANE_FAMILIAR, 7 + roll_dice (2, pow), 50);
+            mpr("You conjure a globe of magical energy.");
+            you.increase_duration(DUR_ARCANE_FAMILIAR, 7 + roll_dice(2, pow), 50);
             familiar->number = 4 + random2(pow + 10) / 10;
         }
         else
@@ -2582,6 +2577,8 @@ bool aim_arcane_familiar(spell_type spell, int powc, bolt& beam)
 bool trigger_arcane_familiar(bolt& beam)
 {
     monster* familiar = _find_arcane_familiar();
+    if (!familiar)
+        return false;
 
     if (familiar->props.exists("ready"))
     {
@@ -2597,10 +2594,11 @@ bool trigger_arcane_familiar(bolt& beam)
             {
                 if (exp_map(*ri - beam.target + coord_def(9,9)) < INT_MAX)
                 {
-                    if (monster_at(*ri) && (monster_at(*ri) != familiar))
+                    const monster *targ = monster_at(*ri);
+                    if (targ && targ != familiar)
                     {
                         familiar->props["firing_target"] = *ri;
-                        familiar->foe = monster_at(*ri)->mindex();
+                        familiar->foe = targ->mindex();
                         familiar->props["foe"] = familiar->foe;
                         continue;
                     }
@@ -2740,7 +2738,9 @@ bool fire_arcane_familiar(monster* mons)
                     if (empty_beam &&
                         find(beam.path_taken.begin(), beam.path_taken.end(), beam.target)
                         == beam.path_taken.end())
+                    {
                         continue;
+                    }
 
                     mons->firing_pos = coord_def(0,0);
                     mons->target = *di;
@@ -2807,7 +2807,7 @@ spret_type cast_fulminating_prism(int pow, const coord_def& where, bool fail)
 
     mgen_data prism_data = mgen_data(MONS_FULMINANT_PRISM, BEH_FRIENDLY, &you,
                                   3, SPELL_SUMMON_SMALL_MAMMALS,
-                                  where, MHITYOU,  MG_FORCE_PLACE);
+                                  where, MHITYOU, MG_FORCE_PLACE);
     prism_data.hd = hd;
     monster *prism = create_monster(prism_data);
 

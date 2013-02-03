@@ -923,6 +923,14 @@ bolt mons_spell_beam(monster* mons, spell_type spell_cast, int power,
         beam.hit      = 22 + power / 20;
         break;
 
+    case SPELL_FORCE_LANCE:
+        beam.colour   = LIGHTGREY;
+        beam.name     = "lance of force";
+        beam.damage   = dice_def(3, 3 + power / 50);
+        beam.hit      = 20 + power / 20;
+        beam.flavour  = BEAM_MMISSILE;
+        break;
+
     default:
         if (check_validity)
         {
@@ -989,7 +997,6 @@ static bool _los_free_spell(spell_type spell_cast)
         || spell_cast == SPELL_AIRSTRIKE
         || spell_cast == SPELL_MISLEAD
         || spell_cast == SPELL_RESURRECT
-        || spell_cast == SPELL_SACRIFICE
         || spell_cast == SPELL_HOLY_FLAMES
         || spell_cast == SPELL_SUMMON_SPECTRAL_ORCS);
 }
@@ -1028,7 +1035,6 @@ bool setup_mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
         case SPELL_MISLEAD:
         case SPELL_SMITING:
         case SPELL_RESURRECT:
-        case SPELL_SACRIFICE:
         case SPELL_AIRSTRIKE:
         case SPELL_HOLY_FLAMES:
             return true;
@@ -1117,7 +1123,7 @@ bool setup_mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_DEATHS_DOOR:
     case SPELL_OZOCUBUS_ARMOUR:
     case SPELL_OZOCUBUS_REFRIGERATION:
-    case SPELL_FRAGMENTATION:
+    case SPELL_LRD:
     case SPELL_SHATTER:
     case SPELL_FRENZY:
     case SPELL_SUMMON_TWISTER:
@@ -1316,8 +1322,11 @@ static bool _ms_waste_of_time(const monster* mon, spell_type monspell)
             return true;
     }
 
-    if (mons_genus(mon->type) == MONS_DRAGON && mon->has_ench(ENCH_BREATH_WEAPON))
+    if (mons_genus(mon->type) == MONS_DRAGON
+        && mon->has_ench(ENCH_BREATH_WEAPON))
+    {
         return true;
+    }
 
     // Eventually, we'll probably want to be able to have monsters
     // learn which of their elemental bolts were resisted and have those
@@ -1956,11 +1965,9 @@ bool handle_mon_spell(monster* mons, bolt &beem)
                 if (spell_cast != SPELL_MELEE)
                     setup_mons_cast(mons, beem, spell_cast);
 
-                // Try to find a nearby ally to haste, heal,
-                // resurrect, or sacrifice itself for.
+                // Try to find a nearby ally to haste, heal or resurrect.
                 if ((spell_cast == SPELL_HASTE_OTHER
-                     || spell_cast == SPELL_HEAL_OTHER
-                     || spell_cast == SPELL_SACRIFICE)
+                     || spell_cast == SPELL_HEAL_OTHER)
                         && !_set_allied_target(mons, beem))
                 {
                     spell_cast = SPELL_NO_SPELL;
@@ -2192,7 +2199,7 @@ bool handle_mon_spell(monster* mons, bolt &beem)
                 return false;
         }
         // See if we have a good spot to cast LRD at.
-        else if (spell_cast == SPELL_FRAGMENTATION)
+        else if (spell_cast == SPELL_LRD)
         {
             if (!in_bounds(_mons_fragment_target(mons)))
                 return false;
@@ -2958,7 +2965,7 @@ static coord_def _mons_fragment_target(monster *mons)
 {
     coord_def target(GXM+1, GYM+1);
     int pow = 12 * mons->hit_dice;
-    int range = spell_range(SPELL_FRAGMENTATION, pow, false);
+    int range = spell_range(SPELL_LRD, pow, false);
     int maxpower = 0;
     for (distance_iterator di(mons->pos(), true, true, range); di; ++di)
     {
@@ -3745,7 +3752,7 @@ void mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
         _mons_ozocubus_refrigeration(mons);
         return;
 
-    case SPELL_FRAGMENTATION:
+    case SPELL_LRD:
     {
         const coord_def target = _mons_fragment_target(mons);
         if (in_bounds(target))
@@ -4661,7 +4668,7 @@ void mons_cast_noise(monster* mons, const bolt &pbolt,
                            && (pbolt.target != mons->pos()
                                || pbolt.visible())
                            // ugh. --Grunt
-                           && (actual_spell != SPELL_FRAGMENTATION);
+                           && (actual_spell != SPELL_LRD);
 
     vector<string> key_list;
     unsigned int num_spell_keys =

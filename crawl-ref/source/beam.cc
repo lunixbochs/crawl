@@ -250,13 +250,13 @@ spret_type zapping(zap_type ztype, int power, bolt &pbolt,
     if (msg)
         mpr(msg);
 
-    if (ztype == ZAP_LIGHTNING)
+    if (ztype == ZAP_BOLT_OF_LIGHTNING)
     {
         noisy(25, you.pos(), "You hear a mighty clap of thunder!");
         pbolt.heard = true;
     }
 
-    if (ztype == ZAP_DIGGING)
+    if (ztype == ZAP_DIG)
         pbolt.aimed_at_spot = false;
 
     pbolt.fire();
@@ -3761,8 +3761,11 @@ void bolt::affect_player()
     extra_range_used += range_used_on_hit();
 
     if ((flavour == BEAM_WATER && origin_spell == SPELL_PRIMAL_WAVE)
-         || (name == "chilling blast" && you.airborne()))
+         || (name == "chilling blast" && you.airborne())
+         || (name == "lance of force" && hurted > 0))
+    {
         beam_hits_actor(&you);
+    }
 }
 
 int bolt::apply_AC(const actor *victim, int hurted)

@@ -24,6 +24,7 @@
 #include "defines.h"
 #include "describe.h"
 #include "dgn-delve.h"
+#include "dgn-height.h"
 #include "dgn-shoals.h"
 #include "dgn-swamp.h"
 #include "dgn-labyrinth.h"
@@ -1012,7 +1013,7 @@ dgn_register_place(const vault_placement &place, bool register_vault)
         clear_subvault_stack();
 
         // Identify each square in the map with its map_index.
-        if (!overwritable && !transparent)
+        if (!overwritable)
             _dgn_apply_map_index(place, map_index);
     }
 
@@ -2950,13 +2951,13 @@ static void _place_chance_vaults()
 
 static void _place_minivaults(void)
 {
+    // Always try to place PLACE:X minivaults.
+    const map_def *vault = NULL;
+    if ((vault = random_map_for_place(level_id::current(), true)))
+        _build_secondary_vault(vault);
+
     if (use_random_maps)
     {
-        const map_def *vault = NULL;
-
-        if ((vault = random_map_for_place(level_id::current(), true)))
-            _build_secondary_vault(vault);
-
         int tries = 0;
         do
         {
@@ -3965,7 +3966,8 @@ _build_vault_impl(const map_def *vault,
     if (!make_no_exits)
     {
         const bool spotty = player_in_branch(BRANCH_ORCISH_MINES)
-                            || player_in_branch(BRANCH_SLIME_PITS);
+                            || player_in_branch(BRANCH_SLIME_PITS)
+                            || player_in_branch(BRANCH_SHOALS);
         place.connect(spotty);
     }
 
@@ -4623,8 +4625,7 @@ static bool _dgn_place_monster(const vault_placement &place, mons_spec &mspec,
     const bool patrolling
         = mspec.patrolling || place.map.has_tag("patrolling");
 
-    if (!place.map.has_tag("transparent"))
-        mspec.props["map"].get_string() = place.map_name_at(where);
+    mspec.props["map"].get_string() = place.map_name_at(where);
     return dgn_place_monster(mspec, monster_level, where, false,
                              generate_awake, patrolling);
 }
@@ -5030,7 +5031,10 @@ static bool _join_the_dots_pathfind(coord_set &coords,
     while (curr != from)
     {
         if (!map_masked(curr, mapmask))
+        {
             grd(curr) = DNGN_FLOOR;
+            dgn_height_set_at(curr);
+        }
 
         const int dist = travel_point_distance[curr.x][curr.y];
         ASSERT(dist < 0 && dist != -1000);
@@ -5501,7 +5505,10 @@ static bool _connect_spotty(const coord_def& from)
     if (success)
     {
         for (it = flatten.begin(); it != flatten.end(); ++it)
+        {
             grd(*it) = DNGN_FLOOR;
+            dgn_height_set_at(*it);
+        }
     }
 
     return success;

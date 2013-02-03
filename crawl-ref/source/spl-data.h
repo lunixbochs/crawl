@@ -432,11 +432,11 @@ struct spell_desc
 {
     SPELL_SMITING, "Smiting",
      SPTYP_NONE,
-     SPFLAG_TARGET | SPFLAG_NOT_SELF, // divine ability, rod, monsters
+     SPFLAG_TARGET | SPFLAG_NOT_SELF, // divine ability, monsters
      4,
      200,
      LOS_RADIUS, LOS_RADIUS,
-     4, // SPTYP_NONE spells have no default noise level
+     4,
      "Smite",
      false,
      false
@@ -1339,7 +1339,7 @@ struct spell_desc
     SPELL_BLADE_HANDS, "Blade Hands",
      SPTYP_TRANSMUTATION,
      SPFLAG_HELPFUL | SPFLAG_BATTLE | SPFLAG_CHAOTIC,
-     5,  // only removes weapon, so I raised this from 4 -- bwr
+     5,
      200,
      -1, -1,
      0,
@@ -1365,7 +1365,7 @@ struct spell_desc
     SPELL_ICE_FORM, "Ice Form",
      SPTYP_ICE | SPTYP_TRANSMUTATION,
      SPFLAG_HELPFUL | SPFLAG_CHAOTIC,
-     4, // doesn't allow for equipment, so I lowered this from 5 -- bwr
+     4,
      200,
      -1, -1,
      0,
@@ -1667,7 +1667,7 @@ struct spell_desc
     SPELL_WARP_BRAND, "Warp Weapon",
      SPTYP_CHARMS | SPTYP_TRANSLOCATION,
      SPFLAG_HELPFUL | SPFLAG_BATTLE,
-     5,     // this is high for a reason - Warp brands are very powerful.
+     5,
      200,
      -1, -1,
      0,
@@ -1770,7 +1770,7 @@ struct spell_desc
 #endif
 
 {
-    SPELL_FRAGMENTATION, "Lee's Rapid Deconstruction",
+    SPELL_LRD, "Lee's Rapid Deconstruction",
      SPTYP_EARTH,
      SPFLAG_GRID,
      5,
@@ -1788,7 +1788,7 @@ struct spell_desc
      SPFLAG_DIR_OR_TARGET | SPFLAG_NOT_SELF | SPFLAG_BATTLE,
      1,
      50,
-     2, 2,                      // Special-cased!
+     2, 2, // more with wielded stones
      0,
      NULL,
      true,
@@ -1864,7 +1864,7 @@ struct spell_desc
     SPELL_EXCRUCIATING_WOUNDS, "Excruciating Wounds",
      SPTYP_CHARMS | SPTYP_NECROMANCY,
      SPFLAG_HELPFUL | SPFLAG_BATTLE,
-     5,     // fairly high level - potentially one of the best brands
+     5,
      200,
      -1, -1,
      0,
@@ -2117,7 +2117,7 @@ struct spell_desc
      1,
      0,
      -1, -1,
-     1, // SPTYP_NONE spells have no default noise level
+     1,
      NULL,
      false,
      false
@@ -2674,19 +2674,6 @@ struct spell_desc
     SPELL_HEAL_OTHER, "Heal Other",
      SPTYP_NONE,
      SPFLAG_DIR_OR_TARGET | SPFLAG_HELPFUL,
-     6,
-     200,
-     LOS_RADIUS, LOS_RADIUS,
-     0,
-     NULL,
-     true,
-     false
-},
-
-{
-    SPELL_SACRIFICE, "Sacrifice",
-     SPTYP_NONE,
-     SPFLAG_DIR_OR_TARGET | SPFLAG_NOT_SELF | SPFLAG_HELPFUL,
      6,
      200,
      LOS_RADIUS, LOS_RADIUS,

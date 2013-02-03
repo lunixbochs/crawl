@@ -1012,9 +1012,7 @@ int spell_noise(spell_type spell)
     unsigned int disciplines = desc->disciplines;
     int level = desc->level + desc->noise_mod;
 
-    if (disciplines == SPTYP_NONE)
-        return 0;
-    else if (disciplines & SPTYP_CONJURATION)
+    if (disciplines & SPTYP_CONJURATION)
         return level;
     else if (disciplines && !(disciplines & (SPTYP_POISON | SPTYP_AIR)))
         return div_round_up(level * 3, 4);
@@ -1026,37 +1024,37 @@ spell_type zap_type_to_spell(zap_type zap)
 {
     switch (zap)
     {
-    case ZAP_FLAME:
+    case ZAP_THROW_FLAME:
         return SPELL_THROW_FLAME;
-    case ZAP_FROST:
+    case ZAP_THROW_FROST:
         return SPELL_THROW_FROST;
-    case ZAP_SLOWING:
+    case ZAP_SLOW:
         return SPELL_SLOW;
-    case ZAP_HASTING:
+    case ZAP_HASTE:
         return SPELL_HASTE;
-    case ZAP_MAGIC_DARTS:
+    case ZAP_MAGIC_DART:
         return SPELL_MAGIC_DART;
     case ZAP_HEAL_WOUNDS:
         return SPELL_MAJOR_HEALING;
-    case ZAP_PARALYSIS:
+    case ZAP_PARALYSE:
         return SPELL_PARALYSE;
-    case ZAP_FIRE:
+    case ZAP_BOLT_OF_FIRE:
         return SPELL_BOLT_OF_FIRE;
-    case ZAP_COLD:
+    case ZAP_BOLT_OF_COLD:
         return SPELL_BOLT_OF_COLD;
     case ZAP_PRIMAL_WAVE:
         return SPELL_PRIMAL_WAVE;
-    case ZAP_CONFUSION:
+    case ZAP_CONFUSE:
         return SPELL_CONFUSE;
     case ZAP_INVISIBILITY:
         return SPELL_INVISIBILITY;
-    case ZAP_DIGGING:
+    case ZAP_DIG:
         return SPELL_DIG;
     case ZAP_FIREBALL:
         return SPELL_FIREBALL;
-    case ZAP_TELEPORTATION:
+    case ZAP_TELEPORT_OTHER:
         return SPELL_TELEPORT_OTHER;
-    case ZAP_LIGHTNING:
+    case ZAP_BOLT_OF_LIGHTNING:
         return SPELL_LIGHTNING_BOLT;
     case ZAP_POLYMORPH_OTHER:
         return SPELL_POLYMORPH_OTHER;
@@ -1064,7 +1062,7 @@ spell_type zap_type_to_spell(zap_type zap)
         return SPELL_BOLT_OF_DRAINING;
     case ZAP_ENSLAVEMENT:
         return SPELL_ENSLAVEMENT;
-    case ZAP_DISINTEGRATION:
+    case ZAP_DISINTEGRATE:
         return SPELL_DISINTEGRATE;
     default:
         die("zap_type_to_spell() only handles wand zaps for now");
@@ -1224,7 +1222,7 @@ bool spell_no_hostile_in_range(spell_type spell)
     case SPELL_DIG:
     case SPELL_PASSWALL:
     case SPELL_GOLUBRIAS_PASSAGE:
-    case SPELL_FRAGMENTATION:
+    case SPELL_LRD:
     case SPELL_FULMINANT_PRISM:
 
     // Shock and Lightning Bolt are no longer here, as the code below can

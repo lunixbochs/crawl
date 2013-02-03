@@ -1017,6 +1017,7 @@ static void _setup_base_explosion(bolt & beam, const monster& origin)
     beam.source       = origin.pos();
     beam.source_name  = origin.base_name(DESC_BASENAME);
     beam.target       = origin.pos();
+    beam.noise_msg    = "You hear an explosion!";
 
     if (!crawl_state.game_is_arena() && origin.attitude == ATT_FRIENDLY
         && !origin.is_summoned())
@@ -1043,11 +1044,12 @@ void setup_spore_explosion(bolt & beam, const monster& origin)
 static void _setup_lightning_explosion(bolt & beam, const monster& origin)
 {
     _setup_base_explosion(beam, origin);
-    beam.flavour = BEAM_ELECTRICITY;
-    beam.damage  = dice_def(3, 20);
-    beam.name    = "blast of lightning";
-    beam.colour  = LIGHTCYAN;
-    beam.ex_size = coinflip() ? 3 : 2;
+    beam.flavour   = BEAM_ELECTRICITY;
+    beam.damage    = dice_def(3, 20);
+    beam.name      = "blast of lightning";
+    beam.noise_msg = "You hear a clap of thunder!";
+    beam.colour    = LIGHTCYAN;
+    beam.ex_size   = coinflip() ? 3 : 2;
 }
 
 static void _setup_prism_explosion(bolt& beam, const monster& origin)
@@ -1071,6 +1073,7 @@ static void _setup_inner_flame_explosion(bolt & beam, const monster& origin,
                      (size > SIZE_TINY) ? dice_def(3, 20) :
                                           dice_def(3, 15);
     beam.name      = "fiery explosion";
+    beam.noise_msg = "You hear an explosion!";
     beam.colour    = RED;
     beam.ex_size   = (size > SIZE_BIG) ? 2 : 1;
     beam.set_agent(agent);
@@ -1080,7 +1083,8 @@ static bool _explode_monster(monster* mons, killer_type killer,
                              int killer_index, bool pet_kill, bool wizard)
 {
     if (mons->hit_points > 0 || mons->hit_points <= -15 || wizard
-        || killer == KILL_RESET || killer == KILL_DISMISSED || killer == KILL_BANISHED)
+        || killer == KILL_RESET || killer == KILL_DISMISSED
+        || killer == KILL_BANISHED)
     {
         if (killer != KILL_TIMEOUT)
             return false;

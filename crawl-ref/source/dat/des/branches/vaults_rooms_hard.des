@@ -588,3 +588,170 @@ v.........7........7.........v
 vvvvvvvvvvvvvv==vvvvvvvvvvvvvv
               ..
 ENDMAP
+
+####
+
+NAME: ontoclasm_vaults_water_temple
+WEIGHT: 3
+TAGS: vaults_hard no_pool_fixup
+KMASK: wW = no_monster_gen
+NSUBST: 0 = 1:9 / *:0
+KMONS: 0 = 0 band
+SUBST: G : GU, % = %%%%*.
+MAP
+     ........
+     ........
+      wx++xw
+   xxxxxWWxxxxx
+   xwwwxWWxwwwx
+.. xw0.x++x.0wx ..
+..wxw%W....W%wxw..
+..xxxx.G..G.xxxx..
+..+WW+..WW..+WW+..
+..+WW+..WW..+WW+..
+..xxxx.G..G.xxxx..
+..wxw%WWwwWW%wxw..
+.. xw0.wwww.0wx ..
+   xwwwxxxxwwwx
+ENDMAP
+
+NAME: ontoclasm_vaults_fire_temple
+WEIGHT: 3
+TAGS: vaults_hard
+KMASK: l = no_monster_gen
+NSUBST: 0 = 1:9 / *:0
+KMONS: 0 = 0 band
+SUBST: G : GY, % = %%%%*.
+MAP
+     ........
+     ........
+      lx++xl
+   xxxxx..xxxxx
+   xlllx..xlllx
+.. xl0.x++x.0lx ..
+..lxl%......%lxl..
+..xxxx.llll.xxxx..
+..+..+.lGGl.+..+..
+..+..+......+..+..
+..xxxx.lGGl.xxxx..
+..lxl%.llll.%lxl..
+.. xl0.llll.0lx ..
+   xlllxxxxlllx
+ENDMAP
+
+NAME: ontoclasm_vaults_shout
+TAGS: vaults_hard
+KMONS: 0 = 0 band
+MAP
+..xxxxxxx
+..x.9...xx
+..x%.9...x
+..xxxxx..x
+.....+..0x
+.....+..0x
+..xxxxx..x
+..x%.9...x
+..x.9...xx
+..xxxxxxx
+ENDMAP
+
+NAME: ontoclasm_vaults_gallery
+TAGS: vaults_hard
+NSUBST: 9 = 1:0 / 1=8 / *:9
+MAP
+G...........G
+..x.......x..
+..xx..%..xx..
+..x.GGGGG.x..
+..xx..9..xx..
+..x*9.9.9*x..
+..xxxxxxxxx..
+ENDMAP
+
+NAME: ontoclasm_vaults_echo
+WEIGHT: 3
+TAGS: vaults_hard no_rotate vaults_orient_s
+NSUBST: % = 2=% / 1=* / *=.
+SUBST: G : GGGTUY
+MAP
+x%..x.x..%x
+..8..|..8..
+....x.x....
+x.xxxxxxx.x
+%....x....%
+.9.x...x.9.
+...x...x...
+x.%x...x%.x
+xxxxx.xxxxx
+...G...G...
+...........
+ENDMAP
+
+NAME:   dpeg_vaults_monster_row
+TAGS:   vaults_hard
+SUBST:  0 : 0000000z, z : z., 0 = 0099..
+KMONS:  z = human skeleton
+MAP
+xxxxxxxxxxxxxxxxxxxxxxxxxx
+xx00xx00xx00xx00xx00xx00xx
+xx..xx..xx..xx..xx..xx..xx
+..........................
+ENDMAP
+
+NAME:   dpeg_vaults_hating_casters
+TAGS:   vaults_hard
+MONS:   eye of draining
+SUBST:  % = %%%$* , * = **|
+NSUBST: . = 6:0 / *:.
+SUBST:  0 = 00009, 8 = 889
+SUBST:  _ : x. , + : +==
+NSUBST: = = 1:+ / *=+x
+MAP
+    @@@
+xxxx+++xxxx
+x%%.....%%x
+x%..000..%x
+x_..mmm.._x
+x_..m1m.._x
+x_..mmm.._x
+x...***...x
+x8.......8x
+xxxxxxxxxxx
+ENDMAP
+
+NAME:   dpeg_vaults_pockets_of_resistance
+TAGS:   vaults_hard
+SUBST:  0 = 0000099998
+MAP
+  xxx......
+ xxxxx....xxx
+xx000xx..xxxxx
+xx000xx..x000xx
+xx000....x000xx
+.xx.......000xx
+...........xxx.
+...............
+...xx000xx.....
+.  xx000xx  ...
+   xx000xx    .
+    xxxxx
+     xxx
+ENDMAP
+
+NAME:   dpeg_vaults_waves
+TAGS:   vaults_hard
+SUBST:  = = +x
+SUBST:  ^ : .x , - : .xx
+SUBST:  * = **% , | = ||*
+SUBST:  8 = 89
+MAP
+xxxxxx
+x8..|x
+x-..^xxxxxxxxxxxxxx
+x8...+*.9...x%.....
+x-...=..9...+..000@
+x8...+*.9...x%.....
+x-..^xxxxxxxxxxxxxx
+x8..|x
+xxxxxx
+ENDMAP
