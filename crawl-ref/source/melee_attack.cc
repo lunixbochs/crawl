@@ -3767,31 +3767,33 @@ int melee_attack::calc_to_hit(bool random)
  * the same base methods so we still have to check the atype of the attacker
  * and fork on the logic.
  *
+ * @param random deterministic or stochastic calculation(s)
  * @param apply haste/finesse scaling
  */
-int melee_attack::calc_attack_delay(bool scaled)
+int melee_attack::calc_attack_delay(bool random, bool scaled)
 {
     if (attacker->is_player())
     {
-        int attack_delay = weapon ? player_weapon_speed()
-                                  : player_unarmed_speed();
+        random_var attack_delay = weapon ? player_weapon_speed()
+                                         : player_unarmed_speed();
         // At the moment it never gets this low anyway.
-        attack_delay = max(attack_delay, 30);
+        attack_delay = rv::max(attack_delay, constant(30));
 
         // Calculate this separately to avoid overflowing the weights in
         // the random_var.
-        int shield_penalty = 0;
+        random_var shield_penalty = constant(0);
         if (attacker_shield_penalty)
         {
-            shield_penalty = div_rand_round(min(roll_dice(1, attacker_shield_penalty),
-                                                roll_dice(1, attacker_shield_penalty)),
+            shield_penalty = div_rand_round(rv::min(rv::roll_dice(1, attacker_shield_penalty),
+                                                    rv::roll_dice(1, attacker_shield_penalty)),
                                             2);
         }
         // Give unarmed shield-users a slight penalty always.
         if (!weapon && player_wearing_slot(EQ_SHIELD))
             shield_penalty += rv::random2(20);
 
-        int final_delay = attack_delay + shield_penalty;
+        int final_delay = random ? attack_delay.roll() + shield_penalty.roll()
+                                 : attack_delay.expected() + shield_penalty.expected();
         // Stop here if we just want the unmodified value.
         if (!scaled)
             return final_delay;
@@ -3884,7 +3886,7 @@ void melee_attack::player_stab_check()
 
 // TODO: Unify this and player_unarmed_speed (if possible), then unify with
 // monster weapon/attack speed
-int melee_attack::player_weapon_speed()
+random_var melee_attack::player_weapon_speed()
 {
     int attack_delay = 150;
 
@@ -3905,17 +3907,22 @@ int melee_attack::player_weapon_speed()
             attack_delay = (attack_delay + 1) / 2;
     }
 
-    return attack_delay;
+    return constant(attack_delay);
 }
 
-int melee_attack::player_unarmed_speed()
+random_var melee_attack::player_unarmed_speed()
 {
-    int unarmed_delay = max(100, roll_dice(1, 100)
-               + div_rand_round(roll_dice(2, attacker_body_armour_penalty), 2));
+    random_var unarmed_delay =
+        rv::max(constant(100),
+                (rv::roll_dice(1, 100) +
+                 div_rand_round(rv::roll_dice(2, attacker_body_armour_penalty), 2)));
 
     // Unarmed speed scales linearly with skill. Delay is 270 / (27 + skill)
     if (you.burden_state == BS_UNENCUMBERED)
-        unarmed_delay = unarmed_delay * 270 / (you.skill(SK_UNARMED_COMBAT, 10) + 270);
+    {
+        unarmed_delay = div_rand_round(unarmed_delay * constant(270),
+                                       you.skill(SK_UNARMED_COMBAT, 10) + 270);
+    }
 
     // Bats are faster (for what good it does them).
     if (player_in_bat_form())

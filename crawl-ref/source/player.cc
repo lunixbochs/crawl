@@ -3986,7 +3986,7 @@ static void _display_attack_delay()
     if (weapon && is_range_weapon(*weapon))
         avg = launcher_final_speed(*weapon, you.shield(), false);
     else
-        avg = attk.calc_attack_delay(false);;
+        avg = attk.calc_attack_delay(false, false);
 
     // Haste shouldn't be counted, but let's show finesse.
     if (you.duration[DUR_FINESSE])
