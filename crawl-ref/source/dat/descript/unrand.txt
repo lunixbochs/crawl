@@ -466,6 +466,10 @@ Trog's gloves
 
 A pair of gloves passed down from a great lineage of berserkers.
 %%%%
+Moon Troll leather armour
+
+An enchanted hide from a now extinct species.
+%%%%
 milk chocolate
 
 This item is a debugging aid, granting a vast array of mostly beneficial

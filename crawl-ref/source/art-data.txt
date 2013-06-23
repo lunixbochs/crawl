@@ -1077,6 +1077,14 @@ COLOUR:   ETC_BLOOD
 MAGIC:    30
 BOOL:     regen, nospell
 
+NAME:     Moon Troll leather armour
+OBJ:      OBJ_ARMOUR/ARM_TROLL_LEATHER_ARMOUR
+PLUS:     +4
+COLOUR:   ETC_SHIMMER_BLUE
+BRAND:    SPARM_SPIRIT_SHIELD
+MP:       +5
+BOOL:     regen
+
 # This is the first of two amulets used to test suppression aura.
 # Together, they confer every randart effect except for a few that are
 # determined explicitly by checking whether a certain amulet is worn
