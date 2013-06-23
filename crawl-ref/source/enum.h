@@ -3107,6 +3107,7 @@ enum artefact_prop_type
 #if TAG_MAJOR_VERSION == 34
     ARTP_FOG,
 #endif
+    ARTP_REGENERATION,
     ARTP_NUM_PROPERTIES
 };
 

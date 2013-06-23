@@ -90,6 +90,7 @@
 # * poison:   Grants poison resistance.
 # * randapp:  Generated with a random artefact's appearance (used by
 #             strictly-bad unrands).
+# * regen:    Provides regeneration.
 # * rmsl:     Passively repels missiles.
 # * rnd_tele: Induces random teleportation.
 # * seeinv:   Lets wearer see invisible.
@@ -1067,6 +1068,14 @@ COLOUR:   ETC_BLOOD
 TILE:     urand_axe_of_woe
 TILE_EQ:  axe_of_woe
 BOOL:     nogen
+
+ENUM:     GLOVES_TROG
+NAME:     Trog's gloves
+OBJ:      OBJ_ARMOUR/ARM_GLOVES
+PLUS:     +0
+COLOUR:   ETC_BLOOD
+MAGIC:    30
+BOOL:     regen, nospell
 
 # This is the first of two amulets used to test suppression aura.
 # Together, they confer every randart effect except for a few that are

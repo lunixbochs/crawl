@@ -235,6 +235,8 @@ brand_type player::damage_brand(int)
     }
     else if (duration[DUR_CONFUSING_TOUCH])
         ret = SPWPN_CONFUSE;
+    else if (player_equip_unrand(UNRAND_GLOVES_TROG))
+        ret = SPWPN_ANTIMAGIC;
     else
     {
         switch (form)
