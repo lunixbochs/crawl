@@ -470,6 +470,10 @@ Moon Troll leather armour
 
 An enchanted hide from a now extinct species.
 %%%%
+boots of Ultimate Suction
+
+A novel pair of boots invented by a suitor of Arachne.
+%%%%
 milk chocolate
 
 This item is a debugging aid, granting a vast array of mostly beneficial

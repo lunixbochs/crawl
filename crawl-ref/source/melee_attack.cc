@@ -5297,6 +5297,12 @@ bool melee_attack::do_knockback(bool trample)
 {
     do
     {
+        if (defender->is_player()
+            && player_equip_unrand(UNRAND_SUCTION))
+        {
+            if (x_chance_in_y(9, 10))
+                return false;
+        }
         monster* def_monster = defender->as_monster();
         if (def_monster && mons_is_stationary(def_monster))
             return false; // don't even print a message
