@@ -632,6 +632,8 @@ local function ziggurat_stairs(entry, exit)
 
   if you.depth() < ZIGGURAT_MAX then
     zigstair(exit.x, exit.y, "stone_stairs_down_i")
+  elseif crawl.is_sprint() then
+    dgn.create_item(exit.x, exit.y, "Orb of Zot")
   end
 
   zigstair(exit.x, exit.y + 1, "exit_portal_vault")
@@ -656,7 +658,13 @@ local function ziggurat_furnish(centre, entry, exit)
     ziggurat_place_pillars(centre)
   end
 
-  ziggurat_create_loot_at(lootspot)
+  -- The Orb belongs between the exits in zigsprint.
+  if not crawl.is_sprint()
+     or you.depth() < ZIGGURAT_MAX
+     or lootspot.x ~= exit.x
+     or lootspot.y ~= exit.y then
+    ziggurat_create_loot_at(lootspot)
+  end
 
   ziggurat_create_monsters(exit, monster_generation.fn)
 
