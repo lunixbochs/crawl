@@ -606,7 +606,6 @@ i-dexterity BRAND_ARM_DEXTERITY
 i-intelligence BRAND_ARM_INTELLIGENCE
 i-ponderous BRAND_ARM_PONDEROUSNESS
 i-flying BRAND_ARM_FLYING
-i-jumping BRAND_ARM_JUMPING
 i-magic-res BRAND_ARM_MAGIC_RESISTANCE
 i-protection BRAND_ARM_PROTECTION
 %rim 0
@@ -619,6 +618,7 @@ i-preservation BRAND_ARM_PRESERVATION
 i-reflection BRAND_ARM_REFLECTION
 i-spirit BRAND_ARM_SPIRIT_SHIELD
 i-archery BRAND_ARM_ARCHERY BRAND_ARM_LAST
+i-jumping BRAND_ARM_JUMPING
 
 ###########OBJ_WANDS
 %sdir item/wand
