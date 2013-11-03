@@ -82,6 +82,7 @@ void tile_default_flv(branch_type br, tile_flavour &flv)
     switch (br)
     {
     case BRANCH_MAIN_DUNGEON:
+    case BRANCH_DEPTHS: //TODO?
         flv.wall  = TILE_WALL_NORMAL;
         flv.floor = TILE_FLOOR_NORMAL;
         return;
@@ -421,7 +422,9 @@ void tile_init_flavour(const coord_def &gc)
 
     if (!env.tile_flv(gc).wall)
     {
-        if (player_in_branch(BRANCH_MAIN_DUNGEON) && env.tile_default.wall == TILE_WALL_NORMAL)
+        if ((player_in_branch(BRANCH_MAIN_DUNGEON)
+             || player_in_branch(BRANCH_MAIN_DUNGEON))
+            && env.tile_default.wall == TILE_WALL_NORMAL)
         {
             vector<tileidx_t> tile_candidates;
             _get_dungeon_wall_tiles_by_depth(you.depth, tile_candidates);

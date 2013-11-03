@@ -287,7 +287,8 @@ static void _update_travel_cache(const level_id& old_level,
         // to Hell as shortcuts between dungeon levels, which won't work,
         // and will confuse the dickens out of the player (well, it confused
         // the dickens out of me when it happened).
-        if (new_level_id == BRANCH_MAIN_DUNGEON
+        if ((new_level_id == BRANCH_MAIN_DUNGEON
+             || new_level_id == BRANCH_DEPTHS)
             && old_level == BRANCH_VESTIBULE_OF_HELL)
         {
             old_level_info.clear_stairs(DNGN_EXIT_HELL);
@@ -350,25 +351,6 @@ void up_stairs(dungeon_feature_type force_stair)
     {
         if (!(stair_find == DNGN_ENTER_HELL && player_in_hell()))
             return down_stairs(force_stair);
-    }
-
-    if (player_in_branch(BRANCH_MAIN_DUNGEON)
-        && you.depth == RUNE_LOCK_DEPTH + 1
-        && (feat_is_stone_stair(stair_find) || feat_is_escape_hatch(stair_find)))
-    {
-        bool has_rune = false;
-        for (int i = 0; i < NUM_RUNE_TYPES; i++)
-            if (you.runes[i])
-            {
-                has_rune = true;
-                break;
-            }
-
-        if (!has_rune)
-        {
-            mpr("You need a rune to go back up.");
-            return;
-        }
     }
 
     // Only check the current position for a legal stair traverse.
@@ -691,18 +673,6 @@ void down_stairs(dungeon_feature_type force_stair)
 
     if (shaft)
     {
-        if (player_in_branch(BRANCH_MAIN_DUNGEON)
-            && you.depth == RUNE_LOCK_DEPTH)
-        {
-            mpr("If you take this shaft, you won't be able to return to this "
-                "depth without first obtaining a rune of Zot!", MSGCH_WARN);
-            if (!yesno("Take the shaft anyway?", false, 'n', true, false))
-            {
-                canned_msg(MSG_OK);
-                return;
-            }
-        }
-
         if (!is_valid_shaft_level())
         {
             if (known_shaft)
@@ -742,9 +712,7 @@ void down_stairs(dungeon_feature_type force_stair)
         _maybe_destroy_trap(you.pos());
     }
 
-    if (player_in_branch(BRANCH_MAIN_DUNGEON)
-        && you.depth == RUNE_LOCK_DEPTH
-        && (feat_is_stone_stair(stair_find) || feat_is_escape_hatch(stair_find)))
+    if (stair_find == DNGN_ENTER_DEPTHS)
     {
         bool has_rune = false;
         for (int i = 0; i < NUM_RUNE_TYPES; i++)
@@ -756,7 +724,7 @@ void down_stairs(dungeon_feature_type force_stair)
 
         if (!has_rune)
         {
-            mpr("You need a rune to go deeper.");
+            mpr("You need a rune to enter this place.");
             return;
         }
     }
