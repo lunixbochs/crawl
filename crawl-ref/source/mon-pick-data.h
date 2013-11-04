@@ -1116,6 +1116,8 @@ static const pop_entry pop_depths[] =
   {  1,  4,  999, DOWN, MONS_ORC_KNIGHT },
   {  1,  4,  999, DOWN, MONS_HYDRA },
   {  1,  6,  999, FLAT, MONS_STONE_GIANT },
+  {  1,  6,  250, FLAT, MONS_FIRE_GIANT },
+  {  1,  6,  250, FLAT, MONS_FROST_GIANT },
   {  1,  6,  999, FLAT, MONS_ETTIN },
   {  1,  6,  999, DOWN, MONS_YAKTAUR },
   {  1,  6,  999, UP,   MONS_YAKTAUR_CAPTAIN },
