@@ -1242,6 +1242,15 @@ bool vitrify_area(int radius)
 
 static void _hell_effects()
 {
+    // Don't allow hell effects if the hell lord is dead.
+    if (player_in_branch(BRANCH_COCYTUS) && you.unique_creatures[MONS_ANTAEUS]
+        || player_in_branch(BRANCH_DIS) && you.unique_creatures[MONS_DISPATER]
+        || player_in_branch(BRANCH_GEHENNA)
+           && you.unique_creatures[MONS_ASMODEUS]
+        || player_in_branch(BRANCH_TARTARUS)
+           && you.unique_creatures[MONS_ERESHKIGAL])
+        return;
+
     if ((you_worship(GOD_ZIN) && x_chance_in_y(you.piety, MAX_PIETY))
         || is_sanctuary(you.pos()))
     {

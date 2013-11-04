@@ -975,6 +975,19 @@ static void _fire_monster_death_event(monster* mons,
         if (jiyva_is_dead())
             _jiyva_died();
     }
+
+    // XXX: Can this logic be simplified?
+    if ((mons_species((monster_type)type) == MONS_HELL_LORD
+         || type == MONS_ANTAEUS)
+        && type != MONS_GERYON
+        && !polymorph)
+    {
+        // XXX: What if they're not in their branch?
+        mprf(MSGCH_HELL_EFFECT,
+             "With %s, the power tormenting this place vanishes!",
+             silenced(you.pos()) ? "an infernal shudder"
+                                 : "infernal noise");
+    }
 }
 
 static void _mummy_curse(monster* mons, killer_type killer, int index)
