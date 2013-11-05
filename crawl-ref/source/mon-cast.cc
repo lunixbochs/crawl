@@ -21,7 +21,6 @@
 #include "fight.h"
 #include "fprop.h"
 #include "ghost.h"
-#include "itemprop.h"
 #include "items.h"
 #include "libutil.h"
 #include "losglobal.h"
@@ -2042,7 +2041,7 @@ static bool _valid_vine_spot(coord_def p)
 static bool _awaken_vines(monster* mon, bool test_only = false)
 {
     vector<coord_def> spots;
-    for (radius_iterator ri(mon->get_los_no_trans()); ri; ++ri)
+    for (radius_iterator ri(mon->pos(), LOS_NO_TRANS); ri; ++ri)
     {
         if (_valid_vine_spot(*ri))
             spots.push_back(*ri);

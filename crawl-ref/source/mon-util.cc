@@ -41,7 +41,6 @@
 #include "mon-stuff.h"
 #include "notes.h"
 #include "options.h"
-#include "orb.h"
 #include "random.h"
 #include "religion.h"
 #include "showsymb.h"
@@ -785,10 +784,10 @@ bool mons_is_native_in_branch(const monster* mons,
 {
     switch (branch)
     {
-    case BRANCH_ELVEN_HALLS:
+    case BRANCH_ELF:
         return mons_genus(mons->type) == MONS_ELF;
 
-    case BRANCH_ORCISH_MINES:
+    case BRANCH_ORC:
         return mons_genus(mons->type) == MONS_ORC;
 
     case BRANCH_SHOALS:
@@ -797,14 +796,14 @@ bool mons_is_native_in_branch(const monster* mons,
                || mons_genus(mons->type) == MONS_MERMAID
                || mons->type == MONS_HARPY;
 
-    case BRANCH_SLIME_PITS:
+    case BRANCH_SLIME:
         return mons_genus(mons->type) == MONS_JELLY;
 
-    case BRANCH_SNAKE_PIT:
+    case BRANCH_SNAKE:
         return mons_genus(mons->type) == MONS_NAGA
                || mons_genus(mons->type) == MONS_ADDER;
 
-    case BRANCH_HALL_OF_ZOT:
+    case BRANCH_ZOT:
         return mons_genus(mons->type) == MONS_DRACONIAN
                || mons->type == MONS_ORB_GUARDIAN
                || mons->type == MONS_ORB_OF_FIRE
@@ -816,7 +815,7 @@ bool mons_is_native_in_branch(const monster* mons,
     case BRANCH_TOMB:
         return mons_genus(mons->type) == MONS_MUMMY;
 
-    case BRANCH_SPIDER_NEST:
+    case BRANCH_SPIDER:
         return mons_genus(mons->type) == MONS_SPIDER;
 
     case BRANCH_FOREST:
@@ -826,7 +825,7 @@ bool mons_is_native_in_branch(const monster* mons,
                || mons_genus(mons->type) == MONS_SATYR
                || mons_genus(mons->type) == MONS_DRYAD;
 
-    case BRANCH_HALL_OF_BLADES:
+    case BRANCH_BLADE:
         return mons->type == MONS_DANCING_WEAPON;
 
     case BRANCH_ABYSS:
@@ -4549,7 +4548,6 @@ bool mons_landlubbers_in_reach(const monster* mons)
     for (radius_iterator ai(mons->pos(),
                             mons->reach_range(),
                             C_CIRCLE,
-                            NULL,
                             true);
                          ai; ++ai)
         if ((act = actor_at(*ai)) && !mons_aligned(mons, act))
@@ -4561,7 +4559,7 @@ bool mons_landlubbers_in_reach(const monster* mons)
 int get_dist_to_nearest_monster()
 {
     int minRange = LOS_RADIUS_SQ + 1;
-    for (radius_iterator ri(you.get_los_no_trans(), true); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_NO_TRANS, true); ri; ++ri)
     {
         const monster* mon = monster_at(*ri);
         if (mon == NULL)
@@ -4589,7 +4587,7 @@ int get_dist_to_nearest_monster()
 
 bool monster_nearby()
 {
-    for (radius_iterator ri(you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
         if (monster_at(*ri))
             return true;
     return false;

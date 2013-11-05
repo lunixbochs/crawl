@@ -434,9 +434,7 @@ public:
     bool can_see(const actor* a) const;
     bool nightvision() const;
     reach_type reach_range() const;
-
     bool see_cell(const coord_def& p) const;
-    const los_base* get_los() const;
 
     // Is c in view but behind a transparent wall?
     bool trans_wall_blocking(const coord_def &c) const;
@@ -662,7 +660,6 @@ public:
     int liquefying_radius2() const;
     int umbra_radius2() const;
     int suppression_radius2() const;
-    int soul_aura_radius2() const;
     int heat_radius2() const;
     bool glows_naturally() const;
     bool petrifying() const;

@@ -1658,7 +1658,7 @@ bool is_valid_shaft_level(const level_id &place)
 
     // Shafts are now allowed on the first two levels, as they have a
     // good chance of being detected. You'll also fall less deep.
-    /* if (place == BRANCH_MAIN_DUNGEON && you.depth < 3)
+    /* if (place == BRANCH_DUNGEON && you.depth < 3)
         return false; */
 
     // Don't generate shafts in branches where teleport control
@@ -1813,7 +1813,7 @@ int num_traps_for_place()
 {
     switch (you.where_are_you)
     {
-    case BRANCH_ECUMENICAL_TEMPLE:
+    case BRANCH_TEMPLE:
         return 0;
     default:
         if (!player_in_connected_branch())
@@ -1864,7 +1864,7 @@ static trap_type _random_trap_default(int level_number)
         type = TRAP_BLADE;
 
     if (random2(1 + level_number) > 14 && one_chance_in(3)
-        || (player_in_branch(BRANCH_HALL_OF_ZOT) && coinflip()))
+        || (player_in_branch(BRANCH_ZOT) && coinflip()))
     {
         type = TRAP_ZOT;
     }
@@ -1883,7 +1883,7 @@ trap_type random_trap_for_place()
 {
     int level_number = env.absdepth0;
 
-    if (player_in_branch(BRANCH_SLIME_PITS))
+    if (player_in_branch(BRANCH_SLIME))
         return _random_trap_slime(level_number);
 
     return _random_trap_default(level_number);

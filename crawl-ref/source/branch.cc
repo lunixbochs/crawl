@@ -2,9 +2,7 @@
 
 #include "branch.h"
 #include "externs.h"
-#include "files.h"
 #include "player.h"
-#include "traps.h"
 #include "travel.h"
 #include "branch-data.h"
 
@@ -35,13 +33,13 @@ bool is_hell_subbranch(branch_type branch)
 {
     return (branch >= BRANCH_FIRST_HELL
             && branch <= BRANCH_LAST_HELL
-            && branch != BRANCH_VESTIBULE_OF_HELL);
+            && branch != BRANCH_VESTIBULE);
 }
 
 bool is_random_subbranch(branch_type branch)
 {
     return (parent_branch(branch) == BRANCH_LAIR
-            && branch != BRANCH_SLIME_PITS)
+            && branch != BRANCH_SLIME)
            || branch == BRANCH_CRYPT
            || branch == BRANCH_FOREST;
 }
@@ -79,7 +77,7 @@ branch_type get_branch_at(const coord_def& pos)
 bool branch_is_unfinished(branch_type branch)
 {
 #if TAG_MAJOR_VERSION == 34
-    if (branch == BRANCH_UNUSED || branch == BRANCH_DWARVEN_HALL)
+    if (branch == BRANCH_UNUSED || branch == BRANCH_DWARF)
         return true;
 #endif
     return false;

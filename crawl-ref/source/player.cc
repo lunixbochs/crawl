@@ -48,7 +48,6 @@
 #include "kills.h"
 #include "libutil.h"
 #include "macro.h"
-#include "map_knowledge.h"
 #include "melee_attack.h"
 #include "message.h"
 #include "misc.h"
@@ -1598,9 +1597,6 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         if (you.duration[DUR_FIRE_SHIELD])
             rf += 2;
 
-        if (you.duration[DUR_FIRE_VULN])
-            rf--;
-
         // transformations:
         switch (you.form)
         {
@@ -1628,10 +1624,12 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
         }
     }
 
+    if (rf > 3)
+        rf = 3;
+    if (temp && you.duration[DUR_FIRE_VULN])
+        rf--;
     if (rf < -3)
         rf = -3;
-    else if (rf > 3)
-        rf = 3;
 
     return rf;
 }
@@ -5903,7 +5901,7 @@ void player::init()
         delete kills;
     kills = new KillMaster();
 
-    where_are_you    = BRANCH_MAIN_DUNGEON;
+    where_are_you    = BRANCH_DUNGEON;
     depth            = 1;
 
     branch_stairs.init(0);
@@ -7898,8 +7896,6 @@ vector<PlaceInfo> player::get_all_place_info(bool visited_only,
 
 bool player::do_shaft()
 {
-    dungeon_feature_type force_stair = DNGN_UNSEEN;
-
     if (!is_valid_shaft_level())
         return false;
 
@@ -7919,19 +7915,17 @@ bool player::do_shaft()
         case DNGN_TRAP_SHAFT:
         case DNGN_UNDISCOVERED_TRAP:
         case DNGN_ENTER_SHOP:
+            if (!ground_level() || total_weight() == 0)
+                return true;
             break;
 
         default:
             return false;
         }
 
-        if (!ground_level() || total_weight() == 0)
-            return true;
-
-        force_stair = DNGN_TRAP_SHAFT;
     }
 
-    down_stairs(force_stair);
+    down_stairs(DNGN_TRAP_SHAFT);
 
     return true;
 }

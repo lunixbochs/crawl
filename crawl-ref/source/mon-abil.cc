@@ -46,7 +46,6 @@
 #include "random.h"
 #include "religion.h"
 #include "spl-miscast.h"
-#include "spl-summoning.h"
 #include "spl-util.h"
 #include "state.h"
 #include "stuff.h"
@@ -58,7 +57,6 @@
 #include "ouch.h"
 #include "target.h"
 #include "items.h"
-#include "mapmark.h"
 #include "teleport.h"
 
 #include <algorithm>
@@ -1334,7 +1332,7 @@ static bool _make_monster_angry(const monster* mon, monster* targ)
     return true;
 }
 
-static bool _moth_incite_monsters(monster* mon)
+static bool _moth_incite_monsters(const monster* mon)
 {
     if (is_sanctuary(you.pos()) || is_sanctuary(mon->pos()))
         return false;
@@ -1813,7 +1811,7 @@ static bool _flay_creature(monster* mon, actor* victim)
     CrawlVector &new_blood = victim->props["flay_blood"].get_vector();
 
     // Find current blood splatters
-    for (radius_iterator ri(victim->get_los()); ri; ++ri)
+    for (radius_iterator ri(victim->pos(), LOS_SOLID); ri; ++ri)
     {
         if (env.pgrid(*ri) & FPROP_BLOODY)
             old_blood.push_back(*ri);
@@ -1823,7 +1821,7 @@ static bool _flay_creature(monster* mon, actor* victim)
 
     // Compute and store new blood splatters
     unsigned int i = 0;
-    for (radius_iterator ri(victim->get_los()); ri; ++ri)
+    for (radius_iterator ri(victim->pos(), LOS_SOLID); ri; ++ri)
     {
         if (env.pgrid(*ri) & FPROP_BLOODY)
         {

@@ -9,8 +9,9 @@
 
 #include "coord-circle.h"
 #include "coord.h"
+#include "libutil.h"
+#include "los_def.h"
 #include "random.h"
-#include "player.h"
 
 rectangle_iterator::rectangle_iterator(const coord_def& corner1,
                                         const coord_def& corner2)
@@ -19,6 +20,15 @@ rectangle_iterator::rectangle_iterator(const coord_def& corner1,
     topleft.y = min(corner1.y, corner2.y); // not really necessary
     bottomright.x = max(corner1.x, corner2.x);
     bottomright.y = max(corner1.y, corner2.y);
+    current = topleft;
+}
+
+rectangle_iterator::rectangle_iterator(const coord_def& center, int halfside)
+{
+    topleft.x = center.x - halfside;
+    topleft.y = center.y - halfside;
+    bottomright.x = center.x + halfside;
+    bottomright.y = center.y + halfside;
     current = topleft;
 }
 
@@ -179,36 +189,40 @@ void circle_iterator::operator++(int)
 }
 
 
-radius_iterator::radius_iterator(const coord_def& center, int param,
+radius_iterator::radius_iterator(const coord_def center, int param,
                                  circle_type ctype,
-                                 const los_base* _los,
                                  bool _exclude_center)
     : circle(center, param, ctype),
       iter(circle.iter()),
       exclude_center(_exclude_center),
-      los(_los)
+      los(NULL)
 {
     advance(true);
 }
 
-radius_iterator::radius_iterator(const coord_def& _center, int _radius,
-                                 bool roguelike, bool _require_los,
+radius_iterator::radius_iterator(const coord_def _center,
+                                 los_type _los,
                                  bool _exclude_center)
-    : circle(_center, _radius, roguelike ? C_SQUARE : C_POINTY),
+    : circle(_center, los_radius2, C_CIRCLE),
       iter(circle.iter()),
-      exclude_center(_exclude_center),
-      los(_require_los ? you.get_los() : NULL)
+      exclude_center(_exclude_center)
 {
+    used_los.reset(new los_glob(_center, _los));
+    los = used_los.get();
     advance(true);
 }
 
-radius_iterator::radius_iterator(const los_base* los_,
+radius_iterator::radius_iterator(const coord_def _center,
+                                 int param,
+                                 circle_type ctype,
+                                 los_type _los,
                                  bool _exclude_center)
-    : circle(los_->get_bounds()),
+    : circle(_center, param, ctype),
       iter(circle.iter()),
-      exclude_center(_exclude_center),
-      los(los_)
+      exclude_center(_exclude_center)
 {
+    used_los.reset(new los_glob(_center, _los));
+    los = used_los.get();
     advance(true);
 }
 
@@ -371,3 +385,109 @@ int distance_iterator::radius() const
 {
     return r;
 }
+
+/********************/
+/* regression tests */
+/********************/
+static void _test_ai(const coord_def c, bool exc, size_t expected)
+{
+    set<coord_def> seen;
+
+    for (adjacent_iterator ai(c, exc); ai; ++ai)
+    {
+        if (seen.count(*ai))
+            die("adjacent_iterator: %d,%d seen twice", ai->x, ai->y);
+        seen.insert(*ai);
+
+        if (c == *ai && !exc)
+            continue;
+        if ((c - *ai).range() != 1)
+        {
+            die("adjacent_iterator: %d,%d not adjacent to %d,%d",
+                ai->x, ai->y, c.x, c.y);
+        }
+    }
+
+    if (seen.size() != expected)
+    {
+        die("adjacent_iterator(%d,%d): seen %lu, expected %lu",
+            c.x, c.y, seen.size(), expected);
+    }
+}
+
+#ifdef DEBUG_TESTS
+void coordit_tests()
+{
+    // bounding box of our playground
+    #define BC   16
+    #define BBOX 32
+    ASSERT(los_radius2 < sqr(BC - 2));
+    coord_def center(BC, BC);
+
+    FixedBitArray<BBOX, BBOX> seen;
+
+    for (int r = 0; r <= los_radius2; ++r)
+    {
+        seen.reset();
+
+        for (radius_iterator ri(center, r, C_CIRCLE); ri; ++ri)
+        {
+            if (seen(*ri))
+                die("radius_iterator(C%d): %d,%d seen twice", r, ri->x, ri->y);
+            seen.set(*ri);
+        }
+
+        for (int x = 0; x < BBOX; x++)
+            for (int y = 0; y < BBOX; y++)
+            {
+                bool in = sqr(x - BC) + sqr(y - BC) <= r;
+                if (seen(coord_def(x, y)) != in)
+                {
+                    die("radius_iterator(C%d) mismatch at %d,%d: %d != %d",
+                        r, x, y, seen(coord_def(x, y)), in);
+                }
+            }
+    }
+
+    for (radius_iterator ri(coord_def(2, 2), 5, C_ROUND); ri; ++ri)
+        if (!map_bounds(*ri))
+            die("radius_iterator(R5) out of bounds at %d, %d", ri->x, ri->y);
+    for (radius_iterator ri(coord_def(GXM + 1, GYM + 1), 7, C_ROUND); ri; ++ri)
+        if (!map_bounds(*ri))
+            die("radius_iterator(R7) out of bounds at %d, %d", ri->x, ri->y);
+
+    seen.reset();
+    int rd = 0;
+    for (distance_iterator di(center, true, false, BC - 1); di; ++di)
+    {
+        if (seen(*di))
+            die("distance_iterator: %d,%d seen twice", di->x, di->y);
+        seen.set(*di);
+
+        int rc = (center - *di).range();
+        if (rc < rd)
+            die("distance_iterator went backwards");
+        rd = rc;
+    }
+
+    for (int x = 0; x < BBOX; x++)
+        for (int y = 0; y < BBOX; y++)
+        {
+            bool in = sqr(x - BC) + sqr(y - BC) <= dist_range(BC - 1);
+            if (seen(coord_def(x, y)) != in)
+            {
+                die("distance_iterator mismatch at %d,%d: %d != %d",
+                    x, y, seen(coord_def(x, y)), in);
+            }
+        }
+
+    _test_ai(center, false, 9);
+    _test_ai(center, true, 8);
+    _test_ai(coord_def(3, 0), false, 6);
+    _test_ai(coord_def(3, 0), true, 5);
+    _test_ai(coord_def(0, 0), false, 4);
+    _test_ai(coord_def(0, 0), true, 3);
+    _test_ai(coord_def(GXM, GYM), false, 1);
+    _test_ai(coord_def(GXM, GYM), true, 1);
+}
+#endif

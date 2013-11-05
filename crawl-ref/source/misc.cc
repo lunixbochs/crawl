@@ -30,11 +30,9 @@
 #include "coordit.h"
 #include "database.h"
 #include "delay.h"
-#include "describe.h"
 #include "dgn-shoals.h"
 #include "dgnevent.h"
 #include "env.h"
-#include "exercise.h"
 #include "feature.h"
 #include "fight.h"
 #include "files.h"
@@ -48,6 +46,7 @@
 #include "items.h"
 #include "item_use.h"
 #include "libutil.h"
+#include "losglobal.h"
 #include "makeitem.h"
 #include "mapmark.h"
 #include "message.h"
@@ -1015,12 +1014,10 @@ static void _orient_wall_blood(const coord_def& where, coord_def from,
 
     coord_def closer = INVALID_COORD;
     int dist = INT_MAX;
-    los_def ld(from, opc_solid);
-    ld.update();
-
     for (orth_adjacent_iterator ai(where); ai; ++ai)
     {
-        if (in_bounds(*ai) && !cell_is_solid(*ai) && ld.see_cell(*ai)
+        if (in_bounds(*ai) && !cell_is_solid(*ai)
+            && cell_see_cell(from, *ai, LOS_SOLID)
             && (distance2(*ai, from) < dist
                 || distance2(*ai, from) == dist && coinflip()))
         {
@@ -1125,10 +1122,6 @@ void bleed_onto_floor(const coord_def& where, monster_type montype,
 
 void blood_spray(const coord_def& origin, monster_type montype, int level)
 {
-    los_def ld(origin, opc_solid);
-
-    ld.update();
-
     int tries = 0;
     for (int i = 0; i < level; ++i)
     {
@@ -1144,7 +1137,7 @@ void blood_spray(const coord_def& origin, monster_type montype, int level)
             bloody.x += random_range(-range, range);
             bloody.y += random_range(-range, range);
 
-            if (in_bounds(bloody) && ld.see_cell(bloody))
+            if (in_bounds(bloody) && cell_see_cell(origin, bloody, LOS_SOLID))
             {
                 bleed_onto_floor(bloody, montype, 99, false, true, origin);
                 break;
@@ -1236,10 +1229,9 @@ void search_around()
     if (max_dist < 1)
         max_dist = 1;
 
-    for (radius_iterator ri(you.pos(), max_dist); ri; ++ri)
+    for (radius_iterator ri(you.pos(), max_dist, C_ROUND, LOS_NO_TRANS); ri; ++ri)
     {
-        // Must have LOS, with no translucent walls in the way.
-        if (grd(*ri) != DNGN_UNDISCOVERED_TRAP || !you.see_cell_no_trans(*ri))
+        if (grd(*ri) != DNGN_UNDISCOVERED_TRAP)
             continue;
 
         int dist = ri->range(you.pos());
@@ -1574,7 +1566,7 @@ vector<monster* > get_nearby_monsters(bool want_move,
     vector<monster* > mons;
 
     // Sweep every visible square within range.
-    for (radius_iterator ri(you.pos(), range); ri; ++ri)
+    for (radius_iterator ri(you.pos(), range, C_ROUND, LOS_DEFAULT); ri; ++ri)
     {
         if (monster* mon = monster_at(*ri))
         {
@@ -1596,8 +1588,8 @@ vector<monster* > get_nearby_monsters(bool want_move,
 
 static bool _exposed_monsters_nearby(bool want_move)
 {
-    const int radius = want_move ? 2 : 1;
-    for (radius_iterator ri(you.pos(), radius); ri; ++ri)
+    const int radius = want_move ? 8 : 2;
+    for (radius_iterator ri(you.pos(), radius, C_CIRCLE, LOS_DEFAULT); ri; ++ri)
         if (env.map_knowledge(*ri).flags & MAP_INVISIBLE_MONSTER)
             return true;
     return false;

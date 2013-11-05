@@ -35,7 +35,6 @@
 #include "spl-clouds.h"
 #include "spl-damage.h"
 #include "spl-other.h"
-#include "spl-summoning.h"
 #include "spl-transloc.h"
 #include "stash.h"
 #include "state.h"
@@ -287,9 +286,7 @@ static void _update_travel_cache(const level_id& old_level,
         // to Hell as shortcuts between dungeon levels, which won't work,
         // and will confuse the dickens out of the player (well, it confused
         // the dickens out of me when it happened).
-        if ((new_level_id == BRANCH_MAIN_DUNGEON
-             || new_level_id == BRANCH_DEPTHS)
-            && old_level == BRANCH_VESTIBULE_OF_HELL)
+        if (new_level_id == BRANCH_DEPTHS && old_level == BRANCH_VESTIBULE)
         {
             old_level_info.clear_stairs(DNGN_EXIT_HELL);
         }
@@ -300,7 +297,7 @@ static void _update_travel_cache(const level_id& old_level,
         // and that we can descend that downstair and get back to where we
         // came from. This assumption is guaranteed false when climbing out
         // of one of the branches of Hell.
-        if (new_level_id != BRANCH_VESTIBULE_OF_HELL
+        if (new_level_id != BRANCH_VESTIBULE
             || !is_hell_subbranch(old_level.branch))
         {
             // Set the new level's stair, assuming arbitrarily that going
@@ -411,14 +408,14 @@ void up_stairs(dungeon_feature_type force_stair)
     _player_change_level_reset();
     _player_change_level_upstairs(force_stair);
 
-    if (old_level.branch == BRANCH_VESTIBULE_OF_HELL
-        && !player_in_branch(BRANCH_VESTIBULE_OF_HELL))
+    if (old_level.branch == BRANCH_VESTIBULE
+        && !player_in_branch(BRANCH_VESTIBULE))
     {
         mpr("Thank you for visiting Hell. Please come again soon.");
     }
 
     // Fixup exits from the Hell branches.
-    if (player_in_branch(BRANCH_VESTIBULE_OF_HELL))
+    if (player_in_branch(BRANCH_VESTIBULE))
     {
         switch (old_level.branch)
         {
@@ -444,7 +441,7 @@ void up_stairs(dungeon_feature_type force_stair)
         mprf("Welcome back to %s!",
              branches[you.where_are_you].longname);
         if ((brdepth[old_level.branch] > 1
-             || old_level.branch == BRANCH_VESTIBULE_OF_HELL)
+             || old_level.branch == BRANCH_VESTIBULE)
             && !you.branches_left[old_level.branch])
         {
             string old_branch_string = branches[old_level.branch].longname;
@@ -544,7 +541,7 @@ level_id stair_destination(dungeon_feature_type feat, const string &dst,
                 mpr("Error: no Hell exit level, how in the Vestibule did "
                         "you get here? Let's go to D:1.", MSGCH_ERROR);
             }
-            return level_id(BRANCH_MAIN_DUNGEON, 1);
+            return level_id(BRANCH_DUNGEON, 1);
         }
         else
             die("hell exit without return destination");
@@ -581,12 +578,12 @@ level_id stair_destination(dungeon_feature_type feat, const string &dst,
 
     case DNGN_ENTER_HELL:
         if (for_real && !player_in_hell())
-            brentry[BRANCH_VESTIBULE_OF_HELL] = level_id::current();
-        return level_id(BRANCH_VESTIBULE_OF_HELL);
+            brentry[BRANCH_VESTIBULE] = level_id::current();
+        return level_id(BRANCH_VESTIBULE);
 
     case DNGN_EXIT_ABYSS:
         if (you.char_direction == GDT_GAME_START)
-            return level_id(BRANCH_MAIN_DUNGEON, 1);
+            return level_id(BRANCH_DUNGEON, 1);
     case DNGN_EXIT_PORTAL_VAULT:
     case DNGN_EXIT_PANDEMONIUM:
         if (you.level_stack.empty())
@@ -598,7 +595,7 @@ level_id stair_destination(dungeon_feature_type feat, const string &dst,
                     mpr("Error: no return path. You did create the exit manually, "
                         "didn't you? Let's go to D:1.", MSGCH_ERROR);
                 }
-                return level_id(BRANCH_MAIN_DUNGEON, 1);
+                return level_id(BRANCH_DUNGEON, 1);
             }
             die("no return path from a portal (%s)",
                 level_id::current().describe().c_str());

@@ -46,8 +46,8 @@
 #include "itemprop.h"
 #include "items.h"
 #include "libutil.h"
+#include "losglobal.h"
 #include "makeitem.h"
-#include "map_knowledge.h"
 #include "message.h"
 #include "mgen_data.h"
 #include "misc.h"
@@ -187,10 +187,7 @@ void holy_word(int pow, holy_word_source_type source, const coord_def& where,
              attacker->conj_verb("speak").c_str());
     }
 
-    // We could use actor.get_los(), but maybe it's NULL.
-    los_def los(where);
-    los.update();
-    for (radius_iterator ri(&los); ri; ++ri)
+    for (radius_iterator ri(where, LOS_SOLID); ri; ++ri)
         holy_word_monsters(*ri, pow, source, attacker);
 }
 
@@ -330,15 +327,9 @@ int torment_monsters(coord_def where, actor *attacker, int taux)
 
 int torment(actor *attacker, int taux, const coord_def& where)
 {
-    los_def los(where);
-    los.update();
     int r = 0;
-    for (radius_iterator ri(&los); ri; ++ri)
-    {
-        if (attacker && !attacker->see_cell_no_trans(*ri))
-            continue;
+    for (radius_iterator ri(where, LOS_NO_TRANS); ri; ++ri)
         r += torment_monsters(*ri, attacker, taux);
-    }
     return r;
 }
 
@@ -1647,7 +1638,7 @@ void change_labyrinth(bool msg)
         // special cases.
         dungeon_feature_type old_grid = grd(c);
         grd(c) = DNGN_FLOOR;
-        los_terrain_changed(c);
+        set_terrain_changed(c);
 
         // Add all floor grids meeting a couple of conditions to a vector
         // of potential switch points.
@@ -1683,7 +1674,7 @@ void change_labyrinth(bool msg)
         {
             // Take back the previous change.
             grd(c) = old_grid;
-            los_terrain_changed(c);
+            set_terrain_changed(c);
             continue;
         }
 
@@ -1753,7 +1744,7 @@ void change_labyrinth(bool msg)
             old_grid = grd[p.x+1][p.y];
         }
         grd(p) = old_grid;
-        los_terrain_changed(p);
+        set_terrain_changed(p);
 
         // Shift blood some of the time.
         if (is_bloodcovered(p))
@@ -2738,7 +2729,7 @@ int place_ring(vector<coord_def> &ring_points,
 // Collect lists of points that are within LOS (under the given env map),
 // unoccupied, and not solid (walls/statues).
 void collect_radius_points(vector<vector<coord_def> > &radius_points,
-                           const coord_def &origin, const los_base* los)
+                           const coord_def &origin, los_type los)
 {
     radius_points.clear();
     radius_points.resize(LOS_RADIUS);
@@ -2793,7 +2784,7 @@ void collect_radius_points(vector<vector<coord_def> > &radius_points,
             coord_dist temp(*i, current.second);
 
             // If the grid is out of LOS, skip it.
-            if (!los->see_cell(temp.first))
+            if (!cell_see_cell(origin, temp.first, los))
                 continue;
 
             coord_def local = temp.first - origin;
@@ -2826,9 +2817,7 @@ static int _mushroom_ring(item_def &corpse, int & seen_count,
 
     vector<vector<coord_def> > radius_points;
 
-    los_def los(corpse.pos, opc_solid);
-
-    collect_radius_points(radius_points, corpse.pos, &los);
+    collect_radius_points(radius_points, corpse.pos, LOS_SOLID);
 
     // So what we have done so far is collect the set of points at each radius
     // reachable from the origin with (somewhat constrained) 8 connectivity,
@@ -3183,7 +3172,7 @@ void slime_wall_damage(actor* act, int delay)
     if (!walls)
         return;
 
-    const int depth = player_in_branch(BRANCH_SLIME_PITS) ? you.depth : 1;
+    const int depth = player_in_branch(BRANCH_SLIME) ? you.depth : 1;
 
     // Up to 1d6 damage per wall per slot.
     const int strength = div_rand_round(depth * walls * delay, BASELINE_DELAY);

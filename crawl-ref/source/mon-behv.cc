@@ -18,7 +18,6 @@
 #include "env.h"
 #include "fprop.h"
 #include "exclude.h"
-#include "itemprop.h"
 #include "losglobal.h"
 #include "macro.h"
 #include "mon-act.h"
@@ -49,9 +48,7 @@ static void _guess_invis_foe_pos(monster* mon)
 
     // NOTE: This depends on ignoring clouds, so that cells hidden by
     // opaque clouds are included as a possibility for the foe's location.
-    los_def los(mon->pos(), opc_fullyopaque, circle_def(guess_radius, C_ROUND));
-    los.update();
-    for (radius_iterator ri(&los); ri; ++ri)
+    for (radius_iterator ri(mon->pos(), guess_radius, C_ROUND, LOS_SOLID); ri; ++ri)
     {
         if (foe->is_habitable(*ri))
             possibilities.push_back(*ri);
@@ -122,14 +119,13 @@ static void _set_firing_pos(monster* mon, coord_def target)
     int best_distance_to_ideal_range = INT_MAX;
     coord_def best_pos(0, 0);
 
-    const los_base *los = mon->get_los();
     for (distance_iterator di(mon->pos(), true, true, LOS_RADIUS);
          di; ++di)
     {
         const coord_def p(*di);
         const int range = p.distance_from(target);
 
-        if (!los->see_cell(*di))
+        if (!mon->see_cell(*di))
             continue;
 
         if (!in_bounds(p) || range > max_range
@@ -186,14 +182,13 @@ static coord_def _furthest_aim_spot(monster* mon, coord_def target)
     int best_distance = 0;
     coord_def best_pos(0, 0);
 
-    const los_base *los = mon->get_los();
     for (distance_iterator di(mon->pos(), false, false, LOS_RADIUS);
          di; ++di)
     {
         const coord_def p(*di);
         const int range = p.distance_from(target);
 
-        if (!los->see_cell(*di))
+        if (!cell_see_cell(mon->pos(), *di, LOS_NO_TRANS))
             continue;
 
         if (!in_bounds(p) || range > LOS_RADIUS - 1

@@ -9,8 +9,9 @@
 #include "env.h"
 #include "fprop.h"
 #include "items.h"
-#include "losglobal.h"
 #include "libutil.h"
+#include "los_def.h"
+#include "losglobal.h"
 #include "mon-behv.h"
 #include "mon-pathfind.h"
 #include "mon-place.h"
@@ -21,7 +22,7 @@
 #include "traps.h"
 
 // If a monster can see but not directly reach the target, and then fails to
-// find a path to get there, mark all surrounding (in a radius of 2) monsters
+// find a path to get there, mark all surrounding (in a radius of √8) monsters
 // of the same (or greater) movement restrictions as also being unable to
 // find a path, so we won't need to calculate again.
 // Should there be a direct path to the target for a monster thus marked, it
@@ -38,7 +39,7 @@ static void _mark_neighbours_target_unreachable(monster* mon)
     const bool amphibious    = (mons_habitat(mon) == HT_AMPHIBIOUS);
     const habitat_type habit = mons_primary_habitat(mon);
 
-    for (radius_iterator ri(mon->pos(), 2, true, false); ri; ++ri)
+    for (radius_iterator ri(mon->pos(), 8, C_CIRCLE); ri; ++ri)
     {
         if (*ri == mon->pos())
             continue;
@@ -102,7 +103,7 @@ static void _set_no_path_found(monster* mon)
             // effortless win with all the opposition doing nothing.
 
             // This is only appropriate in the zotdef map itself, though,
-            // which is why we check for BRANCH_MAIN_DUNGEON above.
+            // which is why we check for BRANCH_DUNGEON above.
             // (This kind of thing is totally normal in, say, a Bazaar.)
             die("ZotDef: monster %s failed to pathfind to (%d,%d) (%s)",
                 mon->name(DESC_PLAIN, true).c_str(),
@@ -339,7 +340,7 @@ bool find_siren_water_target(monster* mon)
     while (true)
     {
         int best_num = 0;
-        for (radius_iterator ri(mon->pos(), LOS_RADIUS, true, false);
+        for (radius_iterator ri(mon->pos(), LOS_NO_TRANS);
              ri; ++ri)
         {
             if (!feat_is_water(grd(*ri)))
@@ -455,7 +456,7 @@ bool find_wall_target(monster* mon)
     bool      best_closer_to_player = false;
     coord_def best_target;
 
-    for (radius_iterator ri(mon->pos(), LOS_RADIUS, true, false);
+    for (radius_iterator ri(mon->pos(), you.current_vision, C_ROUND);
          ri; ++ri)
     {
         if (!cell_is_solid(*ri)
@@ -669,13 +670,11 @@ static bool _choose_random_patrol_target_grid(monster* mon)
     }
 
     int count_grids = 0;
-    for (radius_iterator ri(mon->patrol_point, LOS_RADIUS, true, false);
+    // Don't bother for the current position. If everything fails,
+    // we'll stay here anyway.
+    for (radius_iterator ri(mon->patrol_point, you.current_vision, C_ROUND, true);
          ri; ++ri)
     {
-        // Don't bother for the current position. If everything fails,
-        // we'll stay here anyway.
-        if (*ri == mon->pos())
-            continue;
 
         if (!in_bounds(*ri) || !mon->can_pass_through_feat(grd(*ri)))
             continue;
@@ -865,7 +864,7 @@ static bool _band_wander_target(monster * mon)
 
     vector<coord_def> positions;
 
-    for (radius_iterator r_it(mon->get_los_no_trans(), mon); r_it; ++r_it)
+    for (radius_iterator r_it(mon->pos(), LOS_NO_TRANS, true); r_it; ++r_it)
     {
         if (!in_bounds(*r_it))
             continue;
@@ -907,7 +906,7 @@ static bool _herd_wander_target(monster * mon)
     if (friends.empty())
         return true;
 
-    for (radius_iterator r_it(mon->get_los_no_trans(), true) ; r_it; ++r_it)
+    for (radius_iterator r_it(mon->pos(), LOS_NO_TRANS, true); r_it; ++r_it)
     {
         if (!in_bounds(*r_it))
             continue;
@@ -1079,12 +1078,10 @@ int mons_find_nearest_level_exit(const monster* mon, vector<level_exit> &e,
 void set_random_slime_target(monster* mon)
 {
     // Strictly neutral slimes will go for the nearest item.
-    const coord_def pos = mon->pos();
-    int mindist = LOS_RADIUS_SQ + 1;
-    for (radius_iterator ri(mon->get_los()); ri; ++ri)
+    for (distance_iterator ri(mon->pos(), true, false, you.current_vision);
+                              ri; ++ri)
     {
-        // XXX: an iterator that spirals out would be nice.
-        if (!in_bounds(*ri) || distance2(pos, *ri) >= mindist)
+        if (!in_bounds(*ri) || !mon->see_cell(*ri))
             continue;
         if (testbits(env.pgrid(*ri), FPROP_NO_JIYVA))
             continue;
@@ -1095,12 +1092,11 @@ void set_random_slime_target(monster* mon)
             if (is_item_jelly_edible(item))
             {
                 mon->target = *ri;
-                mindist = distance2(pos, *ri);
-                break;
+                goto end;
             }
         }
     }
-
+end:
     if (mon->target == mon->pos() || mon->target == you.pos())
         set_random_target(mon);
 }

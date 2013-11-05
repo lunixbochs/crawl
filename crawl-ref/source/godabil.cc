@@ -6,8 +6,8 @@
 #include "AppHdr.h"
 
 #include <queue>
+#include <sstream>
 
-#include "act-iter.h"
 #include "areas.h"
 #include "artefact.h"
 #include "beam.h"
@@ -17,7 +17,6 @@
 #include "database.h"
 #include "delay.h"
 #include "dactions.h"
-#include "describe.h"
 #include "effects.h"
 #include "env.h"
 #include "files.h"
@@ -658,7 +657,7 @@ int zin_check_recite_to_monsters(recite_type *prayertype)
     bool found_eligible = false;
     recite_counts count(0);
 
-    for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         const monster *mon = monster_at(*ri);
         if (!mon || !you.can_see(mon))
@@ -744,10 +743,8 @@ int zin_check_recite_to_monsters(recite_type *prayertype)
 enum zin_eff
 {
     ZIN_NOTHING,
-    ZIN_SLEEP,
     ZIN_DAZE,
     ZIN_CONFUSE,
-    ZIN_FEAR,
     ZIN_PARALYSE,
     ZIN_BLEED,
     ZIN_SMITE,
@@ -838,14 +835,7 @@ bool zin_recite_to_single_monster(const coord_def& where,
 
             if (check < 5)
             {
-#if 0
-                // Sleep doesn't really work well. This should be more
-                // 'forceful'. But how?
-                if (one_chance_in(4))
-                    effect = ZIN_SLEEP;
-                else
-#endif
-                    effect = ZIN_DAZE;
+                effect = ZIN_DAZE;
             }
             else if (check < 10)
             {
@@ -856,17 +846,14 @@ bool zin_recite_to_single_monster(const coord_def& where,
             }
             else if (check < 15)
             {
-                if (one_chance_in(3))
-                    effect = ZIN_FEAR;
-                else
-                    effect = ZIN_CONFUSE;
+                effect = ZIN_CONFUSE;
             }
             else
             {
                 if (one_chance_in(3))
                     effect = ZIN_PARALYSE;
                 else
-                    effect = ZIN_FEAR;
+                    effect = ZIN_CONFUSE;
             }
         }
         else
@@ -885,10 +872,13 @@ bool zin_recite_to_single_monster(const coord_def& where,
             {
                 if (one_chance_in(3))
                     effect = ZIN_BLIND;
-                else if (coinflip())
-                    effect = ZIN_SILVER_CORONA;
-                else
+                else if (mon->can_use_spells() && !mon->is_priest()
+                         && !mons_class_flag(mon->type, M_FAKE_SPELLS))
+                {
                     effect = ZIN_ANTIMAGIC;
+                }
+                else
+                    effect = ZIN_SILVER_CORONA;
             }
             else if (check < 15)
             {
@@ -976,7 +966,7 @@ bool zin_recite_to_single_monster(const coord_def& where,
         else if (check < 10)
         {
             if (coinflip())
-                effect = ZIN_FEAR;
+                effect = ZIN_CONFUSE;
             else
                 effect = ZIN_SILVER_CORONA;
         }
@@ -1003,15 +993,6 @@ bool zin_recite_to_single_monster(const coord_def& where,
     case ZIN_NOTHING:
         break;
 
-    case ZIN_SLEEP:
-        if (mon->can_sleep())
-        {
-            mon->put_to_sleep(&you, 0);
-            simple_monster_message(mon, " nods off for a moment.");
-            affected = true;
-        }
-        break;
-
     case ZIN_DAZE:
         if (mon->add_ench(mon_enchant(ENCH_DAZED, degree, &you,
                           (degree + random2(spellpower)) * BASELINE_DELAY)))
@@ -1031,21 +1012,6 @@ bool zin_recite_to_single_monster(const coord_def& where,
                 simple_monster_message(mon, " is confused by your recitation.");
             else
                 simple_monster_message(mon, " stumbles about in disarray.");
-            affected = true;
-        }
-        break;
-
-    case ZIN_FEAR:
-        if (mon->add_ench(mon_enchant(ENCH_FEAR, degree, &you,
-                          (degree + random2(spellpower)) * BASELINE_DELAY)))
-        {
-            if (prayertype == RECITE_HERETIC)
-                simple_monster_message(mon, " is terrified by your recitation.");
-            else if (minor)
-                simple_monster_message(mon, " tries to escape the wrath of Zin.");
-            else
-                simple_monster_message(mon, " flees in terror at the wrath of Zin!");
-            behaviour_event(mon, ME_SCARE, 0, you.pos());
             affected = true;
         }
         break;
@@ -1516,7 +1482,7 @@ bool trog_burn_spellbooks()
     int totalblocked = 0;
     vector<coord_def> mimics;
 
-    for (radius_iterator ri(you.pos(), LOS_RADIUS, true, true, false); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         const unsigned short cloud = env.cgrid(*ri);
         int count = 0;
@@ -1623,7 +1589,7 @@ void jiyva_paralyse_jellies()
     you.duration[DUR_JELLY_PRAYER] = 200;
 
     int jelly_count = 0;
-    for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         monster* mon = monster_at(*ri);
 
@@ -1764,7 +1730,7 @@ void yred_make_enslaved_soul(monster* mon, bool force_hostile)
          !force_hostile ? "is now yours" : "fights you");
 }
 
-bool kiku_receive_corpses(int pow, coord_def where)
+bool kiku_receive_corpses(int pow)
 {
     // pow = necromancy * 4, ranges from 0 to 108
     dprf("kiku_receive_corpses() power: %d", pow);
@@ -1777,8 +1743,8 @@ bool kiku_receive_corpses(int pow, coord_def where)
     // We should get the same number of corpses
     // in a hallway as in an open room.
     int spaces_for_corpses = 0;
-    for (radius_iterator ri(where, corpse_delivery_radius, C_ROUND,
-                            you.get_los(), true); ri; ++ri)
+    for (radius_iterator ri(you.pos(), corpse_delivery_radius, C_ROUND,
+                            LOS_NO_TRANS, true); ri; ++ri)
     {
         if (mons_class_can_pass(MONS_HUMAN, grd(*ri)))
             spaces_for_corpses++;
@@ -1792,14 +1758,14 @@ bool kiku_receive_corpses(int pow, coord_def where)
 
     int corpses_created = 0;
 
-    for (radius_iterator ri(where, corpse_delivery_radius, C_ROUND,
-                            you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), corpse_delivery_radius, C_ROUND,
+                            LOS_NO_TRANS); ri; ++ri)
     {
         bool square_is_walkable = mons_class_can_pass(MONS_HUMAN, grd(*ri));
-        bool square_is_player_square = (*ri == where);
+        bool square_is_player_square = (*ri == you.pos());
         bool square_gets_corpse =
-            (random2(100) < percent_chance_a_square_receives_extra_corpse)
-            || (square_is_player_square && random2(100) < 97);
+            random2(100) < percent_chance_a_square_receives_extra_corpse
+            || square_is_player_square && random2(100) < 97;
 
         if (!square_is_walkable || !square_gets_corpse)
             continue;
@@ -1963,7 +1929,7 @@ int fedhas_fungal_bloom()
     int processed_count = 0;
     bool kills = false;
 
-    for (radius_iterator i(you.pos(), LOS_RADIUS); i; ++i)
+    for (radius_iterator i(you.pos(), LOS_NO_TRANS); i; ++i)
     {
         monster* target = monster_at(*i);
         if (!can_spawn_mushrooms(*i))
@@ -2389,7 +2355,7 @@ static void _point_point_distance(const vector<coord_def>& origins,
 // the distances in question.
 bool prioritise_adjacent(const coord_def &target, vector<coord_def>& candidates)
 {
-    radius_iterator los_it(target, LOS_RADIUS, true, true, true);
+    radius_iterator los_it(target, LOS_NO_TRANS, true);
 
     vector<coord_def> mons_positions;
     // collect hostile monster positions in LOS
@@ -2609,7 +2575,7 @@ int fedhas_rain(const coord_def &target)
     int spawned_count = 0;
     int processed_count = 0;
 
-    for (radius_iterator rad(target, LOS_RADIUS, true, true, true); rad; ++rad)
+    for (radius_iterator rad(target, LOS_NO_TRANS, true); rad; ++rad)
     {
         // Adjust the shape of the rainfall slightly to make it look
         // nicer.  I want a threshold of 2.5 on the euclidean distance,
@@ -2710,7 +2676,7 @@ int fedhas_corpse_spores(beh_type attitude, bool interactive)
     int count = 0;
     vector<stack_iterator> positions;
 
-    for (radius_iterator rad(you.pos(), LOS_RADIUS, true, true, true); rad;
+    for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad;
          ++rad)
     {
         if (actor_at(*rad))
@@ -2896,7 +2862,7 @@ bool fedhas_evolve_flora()
     // This is a little sloppy, but cancel early if nothing useful is in
     // range.
     bool in_range = false;
-    for (radius_iterator rad(you.get_los(), true); rad; ++rad)
+    for (radius_iterator rad(you.pos(), LOS_NO_TRANS, true); rad; ++rad)
     {
         const monster* temp = monster_at(*rad);
         if (is_moldy(*rad) && mons_class_can_pass(MONS_BALLISTOMYCETE,
@@ -3340,7 +3306,7 @@ bool can_convert_to_beogh()
     if (silenced(you.pos()))
         return false;
 
-    for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_NO_TRANS); ri; ++ri)
     {
         const monster * const mon = monster_at(*ri);
         if (mons_allows_beogh_now(mon))
@@ -3362,7 +3328,7 @@ void spare_beogh_convert()
     set<mid_t> witnesses;
 
     you.religion = GOD_NO_GOD;
-    for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         const monster *mon = monster_at(*ri);
         // An invis player converting is ok, for simplicity.
@@ -3378,7 +3344,7 @@ void spare_beogh_convert()
         // as well.
         if (mons_allows_beogh(mon))
         {
-            for (radius_iterator pi(you.pos(), LOS_RADIUS); pi; ++pi)
+            for (radius_iterator pi(you.pos(), LOS_DEFAULT); pi; ++pi)
             {
                 const monster *orc = monster_at(*pi);
                 if (!orc || !cell_see_cell(*ri, *pi, LOS_DEFAULT))

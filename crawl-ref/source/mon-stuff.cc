@@ -881,6 +881,15 @@ static bool _beogh_forcibly_convert_orc(monster* mons, killer_type killer,
     return false;
 }
 
+static bool _lost_soul_nearby(const coord_def pos)
+{
+    for (monster_near_iterator mi(pos, LOS_NO_TRANS); mi; ++mi)
+        if (mi->type == MONS_LOST_SOUL)
+            return true;
+
+    return false;
+}
+
 static bool _monster_avoided_death(monster* mons, killer_type killer, int i)
 {
     if (mons->max_hit_points <= 0 || mons->hit_dice < 1)
@@ -889,10 +898,10 @@ static bool _monster_avoided_death(monster* mons, killer_type killer, int i)
     // Before the hp check since this should not care about the power of the
     // finishing blow
     if (mons->holiness() == MH_UNDEAD && !mons_is_zombified(mons)
-        && soul_aura(mons->pos())
         && killer != KILL_RESET
         && killer != KILL_DISMISSED
-        && killer != KILL_BANISHED)
+        && killer != KILL_BANISHED
+        && _lost_soul_nearby(mons->pos()))
     {
         if (lost_soul_revive(mons))
             return true;
@@ -925,7 +934,7 @@ static void _jiyva_died()
 
     add_daction(DACT_REMOVE_JIYVA_ALTARS);
 
-    if (!player_in_branch(BRANCH_SLIME_PITS))
+    if (!player_in_branch(BRANCH_SLIME))
         return;
 
     if (silenced(you.pos()))
@@ -2631,10 +2640,11 @@ int monster_die(monster* mons, killer_type killer,
     }
 
     // Done before items are dropped so that we can clone them
-    if (soul_aura(mons->pos()) && mons->holiness() == MH_NATURAL
+    if (mons->holiness() == MH_NATURAL
         && killer != KILL_RESET
         && killer != KILL_DISMISSED
-        && killer != KILL_BANISHED)
+        && killer != KILL_BANISHED
+        && _lost_soul_nearby(mons->pos()))
     {
         lost_soul_spectralize(mons);
     }
@@ -2818,7 +2828,7 @@ static bool _valid_morph(monster* mons, monster_type new_mclass)
     // suggests.
     if (mons_genus(new_mclass) == MONS_DRACONIAN
         && new_mclass != MONS_DRACONIAN
-        && !player_in_branch(BRANCH_HALL_OF_ZOT)
+        && !player_in_branch(BRANCH_ZOT)
         && !one_chance_in(10))
     {
         return false;
@@ -3741,7 +3751,7 @@ bool can_go_straight(const monster* mon, const coord_def& p1,
     if (p1 == p2)
         return true;
 
-    if (distance2(p1, p2) > get_los_radius_sq())
+    if (distance2(p1, p2) > los_radius2)
         return false;
 
     // XXX: Hack to improve results for now. See FIXME above.
@@ -3770,62 +3780,55 @@ bool choose_any_monster(const monster* mon)
 // If prefer_priest is true, priestly monsters (including uniques) are
 // twice as likely to get chosen compared to non-priestly ones.
 monster* choose_random_nearby_monster(int weight,
-                                       bool (*suitable)(const monster* mon),
-                                       bool in_sight, bool prefer_named,
-                                       bool prefer_priest)
+                                      bool (*suitable)(const monster* mon),
+                                      bool prefer_named_or_priest)
 {
-    return choose_random_monster_on_level(weight, suitable, in_sight, true,
-                                          prefer_named, prefer_priest);
+    monster* chosen = NULL;
+    for (radius_iterator ri(you.pos(), LOS_NO_TRANS); ri; ++ri)
+    {
+        monster* mon = monster_at(*ri);
+        if (!mon || !suitable(mon))
+            continue;
+
+        // FIXME: if the intent is to favour monsters
+        // named by $DEITY, we should set a flag on the
+        // monster (something like MF_DEITY_PREFERRED) and
+        // use that instead of checking the name, given
+        // that other monsters can also have names.
+
+        // True, but it's currently only used for orcs, and
+        // Blork and Urug also being preferred to non-named orcs
+        // is fine, I think. Once more gods name followers (and
+        // prefer them) that should be changed, of course. (jpeg)
+        int mon_weight = 1;
+
+        if (prefer_named_or_priest)
+            mon_weight += mon->is_named() + mon->is_priest();
+
+        if (x_chance_in_y(mon_weight, weight += mon_weight))
+            chosen = mon;
+    }
+
+    return chosen;
 }
 
 monster* choose_random_monster_on_level(int weight,
-                                         bool (*suitable)(const monster* mon),
-                                         bool in_sight, bool near_by,
-                                         bool prefer_named, bool prefer_priest)
+                                        bool (*suitable)(const monster* mon))
 {
     monster* chosen = NULL;
 
-    // A radius_iterator with radius == max(GXM, GYM) will sweep the
-    // whole level.
-    radius_iterator ri(you.pos(), near_by ? 9 : max(GXM, GYM), true, in_sight);
-
-    for (; ri; ++ri)
+    for (rectangle_iterator ri(1); ri; ++ri)
     {
-        if (in_sight)
-        {
-            // Seeing through glass/trees is not enough.
-            if (!you.see_cell_no_trans(*ri))
-                continue;
-        }
+        monster* mon = monster_at(*ri);
+        if (!mon || !suitable(mon))
+            continue;
 
-        if (monster* mon = monster_at(*ri))
-        {
-            if (suitable(mon))
-            {
-                // FIXME: if the intent is to favour monsters
-                // named by $DEITY, we should set a flag on the
-                // monster (something like MF_DEITY_PREFERRED) and
-                // use that instead of checking the name, given
-                // that other monsters can also have names.
+        // Named or priestly monsters have doubled chances.
+        int mon_weight = 1
+                       + mon->is_named() + mon->is_priest();
 
-                // True, but it's currently only used for orcs, and
-                // Blork and Urug also being preferred to non-named orcs
-                // is fine, I think. Once more gods name followers (and
-                // prefer them) that should be changed, of course. (jpeg)
-
-                // Named or priestly monsters have doubled chances.
-                int mon_weight = 1;
-
-                if (prefer_named && mon->is_named())
-                    mon_weight++;
-
-                if (prefer_priest && mon->is_priest())
-                    mon_weight++;
-
-                if (x_chance_in_y(mon_weight, (weight += mon_weight)))
-                    chosen = mon;
-            }
-        }
+        if (x_chance_in_y(mon_weight, weight += mon_weight))
+            chosen = mon;
     }
 
     return chosen;
@@ -4344,11 +4347,8 @@ int dismiss_monsters(string pattern)
 // applied to new games.
 void zap_los_monsters(bool items_also)
 {
-    for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_SOLID); ri; ++ri)
     {
-        if (!cell_see_cell(you.pos(), *ri, LOS_SOLID))
-            continue;
-
         if (items_also)
         {
             int item = igrd(*ri);

@@ -119,7 +119,6 @@
 #include "spl-goditem.h"
 #include "spl-other.h"
 #include "spl-selfench.h"
-#include "spl-summoning.h"
 #include "spl-transloc.h"
 #include "spl-util.h"
 #include "stairs.h"
@@ -541,6 +540,9 @@ static void _show_commandline_options_help()
     puts("");
     puts("Miscellaneous options:");
     puts("  -dump-maps       write map Lua to stderr when parsing .des files");
+#ifndef TARGET_OS_WINDOWS
+    puts("  -gdb/-no-gdb     produce gdb backtrace when a crash happens (default:on)");
+#endif
 
 #if defined(TARGET_OS_WINDOWS) && defined(USE_TILE_LOCAL)
     text_popup(help, L"Dungeon Crawl command line help");
@@ -3186,17 +3188,12 @@ static void _update_mold()
     {
         if (mon_it->type == MONS_HYPERACTIVE_BALLISTOMYCETE)
         {
-            for (radius_iterator rad_it(mon_it->pos(),
-                                        2, true, false); rad_it; ++rad_it)
+            for (radius_iterator rad_it(mon_it->pos(), 2, C_ROUND);
+                 rad_it; ++rad_it)
             {
-                // A threshold greater than 5, less than 8 on distance
-                // matches the blast of a radius 2 explosion.
-                int range = distance2(mon_it->pos(), *rad_it);
-                if (range < 6 && is_moldy(*rad_it))
-                {
-                    env.pgrid(*rad_it) |= FPROP_MOLD;
-                    env.pgrid(*rad_it) |= FPROP_GLOW_MOLD;
-                }
+                // Matche the blast of a radius 2 explosion.
+                env.pgrid(*rad_it) |= FPROP_MOLD;
+                env.pgrid(*rad_it) |= FPROP_GLOW_MOLD;
             }
             env.level_state |= LSTATE_GLOW_MOLD;
         }

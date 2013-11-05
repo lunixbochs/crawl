@@ -625,7 +625,8 @@ void do_crash_dump()
 
         dump_crash_info(stderr);
         write_stack_trace(stderr, 0);
-        call_gdb(stderr);
+        if (Options.want_gdb)
+            call_gdb(stderr);
 
         return;
     }
@@ -637,7 +638,7 @@ void do_crash_dump()
     if (!dir.empty() && dir[dir.length() - 1] != FILE_SEPARATOR)
         dir += FILE_SEPARATOR;
 
-    char name[180];
+    char name[180] = {};
 
     // Want same time for file name and crash milestone.
     const time_t t = time(NULL);
@@ -682,8 +683,11 @@ void do_crash_dump()
     write_stack_trace(file, 0);
     fprintf(file, "\n");
 
-    call_gdb(file);
-    fprintf(file, "\n");
+    if (Options.want_gdb)
+    {
+        call_gdb(file);
+        fprintf(file, "\n");
+    }
 
     // Next information on how the binary was compiled
     _dump_compilation_info(file);
@@ -860,7 +864,8 @@ NORETURN void AssertFailed(const char *expr, const char *file, int line,
 #undef die
 NORETURN void die(const char *file, int line, const char *format, ...)
 {
-    char tmp[2048], mesg[2048];
+    char tmp[2048] = {};
+    char mesg[2048] = {};
 
     va_list args;
 
@@ -878,7 +883,8 @@ NORETURN void die(const char *file, int line, const char *format, ...)
 
 NORETURN void die_noline(const char *format, ...)
 {
-    char tmp[2048], mesg[2048];
+    char tmp[2048] = {};
+    char mesg[2048] = {};
 
     va_list args;
 

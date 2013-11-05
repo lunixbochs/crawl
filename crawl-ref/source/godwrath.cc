@@ -450,7 +450,7 @@ static bool _kikubaaqudgha_retribution()
     if (random2(you.experience_level) > 4)
     {
         // Either zombies, or corpse rot + skeletons.
-        kiku_receive_corpses(you.experience_level * 4, you.pos());
+        kiku_receive_corpses(you.experience_level * 4);
 
         if (coinflip())
             corpse_rot(&you);
@@ -1067,8 +1067,7 @@ static bool _fedhas_retribution()
         // We are going to spawn some oklobs but first we need to find
         // out a little about the situation.
         vector<vector<coord_def> > radius_points;
-        collect_radius_points(radius_points, you.pos(),
-                              you.get_los_no_trans());
+        collect_radius_points(radius_points, you.pos(), LOS_NO_TRANS);
 
         unsigned free_thresh = 24;
 

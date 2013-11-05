@@ -171,17 +171,17 @@ DEPTH:   D:8-
 ORIENT:  float
 MONS:    orange crystal statue / silver statue / ice statue
 MAP
-       xxx            xxx            xxx
-       x1x            x1x            x1x
-       x*x            x|x            x*x
-      xx.xx          xx.xx          xx.xx
-      x...x          x...x          x...x
-     xx...xx        xx...xx        xx...xx
-   xxx.....xxx    xxx.....xxx    xxx.....xxx
-xxxx.........xxxxxx.........xxxxxx.........xxxx
-@.............................................@
-...............................................
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+           xxx
+           x1x
+           x|x
+          xx.xx
+          x...x
+         xx...xx
+       xxx.....xxx
+xxxxxxxx.........xxxxxxxx
+@.......................@
+.........................
+xxxxxxxxxxxxxxxxxxxxxxxxx
 ENDMAP
 
 ##############################################################################
@@ -2152,8 +2152,8 @@ ENDMAP
 # Firewalk (Lemuel)
 #
 NAME:    lemuel_firewalk_3
-DEPTH:   Depths
-TAGS:    uniq_firewalk abyss ruin_abyss
+DEPTH:   Depths, Abyss
+TAGS:    uniq_firewalk ruin_abyss
 WEIGHT:  2
 ORIENT:  float
 ITEM:    nothing, nothing, nothing
@@ -3091,8 +3091,8 @@ ENDMAP
 
 NAME:    hangedman_cross_veins
 ORIENT:  float
-TAGS:    transparent no_monster_gen no_pool_fixup abyss
-DEPTH:   D:8-, !D:$, Depths, !Depths:$, Elf, Snake
+TAGS:    transparent no_monster_gen no_pool_fixup
+DEPTH:   D:8-, Depths, Elf, Snake, Abyss
 WEIGHT:  5 (Elf, Snake), 10
 KMONS:   12 = 0
 KMONS:   34 = 9

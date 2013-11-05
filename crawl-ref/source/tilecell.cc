@@ -167,7 +167,7 @@ static void _pack_shoal_waves(const coord_def &gc, packed_cell *cell)
     bool inkn = false, inks = false, inke = false, inkw = false,
          inkne = false, inknw = false, inkse = false, inksw = false;
 
-    for (radius_iterator ri(gc, 1, true, false, true); ri; ++ri)
+    for (adjacent_iterator ri(gc, true); ri; ++ri)
     {
         if (!env.map_knowledge(*ri).seen() && !env.map_knowledge(*ri).mapped())
             continue;
@@ -464,7 +464,7 @@ void pack_cell_overlays(const coord_def &gc, packed_cell *cell)
     else
         _pack_default_waves(gc, cell);
 
-    if (player_in_branch(BRANCH_SLIME_PITS) &&
+    if (player_in_branch(BRANCH_SLIME) &&
         env.map_knowledge(gc).feat() != DNGN_SLIMY_WALL)
     {
         _add_directional_overlays(gc, cell, TILE_SLIME_OVERLAY,

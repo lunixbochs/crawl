@@ -17,9 +17,7 @@
 #include "coordit.h"
 #include "env.h"
 #include "fprop.h"
-#include "itemprop.h"
 #include "items.h"
-#include "libutil.h"
 #include "losglobal.h"
 #include "message.h"
 #include "misc.h"
@@ -27,7 +25,6 @@
 #include "mon-util.h"
 #include "ouch.h"
 #include "player.h"
-#include "skills.h"
 #include "spl-util.h"
 #include "stuff.h"
 #include "terrain.h"
@@ -318,9 +315,7 @@ spret_type cast_corpse_rot(bool fail)
 
 void corpse_rot(actor* caster)
 {
-    for (radius_iterator ri(caster->pos(), 6, C_ROUND, caster->is_player() ? you.get_los_no_trans()
-                                                                                    : caster->get_los());
-         ri; ++ri)
+    for (radius_iterator ri(caster->pos(), 6, C_ROUND, LOS_NO_TRANS); ri; ++ri)
     {
         if (!is_sanctuary(*ri) && env.cgrid(*ri) == EMPTY_CLOUD)
             for (stack_iterator si(*ri); si; ++si)

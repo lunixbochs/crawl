@@ -22,13 +22,10 @@
 #include "chardump.h"
 #include "coordit.h"
 #include "defines.h"
-#include "describe.h"
 #include "dgn-delve.h"
 #include "dgn-height.h"
 #include "dgn-shoals.h"
-#include "dgn-swamp.h"
 #include "dgn-labyrinth.h"
-#include "dgn-layouts.h"
 #include "effects.h"
 #include "env.h"
 #include "enum.h"
@@ -45,7 +42,6 @@
 #include "itemname.h"
 #include "itemprop.h"
 #include "items.h"
-#include "l_defs.h"
 #include "lev-pand.h"
 #include "libutil.h"
 #include "makeitem.h"
@@ -329,7 +325,7 @@ static bool _build_level_vetoable(bool enable_random_maps,
 
     dgn_reset_level(enable_random_maps);
 
-    if (player_in_branch(BRANCH_ECUMENICAL_TEMPLE))
+    if (player_in_branch(BRANCH_TEMPLE))
         _setup_temple_altars(you.props);
 
     try
@@ -1185,8 +1181,8 @@ static bool _valid_dungeon_level()
     // D:1 only.
     // Also, what's the point of this check?  Regular connectivity should
     // do that already.
-    if (player_in_branch(BRANCH_MAIN_DUNGEON) && you.depth == 1)
-        return _is_level_stair_connected(branches[BRANCH_MAIN_DUNGEON].exit_stairs);
+    if (player_in_branch(BRANCH_DUNGEON) && you.depth == 1)
+        return _is_level_stair_connected(branches[BRANCH_DUNGEON].exit_stairs);
 
     return true;
 }
@@ -1271,7 +1267,7 @@ void dgn_reset_level(bool enable_random_maps)
 
     // Set default random monster generation rate (smaller is more often,
     // except that 0 == no random monsters).
-    if (player_in_branch(BRANCH_ECUMENICAL_TEMPLE)
+    if (player_in_branch(BRANCH_TEMPLE)
         && you.char_direction == GDT_DESCENDING // except for the Orb run
         || crawl_state.game_is_tutorial())
     {
@@ -1378,7 +1374,7 @@ static void _fixup_walls()
         wall_type = DNGN_STONE_WALL;
         break;
 
-    case BRANCH_SLIME_PITS:
+    case BRANCH_SLIME:
         wall_type = DNGN_SLIMY_WALL;
         break;
 
@@ -1589,7 +1585,7 @@ static bool _fixup_stone_stairs(bool preserve_vault_stairs)
 
         // In Zot, don't create extra escape hatches, in order to force
         // the player through vaults that use all three down stone stairs.
-        if (player_in_branch(BRANCH_HALL_OF_ZOT))
+        if (player_in_branch(BRANCH_ZOT))
             replace = DNGN_GRANITE_STATUE;
 
         dprf("Before culling: %d/%d %s stairs", num_stairs, needed_stairs,
@@ -1832,7 +1828,7 @@ static bool _add_connecting_escape_hatches()
 
     // Veto D:1 or Pan if there are disconnected areas.
     if (player_in_branch(BRANCH_PANDEMONIUM)
-        || (player_in_branch(BRANCH_MAIN_DUNGEON) && you.depth == 1))
+        || (player_in_branch(BRANCH_DUNGEON) && you.depth == 1))
     {
         // Allow == 0 in case the entire level is one opaque vault.
         return dgn_count_disconnected_zones(false) <= 1;
@@ -1848,7 +1844,7 @@ static bool _add_connecting_escape_hatches()
         return false;
 
     // FIXME: shouldn't depend on branch.
-    if (!player_in_branch(BRANCH_ORCISH_MINES))
+    if (!player_in_branch(BRANCH_ORC))
         return true;
 
     return _add_feat_if_missing(_is_upwards_exit_stair, DNGN_ESCAPE_HATCH_UP);
@@ -2235,10 +2231,10 @@ static void _ruin_level(Iterator iter,
 
 static bool _mimic_at_level()
 {
-    return (!player_in_branch(BRANCH_MAIN_DUNGEON) || you.depth > 1)
-           && !player_in_branch(BRANCH_ECUMENICAL_TEMPLE)
-           && !player_in_branch(BRANCH_VESTIBULE_OF_HELL)
-           && !player_in_branch(BRANCH_SLIME_PITS)
+    return (!player_in_branch(BRANCH_DUNGEON) || you.depth > 1)
+           && !player_in_branch(BRANCH_TEMPLE)
+           && !player_in_branch(BRANCH_VESTIBULE)
+           && !player_in_branch(BRANCH_SLIME)
            && !player_in_branch(BRANCH_TOMB)
            && !player_in_branch(BRANCH_PANDEMONIUM)
            && !player_in_hell();
@@ -2379,7 +2375,7 @@ static void _build_dungeon_level(dungeon_feature_type dest_stairs_type)
     if (player_in_branch(BRANCH_LABYRINTH))
         return;
 
-    if (player_in_branch(BRANCH_SLIME_PITS))
+    if (player_in_branch(BRANCH_SLIME))
         _slime_connectivity_fixup();
 
     // Now place items, mons, gates, etc.
@@ -2393,7 +2389,7 @@ static void _build_dungeon_level(dungeon_feature_type dest_stairs_type)
     // Any further vaults must make sure not to disrupt level layout.
     dgn_check_connectivity = true;
 
-    if (player_in_branch(BRANCH_MAIN_DUNGEON)
+    if (player_in_branch(BRANCH_DUNGEON)
         && !crawl_state.game_is_tutorial())
     {
         _build_overflow_temples();
@@ -2726,7 +2722,7 @@ static bool _builder_by_type()
 
 static const map_def *_dgn_random_map_for_place(bool minivault)
 {
-    if (!minivault && player_in_branch(BRANCH_ECUMENICAL_TEMPLE))
+    if (!minivault && player_in_branch(BRANCH_TEMPLE))
     {
         // Temple vault determined at new game time.
         const string name = you.props[TEMPLE_MAP_KEY];
@@ -3196,7 +3192,7 @@ static bool _builder_normal()
     // We'll accept any kind of primary vault in the main dungeon, but only
     // ORIENT: encompass primary vaults in other branches. Other kinds of vaults
     // can still be placed in other branches as secondary vaults.
-    if (vault && (player_in_branch(BRANCH_MAIN_DUNGEON)
+    if (vault && (player_in_branch(BRANCH_DUNGEON)
                   || player_in_branch(BRANCH_DEPTHS)
                   || vault->orient == MAP_ENCOMPASS))
     {
@@ -3289,7 +3285,7 @@ static void _place_traps()
         ts.prepare_ammo();
     }
 
-    if (player_in_branch(BRANCH_SPIDER_NEST))
+    if (player_in_branch(BRANCH_SPIDER))
     {
         // Max webs ranges from around 35 (Spider:1) to 220 (Spider:5), actual
         // amount will be much lower.
@@ -3305,7 +3301,7 @@ static void _dgn_place_feature_at_random_floor_square(dungeon_feature_type feat,
                                                       unsigned mask = MMT_VAULT)
 {
     coord_def place = _dgn_random_point_in_bounds(DNGN_FLOOR, mask, DNGN_FLOOR);
-    if (player_in_branch(BRANCH_SLIME_PITS))
+    if (player_in_branch(BRANCH_SLIME))
     {
         int tries = 100;
         while (!place.origin()  // stop if we fail to find floor.
@@ -3517,7 +3513,7 @@ static void _place_branch_entrances(bool use_vaults)
     {
         // Vestibule and hells are placed by other means.
         // Likewise, if we already have an entrance, keep going.
-        if (i >= BRANCH_VESTIBULE_OF_HELL && i <= BRANCH_LAST_HELL
+        if (i >= BRANCH_VESTIBULE && i <= BRANCH_LAST_HELL
             || branch_entrance_placed[i])
         {
             continue;
@@ -3562,7 +3558,7 @@ static void _place_extra_vaults()
 {
     while (true)
     {
-        if (!player_in_branch(BRANCH_MAIN_DUNGEON) && use_random_maps)
+        if (!player_in_branch(BRANCH_DUNGEON) && use_random_maps)
         {
             const map_def *vault = random_map_in_depth(level_id::current());
 
@@ -3749,7 +3745,7 @@ static void _place_aquatic_monsters()
     //
     if (player_in_branch(BRANCH_SHOALS)
         || player_in_branch(BRANCH_ABYSS)
-        || (player_in_branch(BRANCH_MAIN_DUNGEON)
+        || (player_in_branch(BRANCH_DUNGEON)
             && level_number < 5))
     {
         return;
@@ -3780,7 +3776,7 @@ static void _place_aquatic_monsters()
                                        + (random2(lava_spaces) / 10), 15));
     }
 
-    if (player_in_branch(BRANCH_MAIN_DUNGEON) || player_in_branch(BRANCH_FOREST))
+    if (player_in_branch(BRANCH_DUNGEON) || player_in_branch(BRANCH_FOREST))
         _place_aquatic_monsters_weighted();
     else if (water_spaces > 49)
     {
@@ -3864,7 +3860,7 @@ bool door_vetoed(const coord_def pos)
 
 static void _builder_monsters()
 {
-    if (player_in_branch(BRANCH_ECUMENICAL_TEMPLE))
+    if (player_in_branch(BRANCH_TEMPLE))
         return;
 
     int mon_wanted = _num_mons_wanted();
@@ -3921,7 +3917,7 @@ static void _builder_items()
         items_levels *= 15;
         items_levels /= 10;
     }
-    else if (player_in_branch(BRANCH_ORCISH_MINES))
+    else if (player_in_branch(BRANCH_ORC))
         specif_type = OBJ_GOLD;  // Lots of gold in the orcish mines.
 
     for (i = 0; i < items_wanted; i++)
@@ -4303,8 +4299,8 @@ _build_vault_impl(const map_def *vault,
 
     if (!make_no_exits)
     {
-        const bool spotty = player_in_branch(BRANCH_ORCISH_MINES)
-                            || player_in_branch(BRANCH_SLIME_PITS)
+        const bool spotty = player_in_branch(BRANCH_ORC)
+                            || player_in_branch(BRANCH_SLIME)
                             || player_in_branch(BRANCH_FOREST);
         place.connect(spotty);
     }
@@ -4323,7 +4319,7 @@ _build_vault_impl(const map_def *vault,
 
 static void _build_postvault_level(vault_placement &place)
 {
-    if (player_in_branch(BRANCH_SPIDER_NEST))
+    if (player_in_branch(BRANCH_SPIDER))
     {
         int ngb_min = 2;
         int ngb_max = random_range(3, 8);
@@ -5438,7 +5434,7 @@ static dungeon_feature_type _pick_an_altar()
 {
     god_type god;
 
-    if (player_in_branch(BRANCH_ECUMENICAL_TEMPLE)
+    if (player_in_branch(BRANCH_TEMPLE)
         || player_in_branch(BRANCH_LABYRINTH))
     {
         // No extra altars in Temple, none at all in Labyrinth.
@@ -5453,7 +5449,7 @@ static dungeon_feature_type _pick_an_altar()
                               : GOD_YREDELEMNUL);
             break;
 
-        case BRANCH_ORCISH_MINES: // violent gods (50% chance of Beogh)
+        case BRANCH_ORC: // violent gods (50% chance of Beogh)
             if (coinflip())
                 god = GOD_BEOGH;
             else
@@ -5470,16 +5466,16 @@ static dungeon_feature_type _pick_an_altar()
                                          0);
             break;
 
-        case BRANCH_HALL_OF_BLADES:
+        case BRANCH_BLADE:
             god = GOD_OKAWARU;
             break;
 
-        case BRANCH_ELVEN_HALLS: // magic gods
+        case BRANCH_ELF: // magic gods
             god = random_choose(GOD_VEHUMET, GOD_SIF_MUNA, GOD_XOM,
                                 GOD_MAKHLEB, -1);
             break;
 
-        case BRANCH_SLIME_PITS:
+        case BRANCH_SLIME:
             god = GOD_JIYVA;
             break;
 
@@ -5924,7 +5920,7 @@ static void _add_plant_clumps(int frequency /* = 10 */,
         to_place.push_back(*ri);
         for (int i = 1; i < clump_radius; ++i)
         {
-            for (radius_iterator rad(*ri, i, C_SQUARE); rad; ++rad)
+            for (radius_iterator rad(*ri, i, C_ROUND); rad; ++rad)
             {
                 if (grd(*rad) != DNGN_FLOOR)
                     continue;
@@ -6088,7 +6084,7 @@ coord_def dgn_find_nearby_stair(dungeon_feature_type stair_to_find,
         || stair_to_find == DNGN_TRAP_SHAFT)
     {
         coord_def pos(_get_hatch_dest(base_pos, stair_to_find == DNGN_TRAP_SHAFT));
-        if (player_in_branch(BRANCH_SLIME_PITS))
+        if (player_in_branch(BRANCH_SLIME))
             _fixup_slime_hatch_dest(&pos);
         if (in_bounds(pos))
             return pos;

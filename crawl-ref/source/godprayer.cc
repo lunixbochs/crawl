@@ -4,7 +4,6 @@
 
 #include <cmath>
 
-#include "areas.h"
 #include "artefact.h"
 #include "coordit.h"
 #include "database.h"
@@ -25,11 +24,10 @@
 #include "misc.h"
 #include "monster.h"
 #include "notes.h"
-#include "options.h"
 #include "random.h"
 #include "religion.h"
+#include "shopping.h"
 #include "skills2.h"
-#include "stash.h"
 #include "state.h"
 #include "stuff.h"
 #include "terrain.h"
@@ -163,9 +161,9 @@ static bool _bless_weapon(god_type god, brand_type brand, int colour)
         holy_word(100, HOLY_WORD_TSO, you.pos(), true);
 
         // Un-bloodify surrounding squares.
-        for (radius_iterator ri(you.pos(), 3, true, true); ri; ++ri)
+        for (radius_iterator ri(you.pos(), 3, C_ROUND, LOS_SOLID); ri; ++ri)
             if (is_bloodcovered(*ri))
-                env.pgrid(*ri) &= ~(FPROP_BLOODY);
+                env.pgrid(*ri) &= ~FPROP_BLOODY;
     }
 
     if (god == GOD_KIKUBAAQUDGHA)
@@ -177,7 +175,7 @@ static bool _bless_weapon(god_type god, brand_type brand, int colour)
         you.gift_timeout = 0; // protection after pain branding weapon
 
         // Bloodify surrounding squares (75% chance).
-        for (radius_iterator ri(you.pos(), 2, true, true); ri; ++ri)
+        for (radius_iterator ri(you.pos(), 2, C_ROUND, LOS_SOLID); ri; ++ri)
             if (!one_chance_in(4))
                 maybe_bloodify_square(*ri);
     }
@@ -398,7 +396,7 @@ int zin_tithe(item_def& item, int quant, bool quiet, bool converting)
         }
         else
         {
-            if (player_in_branch(BRANCH_ORCISH_MINES) && !converting)
+            if (player_in_branch(BRANCH_ORC) && !converting)
             {
                 // Another special case: Orc gives simply too much compared to
                 // other branches.

@@ -406,7 +406,7 @@ ENDMAP
 # Baited teleport trap - this is evil!
 NAME:    labyrinth_baited_teleportation_trap
 TAGS:    lab allow_dup
-KFEAT:   Y = teleport trap / zot trap / .
+KFEAT:   Y = known teleport trap / known zot trap / .
 KITEM:   Y = any good_item
 SHUFFLE: cxv
 WEIGHT:  1
@@ -572,19 +572,6 @@ MAP
 1wtw1
 1www1
 11111
-ENDMAP
-
-NAME: nicolae_lab_imaginary_food
-TAGS: lab allow_dup
-KMONS: f = rat sum:shadow_creatures dur:6 / \
-           quokka sum:shadow_creatures dur:6 / \
-           ball python sum:shadow_creatures dur:6 / \
-           bat sum:shadow_creatures dur:6 / \
-           nothing w:20
-MAP
-fff
-fxf
-fff
 ENDMAP
 
 NAME: nicolae_lab_stuck

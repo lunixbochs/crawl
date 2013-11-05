@@ -12,7 +12,6 @@
 #include "cloud.h"
 #include "coordit.h"
 #include "database.h"
-#include "dactions.h"
 #include "env.h"
 #include "fineff.h"
 #include "items.h"
@@ -494,7 +493,7 @@ void timeout_phoenix_markers(int duration)
             coord_def place_at;
             bool from_inventory = false;
 
-            for (radius_iterator ri(mmark->corpse_pos, LOS_RADIUS, C_ROUND, NULL, false); ri; ++ri)
+            for (radius_iterator ri(mmark->corpse_pos, LOS_RADIUS, C_ROUND, false); ri; ++ri)
             {
                 for (stack_iterator si(*ri); si; ++si)
                     if (si->base_type == OBJ_CORPSES && si->sub_type == CORPSE_BODY
@@ -688,7 +687,7 @@ void shedu_do_actual_resurrection(monster* mons)
     if (mons->number == 0)
         return;
 
-    for (radius_iterator ri(mons->pos(), LOS_RADIUS, C_ROUND, mons->get_los()); ri; ++ri)
+    for (radius_iterator ri(mons->pos(), LOS_NO_TRANS); ri; ++ri)
     {
         for (stack_iterator si(*ri); si; ++si)
             if (si->base_type == OBJ_CORPSES && si->sub_type == CORPSE_BODY

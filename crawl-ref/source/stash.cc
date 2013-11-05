@@ -16,7 +16,6 @@
 #include "directn.h"
 #include "itemname.h"
 #include "itemprop.h"
-#include "files.h"
 #include "godpassive.h"
 #include "godprayer.h"
 #include "invent.h"
@@ -28,7 +27,6 @@
 #include "message.h"
 #include "mon-util.h"
 #include "notes.h"
-#include "options.h"
 #include "place.h"
 #include "religion.h"
 #include "shopping.h"
@@ -1585,7 +1583,7 @@ void StashTracker::update_visible_stashes()
 {
     LevelStashes *lev = find_current_level();
     coord_def c;
-    for (radius_iterator ri(you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         const dungeon_feature_type feat = grd(*ri);
 

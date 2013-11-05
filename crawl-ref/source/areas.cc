@@ -87,8 +87,7 @@ void areas_actor_moved(const actor* act, const coord_def& oldpos)
         (you.entering_level
          || act->halo_radius2() > -1 || act->silence_radius2() > -1
          || act->liquefying_radius2() > -1 || act->umbra_radius2() > -1
-         || act->suppression_radius2() > -1 || act->heat_radius2() > -1)
-         || act->soul_aura_radius2() > -1)
+         || act->suppression_radius2() > -1 || act->heat_radius2() > -1))
     {
         // Not necessarily new, but certainly potentially interesting.
         invalidate_agrid(true);
@@ -122,8 +121,7 @@ static void _actor_areas(actor *a)
     {
         _agrid_centres.push_back(area_centre(AREA_HALO, a->pos(), r));
 
-        for (radius_iterator ri(a->pos(), r, C_CIRCLE, a->get_los());
-             ri; ++ri)
+        for (radius_iterator ri(a->pos(), r, C_CIRCLE, LOS_DEFAULT); ri; ++ri)
         {
             _set_agrid_flag(*ri, APROP_HALO);
         }
@@ -134,8 +132,7 @@ static void _actor_areas(actor *a)
     {
         _agrid_centres.push_back(area_centre(AREA_LIQUID, a->pos(), r));
 
-        for (radius_iterator ri(a->pos(), r, C_CIRCLE, a->get_los());
-             ri; ++ri)
+        for (radius_iterator ri(a->pos(), r, C_CIRCLE, LOS_SOLID); ri; ++ri)
         {
             dungeon_feature_type f = grd(*ri);
 
@@ -151,23 +148,9 @@ static void _actor_areas(actor *a)
     {
         _agrid_centres.push_back(area_centre(AREA_UMBRA, a->pos(), r));
 
-        for (radius_iterator ri(a->pos(), r, C_CIRCLE, a->get_los());
-             ri; ++ri)
+        for (radius_iterator ri(a->pos(), r, C_CIRCLE, LOS_DEFAULT); ri; ++ri)
         {
             _set_agrid_flag(*ri, APROP_UMBRA);
-        }
-        no_areas = false;
-    }
-
-
-    if ((r = a->soul_aura_radius2()) >= 0)
-    {
-        _agrid_centres.push_back(area_centre(AREA_SOUL_AURA, a->pos(), r));
-
-        for (radius_iterator ri(a->pos(), r, C_CIRCLE, a->get_los());
-             ri; ++ri)
-        {
-            _set_agrid_flag(*ri, APROP_SOUL_AURA);
         }
         no_areas = false;
     }
@@ -176,8 +159,7 @@ static void _actor_areas(actor *a)
     {
         _agrid_centres.push_back(area_centre(AREA_HOT, a->pos(), r));
 
-        for (radius_iterator ri(a->pos(),r, C_CIRCLE, a->get_los());
-            ri; ++ri)
+        for (radius_iterator ri(a->pos(), r, C_CIRCLE, LOS_NO_TRANS); ri; ++ri)
         {
             _set_agrid_flag(*ri, APROP_HOT);
         }
@@ -206,12 +188,8 @@ static void _update_agrid()
     {
         const int r = 5;
         _agrid_centres.push_back(area_centre(AREA_ORB, you.pos(), r));
-        los_glob los(you.pos(), LOS_DEFAULT);
-        for (radius_iterator ri(you.pos(), r, C_CIRCLE, &los);
-             ri; ++ri)
-        {
+        for (radius_iterator ri(you.pos(), r, C_CIRCLE, LOS_DEFAULT); ri; ++ri)
             _set_agrid_flag(*ri, APROP_ORB);
-        }
         no_areas = false;
     }
 
@@ -342,7 +320,7 @@ bool remove_sanctuary(bool did_attack)
 
     const int radius = 5;
     bool seen_change = false;
-    for (radius_iterator ri(env.sanctuary_pos, radius, C_SQUARE); ri; ++ri)
+    for (rectangle_iterator ri(env.sanctuary_pos, radius); ri; ++ri)
         if (is_sanctuary(*ri))
         {
             _remove_sanctuary_property(*ri);
@@ -389,7 +367,7 @@ void decrease_sanctuary_radius()
         stop_running();
     }
 
-    for (radius_iterator ri(env.sanctuary_pos, size+1, C_SQUARE); ri; ++ri)
+    for (rectangle_iterator ri(env.sanctuary_pos, size+1); ri; ++ri)
     {
         int dist = distance2(*ri, env.sanctuary_pos);
 
@@ -805,32 +783,6 @@ bool actor::suppressed() const
 }
 
 int player::suppression_radius2() const
-{
-    return -1;
-}
-
-/////////////
-// Soul aura (currently just a marker for reference)
-
-bool soul_aura(const coord_def& p)
-{
-    if (!map_bounds(p))
-        return false;
-    if (!_agrid_valid)
-        _update_agrid();
-
-    return _check_agrid_flag(p, APROP_SOUL_AURA);
-}
-
-int monster::soul_aura_radius2() const
-{
-    if (type == MONS_LOST_SOUL)
-        return LOS_RADIUS_SQ;
-    else
-        return -1;
-}
-
-int player::soul_aura_radius2() const
 {
     return -1;
 }

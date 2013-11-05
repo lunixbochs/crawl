@@ -39,7 +39,6 @@
 #include "message.h"
 #include "misc.h"
 #include "mon-abil.h"
-#include "mon-act.h"
 #include "mon-behv.h"
 #include "mon-cast.h"
 #include "mon-clone.h"
@@ -282,7 +281,8 @@ bool melee_attack::handle_phase_attempted()
             cancel_attack = true;
             return false;
         }
-        else if (cell_is_solid(defender->pos())
+
+        if (cell_is_solid(defender->pos())
                  && mons_wall_shielded(defender->as_monster())
                  && you.can_see(defender)
                  && !you.confused()

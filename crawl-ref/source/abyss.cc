@@ -25,7 +25,6 @@
 #include "files.h"
 #include "itemprop.h"
 #include "items.h"
-#include "l_defs.h"
 #include "libutil.h"
 #include "los.h"
 #include "makeitem.h"
@@ -211,7 +210,7 @@ static bool _abyss_place_map(const map_def *mdef)
 static bool _abyss_place_vault_tagged(const map_bitmask &abyss_genlevel_mask,
                                       const string &tag)
 {
-    const map_def *map = random_map_for_tag(tag, false, true);
+    const map_def *map = random_map_for_tag(tag, true, true);
     if (map)
     {
         unwind_vault_placement_mask vaultmask(&abyss_genlevel_mask);
@@ -466,7 +465,7 @@ private:
     {
         // env.map_knowledge().known() doesn't work on unmappable levels because
         // mapping flags are not set on such levels.
-        for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+        for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
             if (grd(*ri) == DNGN_EXIT_ABYSS && env.map_knowledge(*ri).seen())
                 return true;
 
@@ -476,7 +475,7 @@ private:
     bool abyss_rune_nearness() const
     {
         // See above comment about env.map_knowledge().known().
-        for (radius_iterator ri(you.pos(), LOS_RADIUS); ri; ++ri)
+        for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
             if (env.map_knowledge(*ri).seen() && _abyssal_rune_at(*ri))
                 return true;
         return false;
@@ -779,7 +778,7 @@ static void _abyss_identify_area_to_shift(coord_def source, int radius,
     mask->reset();
 
     set<int> affected_vault_indexes;
-    for (radius_iterator ri(source, radius, C_SQUARE); ri; ++ri)
+    for (rectangle_iterator ri(source, radius); ri; ++ri)
     {
         if (!map_bounds_with_margin(*ri, MAPGEN_BORDER))
             continue;
@@ -970,7 +969,7 @@ static bool _in_wastes(const coord_def &p)
 static level_id _get_random_level(bool existing, bool connected)
 {
     vector<level_id> levels;
-    for (int i = BRANCH_MAIN_DUNGEON; i < NUM_BRANCHES; ++i)
+    for (int i = BRANCH_DUNGEON; i < NUM_BRANCHES; ++i)
     {
         if (i == BRANCH_ABYSS
             || (existing && i == BRANCH_SHOALS)
@@ -988,7 +987,7 @@ static level_id _get_random_level(bool existing, bool connected)
     if (levels.empty())
     {
         // Let this fail later on.
-        return level_id(static_cast<branch_type>(BRANCH_MAIN_DUNGEON), 1);
+        return level_id(static_cast<branch_type>(BRANCH_DUNGEON), 1);
     }
 
     return levels[hash_rand(levels.size(), abyssal_state.seed)];
@@ -1291,13 +1290,21 @@ static int _abyss_place_vaults(const map_bitmask &abyss_genlevel_mask)
 
     int vaults_placed = 0;
 
+    bool mini = false;
     const int maxvaults = 6;
     int tries = 0;
     while (vaults_placed < maxvaults)
     {
-        const map_def *map = random_map_for_tag("abyss", false, true);
+        const map_def *map = random_map_in_depth(level_id::current(), mini);
         if (!map)
+        {
+            if (!mini)
+            {
+                mini = true;
+                continue;
+            }
             break;
+        }
 
         if (!_abyss_place_map(map) || map->has_tag("extra"))
         {
@@ -1306,6 +1313,8 @@ static int _abyss_place_vaults(const map_bitmask &abyss_genlevel_mask)
 
             continue;
         }
+
+        mini = true;
 
         if (!one_chance_in(2 + (++vaults_placed)))
             break;

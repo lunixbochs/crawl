@@ -231,11 +231,8 @@ static item_make_species_type _give_weapon(monster* mon, int level,
 
     item.base_type = OBJ_UNASSIGNED;
 
-    if (mon->type == MONS_DANCING_WEAPON
-        && player_in_branch(BRANCH_HALL_OF_BLADES))
-    {
+    if (mon->type == MONS_DANCING_WEAPON)
         level = MAKE_GOOD_ITEM;
-    }
 
     // moved setting of quantity here to keep it in mind {dlb}
     item.quantity = 1;
@@ -1622,7 +1619,7 @@ static void _give_ammo(monster* mon, int level,
 
         case MONS_ORC_WARRIOR:
             if (one_chance_in(
-                    player_in_branch(BRANCH_ORCISH_MINES)? 9 : 20))
+                    player_in_branch(BRANCH_ORC)? 9 : 20))
             {
                 weap_type = MI_TOMAHAWK;
                 qty       = random_range(4, 8);

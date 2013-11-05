@@ -1825,6 +1825,29 @@ const char* feat_type_name(dungeon_feature_type feat)
     return "floor";
 }
 
+void set_terrain_changed(const coord_def p)
+{
+    if (cell_is_solid(p))
+    {
+        int cl = env.cgrid(p);
+        if (cl != EMPTY_CLOUD)
+            delete_cloud(cl);
+    }
+
+    if (grd(p) == DNGN_SLIMY_WALL)
+        env.level_state |= LSTATE_SLIMY_WALL;
+
+    env.map_knowledge(p).flags |= MAP_CHANGED_FLAG;
+
+    dungeon_events.fire_position_event(DET_FEAT_CHANGE, p);
+
+    los_terrain_changed(p);
+
+    for (orth_adjacent_iterator ai(p); ai; ++ai)
+        if (actor *act = actor_at(*ai))
+            act->check_clinging(false, feat_is_door(grd(p)));
+}
+
 bool is_boring_terrain(dungeon_feature_type feat)
 {
     if (!is_notable_terrain(feat))
@@ -1835,7 +1858,7 @@ bool is_boring_terrain(dungeon_feature_type feat)
         return true;
 
     // Altars in the temple are boring.
-    if (feat_is_altar(feat) && player_in_branch(BRANCH_ECUMENICAL_TEMPLE))
+    if (feat_is_altar(feat) && player_in_branch(BRANCH_TEMPLE))
         return true;
 
     // Only note the first entrance to the Abyss/Pan/Hell

@@ -348,8 +348,8 @@ MAP
 ENDMAP
 
 NAME:    hangedman_stitches_earthworm
-TAGS:    no_monster_gen no_item_gen transparent no_pool_fixup mini_float abyss
-DEPTH:   Depths, Spider:2-
+TAGS:    no_monster_gen no_item_gen transparent no_pool_fixup mini_float
+DEPTH:   Depths, Spider:2-, Abyss
 KMONS:   0 = 0
 KMONS:   1 = rock worm
 KMONS:   2 = boulder beetle
@@ -1749,8 +1749,8 @@ MAP
 ENDMAP
 
 NAME:    hangedman_summoners_spam
-TAGS:    no_monster_gen patrolling abyss
-DEPTH:   Depths, Elf, Crypt
+TAGS:    no_monster_gen patrolling
+DEPTH:   Depths, Elf, Crypt, Abyss
 MONS:    boggart, vampire, kobold demonologist, deep elf summoner
 MONS:    shadow demon, deep elf demonologist, vampire mage
 KMONS:   8 = mummy priest
@@ -3010,8 +3010,8 @@ x.'...1lx
 ENDMAP
 
 NAME:   hangedman_eye_storm
-TAGS:   no_monster_gen no_item_gen patrolling abyss
-DEPTH:  Depths
+TAGS:   no_monster_gen no_item_gen patrolling
+DEPTH:  Depths, Abyss
 MONS:   golden eye, eye of draining, giant eyeball
 MONS:   eye of devastation, great orb of eyes / shining eye w:5
 NSUBST: 5 = 2:5 / *:4 5:15
@@ -3436,7 +3436,7 @@ ENDMAP
 NAME:   minmay_evil_grid
 DEPTH:  D:8-, Depths
 NSUBST: A = 7:+ / *:c
-NSUBST: B = 1:= / 1:n / *:c
+NSUBST: B = 1:+ / 1:n / *:c
 NSUBST: C = 1:+ / *:c
 SUBST:  * = *|
 MAP
@@ -3525,8 +3525,8 @@ MAP
 ENDMAP
 
 NAME:    onia_ninara_dug_in_and_dangerous
-TAGS:    allow_dup abyss ruin_abyss
-DEPTH:   D:8-, !D:$, Depths:2-, !Depths:$
+TAGS:    allow_dup ruin_abyss
+DEPTH:   D:8-, Depths, Abyss
 SHUFFLE: vcb, AB?/CD!, d<>, de
 SUBST:   A=9, B=8, C=1, D=9
 SUBST:   ? = %:10 *:50 |:60
@@ -5463,7 +5463,8 @@ ENDMAP
 
 # Little trap spiral
 NAME: minivault_13
-TAGS: abyss ruin_abyss
+TAGS: ruin_abyss
+DEPTH: D:9-, Elf, Abyss
 SHUFFLE: AB, CD, EH/FG
 KFEAT: ACEH = any trap
 KITEM: ABCD = gold / nothing
@@ -5522,7 +5523,8 @@ MAP
 ENDMAP
 
 NAME: minivault_20
-TAGS: allow_dup extra abyss ruin_abyss
+TAGS: allow_dup extra ruin_abyss
+DEPTH: D:9-, Elf, Abyss
 MAP
 ............
 .xxxx..xxxx.
@@ -5539,7 +5541,8 @@ MAP
 ENDMAP
 
 NAME:    minivault_25_ag
-TAGS:    allow_dup extra abyss ruin_abyss
+TAGS:    allow_dup extra ruin_abyss
+DEPTH:   D:9-, Elf, Abyss
 SHUFFLE: XY, ABCDE
 SUBST:   X=x, Y=+
 SUBST:   A=?, B=%%%*, C=T, D=0009, E=89
@@ -5558,8 +5561,9 @@ MAP
 ............
 ENDMAP
 
-NAME: minivault_28
-TAGS: allow_dup abyss ruin_abyss
+NAME:  minivault_28
+TAGS:  allow_dup ruin_abyss
+DEPTH: D:9-, Elf, Abyss
 MAP
 ...........
 .xxxx.xxxx.

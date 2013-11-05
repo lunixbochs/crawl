@@ -56,7 +56,6 @@
 #include "spl-cast.h"
 #include "spl-goditem.h"
 #include "spl-miscast.h"
-#include "spl-summoning.h"
 #include "spl-transloc.h"
 #include "spl-util.h"
 #include "stairs.h"
@@ -1909,7 +1908,7 @@ static int _xom_throw_divine_lightning(bool debug = false)
 
     // Make sure there's at least one enemy within the lightning radius.
     bool found_hostile = false;
-    for (radius_iterator ri(you.pos(), 2, true, true, true); ri; ++ri)
+    for (radius_iterator ri(you.pos(), 2, C_ROUND, LOS_SOLID, true); ri; ++ri)
     {
         if (monster* mon = monster_at(*ri))
         {
@@ -1981,7 +1980,7 @@ static int _xom_change_scenery(bool debug = false)
     vector<coord_def> candidates;
     vector<coord_def> closed_doors;
     vector<coord_def> open_doors;
-    for (radius_iterator ri(you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
     {
         if (!you.see_cell(*ri))
             continue;
@@ -2457,7 +2456,7 @@ static void _xom_zero_miscast()
     // Dungeon feature dependent stuff.
 
     FixedBitVector<NUM_FEATURES> in_view;
-    for (radius_iterator ri(you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT); ri; ++ri)
         in_view.set(grd(*ri));
 
     if (in_view[DNGN_LAVA])

@@ -1747,43 +1747,32 @@ bool bless_follower(monster* follower,
 
         // Choose a random follower in LOS, preferably a named or
         // priestly one (10% chance).
-        follower = choose_random_nearby_monster(0, suitable, true, true, true);
+        follower = choose_random_nearby_monster(0, suitable, true);
 
         if (!follower)
         {
             if (coinflip())
                 return false;
 
-            // Try again, without the LOS restriction (5% chance).
-            follower = choose_random_nearby_monster(0, suitable, false, true,
-                                                    true);
+            // Try *again*, on the entire level (2.5% chance).
+            follower = choose_random_monster_on_level(0, suitable);
 
             if (!follower)
             {
+                // If no follower was found, attempt to send
+                // reinforcements.
+                _beogh_blessing_reinforcements();
+
+                // Possibly send more reinforcements.
                 if (coinflip())
-                    return false;
-
-                // Try *again*, on the entire level (2.5% chance).
-                follower = choose_random_monster_on_level(0, suitable, false,
-                                                          false, true, true);
-
-                if (!follower)
-                {
-                    // If no follower was found, attempt to send
-                    // reinforcements.
                     _beogh_blessing_reinforcements();
 
-                    // Possibly send more reinforcements.
-                    if (coinflip())
-                        _beogh_blessing_reinforcements();
+                _delayed_monster_done("Beogh blesses you with "
+                                      "reinforcements.", "");
 
-                    _delayed_monster_done("Beogh blesses you with "
-                                          "reinforcements.", "");
-
-                    // Return true, even though the reinforcements might
-                    // not be placed.
-                    return true;
-                }
+                // Return true, even though the reinforcements might
+                // not be placed.
+                return true;
             }
         }
     }
@@ -2802,7 +2791,7 @@ static void _gain_piety_point()
                     dlua.callfn("dgn_set_persistent_var", "sb", "fix_slime_vaults", true);
                     // If we're on Slime:6, pretend we just entered the level
                     // in order to bring down the vault walls.
-                    if (level_id::current() == level_id(BRANCH_SLIME_PITS, 6))
+                    if (level_id::current() == level_id(BRANCH_SLIME, 6))
                         dungeon_events.fire_event(DET_ENTERED_LEVEL);
 
                     you.one_time_ability_used.set(you.religion);
@@ -4360,7 +4349,7 @@ int get_tension(god_type god)
     int total = 0;
 
     bool nearby_monster = false;
-    for (radius_iterator ri(you.get_los()); ri; ++ri)
+    for (radius_iterator ri(you.pos(), LOS_DEFAULT /*?*/); ri; ++ri)
     {
         const monster* mon = monster_at(*ri);
 

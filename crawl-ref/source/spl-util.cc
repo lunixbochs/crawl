@@ -39,7 +39,6 @@
 #include "spl-zap.h"
 #include "target.h"
 #include "terrain.h"
-#include "item_use.h"
 #include "transform.h"
 
 
@@ -527,9 +526,8 @@ int apply_area_visible(cell_func cf, int power, actor *agent)
 {
     int rv = 0;
 
-    for (radius_iterator ri(agent->pos(), you.current_vision); ri; ++ri)
-        if (agent->see_cell_no_trans(*ri))
-            rv += cf(*ri, power, 0, agent);
+    for (radius_iterator ri(agent->pos(), LOS_NO_TRANS); ri; ++ri)
+        rv += cf(*ri, power, 0, agent);
 
     return rv;
 }
@@ -1245,7 +1243,7 @@ bool spell_no_hostile_in_range(spell_type spell)
     case SPELL_HOLY_BREATH:
     {
         targetter_cloud tgt(&you, range);
-        for (radius_iterator ri(you.pos(), range, C_ROUND, you.get_los());
+        for (radius_iterator ri(you.pos(), range, C_ROUND, LOS_NO_TRANS);
              ri; ++ri)
         {
             if (!tgt.valid_aim(*ri))
@@ -1318,7 +1316,7 @@ bool spell_no_hostile_in_range(spell_type spell)
 #ifdef DEBUG_DIAGNOSTICS
         beam.quiet_debug = true;
 #endif
-        for (radius_iterator ri(you.pos(), range, C_ROUND, you.get_los());
+        for (radius_iterator ri(you.pos(), range, C_ROUND, LOS_DEFAULT);
              ri; ++ri)
         {
             tempbeam = beam;

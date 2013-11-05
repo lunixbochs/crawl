@@ -143,7 +143,7 @@ void crash_signal_handler(int sig_num)
     // internally.
     // There's no reliable way to ensure such things won't happen.  A pragmatic
     // solution is to abort the crash dump.
-    alarm(5);
+    alarm(120);
 
     // In case the crash dumper is unable to open a file and has to dump
     // to stderr.
@@ -371,7 +371,7 @@ void call_gdb(FILE *file)
     fprintf(file, "Trying to run gdb.\n");
     fflush(file); // so we can use fileno()
 
-    char pid[12];
+    char pid[12] = {};
     snprintf(pid, sizeof(pid), "%d", getpid());
 
     switch (int gdb = fork())
@@ -385,13 +385,6 @@ void call_gdb(FILE *file)
             dup2(fd, 2);
             close(fd);
 
-            char exe[2048];
-            ssize_t len = readlink("/proc/self/exe", exe, sizeof(exe) - 1);
-            if (len == -1)
-                strcpy(exe, "./crawl");
-            else
-                exe[len] = 0; // readlink() doesn't null-terminate
-
             const char* argv[] =
             {
                 "gdb",
@@ -400,7 +393,6 @@ void call_gdb(FILE *file)
                 "-batch",
                 "-ex",
                 "bt full",
-                exe,
                 0
             };
             execv("/usr/bin/gdb", (char* const*)argv);

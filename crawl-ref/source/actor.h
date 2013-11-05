@@ -2,7 +2,6 @@
 #define ACTOR_H
 
 #include "itemprop-enum.h"
-#include "los_def.h"
 
 enum ev_ignore_type
 {
@@ -180,9 +179,6 @@ public:
     // Is the given cell within LOS of the actor?
     virtual bool see_cell(const coord_def &c) const;
     virtual bool see_cell_no_trans(const coord_def &c) const;
-
-    virtual const los_base* get_los() const;
-    virtual const los_base* get_los_no_trans() const;
 
     // Can the actor actually see the target?
     virtual bool can_see(const actor *target) const;
@@ -363,11 +359,10 @@ public:
     // Squared silence radius.
     virtual int silence_radius2() const = 0;
     // Squared liquefying radius
-    virtual int liquefying_radius2 () const = 0;
-    virtual int umbra_radius2 () const = 0;
-    virtual int suppression_radius2 () const = 0;
-    virtual int soul_aura_radius2 () const = 0;
-    virtual int heat_radius2 () const = 0;
+    virtual int liquefying_radius2() const = 0;
+    virtual int umbra_radius2() const = 0;
+    virtual int suppression_radius2() const = 0;
+    virtual int heat_radius2() const = 0;
 
     virtual bool glows_naturally() const = 0;
 
@@ -442,10 +437,6 @@ public:
 protected:
     void end_constriction(constricting_t::iterator i, bool intentional,
                           bool quiet);
-
-    // These are here for memory management reasons...
-    mutable los_glob los;
-    mutable los_glob los_no_trans;
 };
 
 bool actor_slime_wall_immune(const actor *actor);

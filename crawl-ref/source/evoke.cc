@@ -49,7 +49,6 @@
 #include "spl-book.h"
 #include "spl-cast.h"
 #include "spl-clouds.h"
-#include "spl-summoning.h"
 #include "spl-util.h"
 #include "state.h"
 #include "stuff.h"
@@ -261,7 +260,7 @@ static bool _evoke_horn_of_geryon(item_def &item)
         mpr("You can't produce a sound!");
         return false;
     }
-    else if (player_in_branch(BRANCH_VESTIBULE_OF_HELL))
+    else if (player_in_branch(BRANCH_VESTIBULE))
     {
         mpr("You produce a weird and mournful sound.");
 
@@ -438,7 +437,7 @@ bool disc_of_storms(bool drac_breath)
 
         if (!drac_breath)
         {
-            for (radius_iterator ri(you.pos(), LOS_RADIUS, false); ri; ++ri)
+            for (radius_iterator ri(you.pos(), LOS_NO_TRANS); ri; ++ri)
             {
                 if (!in_bounds(*ri) || cell_is_solid(*ri))
                     continue;
@@ -806,7 +805,7 @@ static bool _sack_of_spiders(item_def &sack)
     {
         // Also generate webs
         int rad = LOS_RADIUS / 2 + 2;
-        for (radius_iterator ri(you.pos(), rad, false, true, true); ri; ++ri)
+        for (radius_iterator ri(you.pos(), rad, C_ROUND, LOS_SOLID, true); ri; ++ri)
         {
             if (grd(*ri) == DNGN_FLOOR)
             {
@@ -1333,7 +1332,7 @@ static void _fan_of_gales_elementals()
     int radius = min(7, 5 + you.skill_rdiv(SK_EVOCATIONS, 1, 6));
 
     vector<coord_def> elementals;
-    for (radius_iterator ri(you.pos(), radius, C_ROUND, NULL, true); ri; ++ri)
+    for (radius_iterator ri(you.pos(), radius, C_ROUND, true); ri; ++ri)
     {
         if (ri->distance_from(you.pos()) >= 3 && !monster_at(*ri)
             && !cell_is_solid(*ri)
