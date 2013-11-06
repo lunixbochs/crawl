@@ -36,17 +36,23 @@ function pan_lord_setup(_G, name)
     -- Set level monsters.
     -- needs exactly 10 monsters, weights are not supported yet
     local monsters = {
-        Mnoleg = "large abomination / large abomination / large abomination / " ..
-                 "neqoxec / neqoxec / chaos spawn / chaos spawn / " ..
-                 "cacodemon / cacodemon / cacodemon",
-        ['Lom Lobon'] = "hellwing / hellwing / hellwing / sixfirhy / " ..
-                 "smoke demon / smoke demon / smoke demon / blizzard demon / " ..
-                 "green death / green death",
-        Cerebov = "efreet / efreet / orange demon / orange demon / " ..
-                 "sun demon / sun demon / ynoxinul / ynoxinul / balrug / balrug",
-        ['Gloorx Vloq'] = "skeleton / skeleton / skeleton / skeleton / " ..
-                 "soul eater / soul eater / lorocyproca / " ..
-                 "executioner / executioner / executioner"
+        Mnoleg = "large abomination w:200 / " ..
+                 "neqoxec w:200 / chaos spawn w:200 / " ..
+                 "cacodemon w:300 / tormentor / " ..
+                 "tentacled monstrosity w:5 / brain worm / " ..
+                 "giant eyeball / golden eye band / eye of devastation / " ..
+                 "eye of draining / shining eye / very ugly thing band",
+        ['Lom Lobon'] = "hellwing w:300 / sixfirhy w:100 / " ..
+                 "smoke demon w:300 / blizzard demon w:100 / " ..
+                 "green death w:200 / giant orange brain / rakshasa / " ..
+                 "wizard / draconian annihilator / deep elf annihilator / " ..
+                 "titan w:5 / vapour / lich w:5",
+        Cerebov = "efreet / orange demon / sun demon / ynoxinul / balrug / " ..
+                  "brimstone fiend w:1",
+        ['Gloorx Vloq'] = "skeleton w:400 / " ..
+                 "soul eater w:200 / lorocyproca w:100 / " ..
+                 "executioner w:300 / demonic crawler / shadow wraith / " ..
+                 "unseen horror"
     }
 
     _G.set_random_mon_list(monsters[name])
@@ -324,6 +330,69 @@ MAP
 .x.xxxx+x.x.
 .xx.....x.x.
 .xxxxxxxx+x.
+............
+ENDMAP
+
+###################################
+# More entries based on panlord vaults.
+
+NAME:  grunt_pan_entry_in_and_out
+TAGS:  patrolling no_monster_gen mini_float transparent nolayout_encompass
+MONS:  common demon, lesser demon
+KMONS: d = any demon
+: pan_entry(_G, 'e')
+MAP
+............
+.x+xxxxxx+x.
+.x.x.de.x.x.
+.x2x....x2x.
+.x.x.11.x.x.
+.x2x....x2x.
+.x.xx++xx.x.
+.x2xx..xx2x.
+.x.xx..xx.x.
+.x2..11..2x.
+.xxxxxxxxxx.
+............
+ENDMAP
+
+NAME:  grunt_pan_entry_spiral
+TAGS:  patrolling no_monster_gen mini_float transparent nolayout_encompass
+MONS:  common demon, lesser demon
+KMONS: d = any demon
+: pan_entry(_G, 'e')
+MAP
+............
+.x+xxxxxxxx.
+.x.xx2.2..+.
+.x.x.xxxxxx.
+.x2x1x.1.xx.
+.x.x.dexx2x.
+.x2xxfg.x.x.
+.xx.1.x1x2x.
+.xxxxxx.x.x.
+.+..2.2xx.x.
+.xxxxxxxx+x.
+............
+ENDMAP
+
+NAME:  grunt_pan_entry_zigzag
+TAGS:  patrolling no_monster_gen mini_float transparent nolayout_encompass
+MONS:  common demon, lesser demon
+KMONS: d = any demon
+: pan_entry(_G, 'e')
+MAP
+............
+.xxxxxxxxxx.
+.x..2..2..+.
+.x.2.xxxxxx.
+.xx.1.xx....
+..xx.d1xx...
+...xx1e.xx..
+....xx.1.xx.
+.xxxxxx.2.x.
+.+..2..2..x.
+.xxxxxxxxxx.
 ............
 ENDMAP
 
@@ -2034,6 +2103,93 @@ MAP
       ccccc
 ENDMAP
 
+###################################
+
+NAME:    grunt_pan_in_and_out
+TAGS:    pan allow_dup no_trap_gen
+MONS:    greater demon, common demon
+KMONS:   d = pandemonium lord
+: pan_demonic_rune(_G, 'e')
+MAP
+............
+.c+cccccc+c.
+.c.c.de.c.c.
+.c2c....c2c.
+.c.c.11.c.c.
+.c2c....c2c.
+.c.cc++cc.c.
+.c2cc..cc2c.
+.c.cc..cc.c.
+.c2..11..2c.
+.cccccccccc.
+............
+ENDMAP
+
+NAME:    grunt_pan_spiral
+TAGS:    pan allow_dup no_trap_gen
+MONS:    greater demon, common demon
+KMONS:   d = pandemonium lord
+: pan_demonic_rune(_G, 'e')
+MAP
+............
+.c+cccccccc.
+.c.cc2.2..+.
+.c.c.cccccc.
+.c2c1c.1.cc.
+.c.c.decc2c.
+.c2ccfg.c.c.
+.cc.1.c1c2c.
+.cccccc.c.c.
+.+..2.2cc.c.
+.cccccccc+c.
+............
+ENDMAP
+
+NAME:    grunt_pan_zigzag
+TAGS:    pan allow_dup no_trap_gen
+MONS:    greater demon, common demon
+KMONS:   d = pandemonium lord
+: pan_demonic_rune(_G, 'e')
+MAP
+............
+.cccccccccc.
+.c..2..2..+.
+.c.2.cccccc.
+.cc.1.cc....
+..cc.d1cc...
+...cc1e.cc..
+....cc.1.cc.
+.cccccc.2.c.
+.+..2..2..c.
+.cccccccccc.
+............
+ENDMAP
+
+NAME: grunt_pan_pentagram
+TAGS: pan allow_dup no_trap_gen
+: pan_demonic_rune(_G, 'P', true)
+MONS: greater demon, common demon
+MAP
+    ...........
+  ...cccc+cccc...
+ ..ccc.......ccc..
+ .cc.cc..2..cc.cc.
+..c...+cc.cc+...c..
+.c+...c.ccc.c...+c.
+.c..2.c1ccc1c.2..c.
+.c....cc+.+cc....c.
+.c..cccc.P.cccc..c.
+.c.cc.1+...+1.cc.c.
+.cc+ccccc+ccccc+cc.
+.c......c1c......c.
+.cc..2..c.c..2..cc.
+..cc....c+c....cc..
+ ..+c....c....c+..
+  ..ccc..c..ccc..
+   ...ccccccc...
+     .........
+ENDMAP
+
 #############################################################################
 # Pandemonium lesser demon vaults: standalone.
 #############################################################################
@@ -2131,6 +2287,29 @@ x.x3xl.2.lx3x.x
 x2xxxl2.2lxxx2x
 x....2.2.2....x
 xxxxxxxxxxxxxxx
+ENDMAP
+
+###################################
+
+NAME:  grunt_pan_frozen_over
+TAGS:  pan no_pool_fixup no_monster_gen
+SUBST: W = wWW.
+KMONS: O = ice statue
+KITEM: O = demonic rune of Zot
+KMONS: P = pandemonium lord
+MONS:  blizzard demon, ice devil / blue devil w:20
+: set_random_mon_list("blizzard demon / ice devil / blue devil")
+MAP
+ccccccccccccccccccc
+.WwcwW1.1O1.1WwcwW.
+2WwcwW.1.P.1.WwcwW2
+.WwccwW.1.1.WwccwW.
+ .WwccwW.1.WwccwW.
+ .WwwccwWWWwccwwW.
+  2WWwWWwwwWWwWW2
+   ..WWwwwwwWW.
+     ..WWWWW..
+       .2.2.
 ENDMAP
 
 #############################################################################

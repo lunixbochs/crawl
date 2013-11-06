@@ -74,6 +74,7 @@ enum extra_monster_index_type
 #define MAX_NUM_ATTACKS 4
 
 // size of Pan monster sets. Also used for wave data in ZotDef.
+#define PAN_MONS_ALLOC 10
 #define MAX_MONS_ALLOC 20
 
 #define MAX_SUBTYPES   60
@@ -183,6 +184,8 @@ const int CHUNK_BASE_NUTRITION    = 1000;
 
 const int ICEMAIL_MAX  = 10;
 const int ICEMAIL_TIME = 300 * BASELINE_DELAY;
+
+const int ANTENNAE_EXTEND_TIME = 10 * BASELINE_DELAY;
 
 // The maximum number of abilities any god can have
 #define MAX_GOD_ABILITIES               5

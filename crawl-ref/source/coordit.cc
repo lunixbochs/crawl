@@ -389,6 +389,7 @@ int distance_iterator::radius() const
 /********************/
 /* regression tests */
 /********************/
+#ifdef DEBUG_TESTS
 static void _test_ai(const coord_def c, bool exc, size_t expected)
 {
     set<coord_def> seen;
@@ -410,12 +411,11 @@ static void _test_ai(const coord_def c, bool exc, size_t expected)
 
     if (seen.size() != expected)
     {
-        die("adjacent_iterator(%d,%d): seen %lu, expected %lu",
-            c.x, c.y, seen.size(), expected);
+        die("adjacent_iterator(%d,%d): seen %d, expected %d",
+            c.x, c.y, (int)seen.size(), (int)expected);
     }
 }
 
-#ifdef DEBUG_TESTS
 void coordit_tests()
 {
     // bounding box of our playground

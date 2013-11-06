@@ -420,17 +420,16 @@ void spawn_random_monsters()
         return;
     }
 
-    // Pandemonium doesn't yet use the standard way.
-    if (player_in_branch(BRANCH_PANDEMONIUM))
-    {
-        pandemonium_mons();
-        viewwindow();
-        return;
-    }
-
     mgen_data mg(WANDERING_MONSTER);
     if (player_in_branch(BRANCH_ABYSS) && one_chance_in(3))
         mg.place = abyssal_state.level;
+    else if (player_in_branch(BRANCH_PANDEMONIUM)
+             && !env.properties.exists("vault_mon_weights")
+             && !one_chance_in(40))
+    {
+        mg.cls = env.mons_alloc[random2(PAN_MONS_ALLOC)];
+        mg.flags |= MG_PERMIT_BANDS;
+    }
 
     mons_place(mg);
     viewwindow();
@@ -1351,10 +1350,8 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     // Yiuf is a faithful Xommite.
     else if (mg.cls == MONS_CRAZY_YIUF)
         mon->god = GOD_XOM;
-    // The hell lords, Grinder and Ignacio belong to Makhleb.
-    else if (mons_species(mg.cls) == MONS_HELL_LORD
-             || mg.cls == MONS_ANTAEUS
-             || mg.cls == MONS_GRINDER
+    // Grinder and Ignacio belong to Makhleb.
+    else if (mg.cls == MONS_GRINDER
              || mg.cls == MONS_IGNACIO)
     {
         mon->god = GOD_MAKHLEB;
@@ -1375,18 +1372,6 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
             mon->god = GOD_SHINING_ONE;
         else
             mon->god = GOD_XOM;
-    }
-    // 6 out of 7 demons in the Abyss belong to Lugonu, and 6 out of 7
-    // demons in hell belong to Makhleb.
-    else if (mons_class_holiness(mg.cls) == MH_DEMONIC)
-    {
-        if (mg.place == BRANCH_ABYSS && !one_chance_in(7))
-            mon->god = GOD_LUGONU;
-        else if ((mg.place == BRANCH_VESTIBULE || player_in_hell())
-                 && !one_chance_in(7))
-        {
-            mon->god = GOD_MAKHLEB;
-        }
     }
 
     // Holy monsters need their halo!
@@ -3499,8 +3484,45 @@ bool find_habitable_spot_near(const coord_def& where, monster_type mon_type,
     return (good_count > 0);
 }
 
+static void _get_vault_mon_list(vector<mons_spec> &list);
+
 monster_type summon_any_demon(monster_type dct)
 {
+    if (player_in_branch(BRANCH_PANDEMONIUM) && !one_chance_in(40))
+    {
+        monster_type typ = MONS_0;
+        int count = 0;
+        vector<mons_spec> list;
+        _get_vault_mon_list(list);
+        const bool major = !list.empty();
+        const int max = major ? list.size() : PAN_MONS_ALLOC;
+        for (int i = 0; i < max; i++)
+        {
+            const monster_type cur = major ? list[i].monbase
+                                           : env.mons_alloc[i];
+            if (invalid_monster_type(cur))
+                continue;
+            const monsterentry *mentry = get_monster_data(cur);
+            if (dct == RANDOM_DEMON && mons_class_holiness(cur) != MH_DEMONIC
+                || dct == RANDOM_DEMON_LESSER && mentry->basechar != '5'
+                || dct == RANDOM_DEMON_COMMON
+                   && mentry->basechar != '4'
+                   && mentry->basechar != '3'
+                || dct == RANDOM_DEMON_GREATER
+                   && mentry->basechar != '2'
+                   && mentry->basechar != '1')
+            {
+                continue;
+            }
+            const int weight = major ? list[i].genweight : 1;
+            count += weight;
+            if (x_chance_in_y(weight, count))
+                typ = cur;
+        }
+        if (count)
+            return typ;
+    }
+
     if (dct == RANDOM_DEMON)
         dct = static_cast<monster_type>(RANDOM_DEMON_LESSER + random2(3));
 
@@ -3759,9 +3781,6 @@ void setup_vault_mon_list()
         {
             vault_mon_types[i] = list[i].type;
             vault_mon_bases[i] = list[i].monbase;
-            // hack for Pandemonium
-            if (i < 10)
-                env.mons_alloc[i] = (monster_type)list[i].type;
         }
         vault_mon_bands[i] = list[i].band;
         vault_mon_weights[i] = list[i].genweight;
