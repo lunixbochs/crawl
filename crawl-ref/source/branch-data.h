@@ -12,7 +12,7 @@ const Branch branches[NUM_BRANCHES] =
     //  has_uniques, floor colour, rock colour
     //  travel shortcut, dangerous branch end, ambient noise level
 
-    { BRANCH_DUNGEON, NUM_BRANCHES, 0, 0, 15, 0,
+    { BRANCH_DUNGEON, NUM_BRANCHES, 0, 0, 16, 0,
       0, 0,
       NUM_FEATURES, DNGN_EXIT_DUNGEON,
       "Dungeon", "the Dungeon", "D",
@@ -296,7 +296,7 @@ const Branch branches[NUM_BRANCHES] =
       '9', false, 0 },
 #endif
 
-    { BRANCH_DEPTHS, BRANCH_DUNGEON, 15, 15, 6, 15,
+    { BRANCH_DEPTHS, BRANCH_DUNGEON, 16, 16, 6, 16,
       0, 0,
       DNGN_ENTER_DEPTHS, DNGN_RETURN_FROM_DEPTHS,
       "Depths", "the Depths", "Depths",
