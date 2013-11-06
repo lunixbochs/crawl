@@ -126,6 +126,9 @@ static const pop_entry pop_d[] =
   { 18, 20,  108,   UP, MONS_FLAYED_GHOST },
   { 18, 20,  155,   UP, MONS_FREEZING_WRAITH },
   { 20, 20,  413, FLAT, MONS_YAKTAUR_CAPTAIN },
+  { 20, 20,  413, FLAT, MONS_STONE_GIANT },
+  { 20, 20,  103, FLAT, MONS_FIRE_GIANT },
+  { 20, 20,  103, FLAT, MONS_FROST_GIANT },
   { 0,0,0,FLAT,MONS_0 }
 };
 
