@@ -2885,7 +2885,8 @@ static void tag_read_you_dungeon(reader &th)
     unmarshallUniqueAnnotations(th);
 
     PlaceInfo place_info = unmarshallPlaceInfo(th);
-    ASSERT(place_info.is_global());
+    ASSERT(place_info.branch == count);
+    place_info.branch = NUM_BRANCHES; // forces is_global
     you.set_place_info(place_info);
 
     vector<PlaceInfo> list = you.get_all_place_info();
