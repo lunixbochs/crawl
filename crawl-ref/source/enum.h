@@ -98,6 +98,9 @@ enum ability_type
 
     // Divine abilities
     // Zin
+#if TAG_MAJOR_VERSION > 34
+#error "evokable abilities need more breathing room!"
+#endif
     ABIL_ZIN_SUSTENANCE = 50,
     ABIL_ZIN_RECITE,
     ABIL_ZIN_VITALISATION,
@@ -1560,7 +1563,9 @@ enum duration_type
     DUR_FIRE_VULN,
     DUR_ELIXIR_HEALTH,
     DUR_ELIXIR_MAGIC,
+#if TAG_MAJOR_VERSION == 34
     DUR_ANTENNAE_EXTEND,
+#endif
     NUM_DURATIONS
 };
 

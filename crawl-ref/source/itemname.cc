@@ -2893,8 +2893,10 @@ bool is_emergency_item(const item_def &item)
         case WAND_HASTING:
             if (you_worship(GOD_CHEIBRIADOS))
                 return false;
-        case WAND_HEAL_WOUNDS:
         case WAND_TELEPORTATION:
+            if (you.species == SP_FORMICID)
+                return false;
+        case WAND_HEAL_WOUNDS:
             return true;
         default:
             return false;
@@ -2904,6 +2906,8 @@ bool is_emergency_item(const item_def &item)
         {
         case SCR_TELEPORTATION:
         case SCR_BLINKING:
+            if (you.species == SP_FORMICID)
+                return false;
         case SCR_FEAR:
         case SCR_FOG:
             return true;
@@ -2917,7 +2921,7 @@ bool is_emergency_item(const item_def &item)
         switch (item.sub_type)
         {
         case POT_SPEED:
-            if (you_worship(GOD_CHEIBRIADOS))
+            if (you_worship(GOD_CHEIBRIADOS) || you.species == SP_FORMICID)
                 return false;
         case POT_CURING:
         case POT_HEAL_WOUNDS:
@@ -2991,11 +2995,13 @@ bool is_bad_item(const item_def &item, bool temp)
 
         switch (item.sub_type)
         {
-        case POT_CONFUSION:
         case POT_SLOWING:
+        case POT_PARALYSIS:
+            if (you.species == SP_FORMICID)
+                return false;
+        case POT_CONFUSION:
         case POT_DEGENERATION:
         case POT_DECAY:
-        case POT_PARALYSIS:
             return true;
         case POT_STRONG_POISON:
             return player_res_poison(false, temp) < 3;
@@ -3272,6 +3278,9 @@ bool is_useless_item(const item_def &item, bool temp)
             return player_res_poison(false, temp) > 0;
         case POT_STRONG_POISON:
             return player_res_poison(false, temp) >= 3;
+        case POT_SLOWING:
+        case POT_PARALYSIS:
+            return you.species == SP_FORMICID;
 
         case POT_INVISIBILITY:
             return _invisibility_is_useless(temp);
