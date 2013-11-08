@@ -1142,15 +1142,7 @@ int player::wearing_ego(equipment_type slot, int special, bool calc_unid) const
     return ret;
 }
 
-bool player_equip_unrand_effect(int unrand_index)
-{
-    if (you.suppressed())
-        return false;
-    else
-        return player_equip_unrand(unrand_index);
-}
-
-// Return's true if the indicated unrandart is equipped
+// Returns true if the indicated unrandart is equipped
 // [ds] There's no equivalent of calc_unid or req_id because as of now, weapons
 // and armour type-id on wield/wear.
 bool player_equip_unrand(int unrand_index)
@@ -1251,19 +1243,15 @@ int player_teleport(bool calc_unid)
 
     int tp = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // rings (keep in sync with _equip_jewellery_effect)
-        tp += 8 * you.wearing(EQ_RINGS, RING_TELEPORTATION, calc_unid);
+    // rings (keep in sync with _equip_jewellery_effect)
+    tp += 8 * you.wearing(EQ_RINGS, RING_TELEPORTATION, calc_unid);
 
-        // randart weapons only
-        if (you.weapon()
-            && you.weapon()->base_type == OBJ_WEAPONS
-            && is_artefact(*you.weapon()))
-        {
-            tp += you.scan_artefacts(ARTP_CAUSE_TELEPORTATION, calc_unid);
-        }
+    // randart weapons only
+    if (you.weapon()
+        && you.weapon()->base_type == OBJ_WEAPONS
+        && is_artefact(*you.weapon()))
+    {
+        tp += you.scan_artefacts(ARTP_CAUSE_TELEPORTATION, calc_unid);
     }
 
     // mutations
@@ -1286,22 +1274,18 @@ static int _player_bonus_regen()
         rr += 100;
     }
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    // Rings.
+    rr += 40 * you.wearing(EQ_RINGS, RING_REGENERATION);
+
+    // Artefacts
+    rr += you.scan_artefacts(ARTP_REGENERATION);
+
+    // Troll leather (except for trolls).
+    if ((you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_LEATHER_ARMOUR)
+         || you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_HIDE))
+        && you.species != SP_TROLL)
     {
-        // Rings.
-        rr += 40 * you.wearing(EQ_RINGS, RING_REGENERATION);
-
-        // Artefacts
-        rr += you.scan_artefacts(ARTP_REGENERATION);
-
-        // Troll leather (except for trolls).
-        if ((you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_LEATHER_ARMOUR)
-             || you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_HIDE))
-            && you.species != SP_TROLL)
-        {
-            rr += 30;
-        }
+        rr += 30;
     }
 
     // Fast heal mutation.
@@ -1452,33 +1436,29 @@ int player_hunger_rate(bool temp)
     if (temp)
         hunger += you.burden_state;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (you.hp < you.hp_max
+        && player_mutation_level(MUT_SLOW_HEALING) < 3)
     {
-        if (you.hp < you.hp_max
-            && player_mutation_level(MUT_SLOW_HEALING) < 3)
+        // rings
+        hunger += 3 * you.wearing(EQ_RINGS, RING_REGENERATION);
+
+        // troll leather
+        if (you.species != SP_TROLL
+            && (you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_LEATHER_ARMOUR)
+                || you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_HIDE)))
         {
-            // rings
-            hunger += 3 * you.wearing(EQ_RINGS, RING_REGENERATION);
-
-            // troll leather
-            if (you.species != SP_TROLL
-                && (you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_LEATHER_ARMOUR)
-                    || you.wearing(EQ_BODY_ARMOUR, ARM_TROLL_HIDE)))
-            {
-                hunger += coinflip() ? 2 : 1;
-            }
+            hunger += coinflip() ? 2 : 1;
         }
-
-        hunger += 4 * you.wearing(EQ_RINGS, RING_HUNGER);
-
-        // randarts
-        hunger += you.scan_artefacts(ARTP_METABOLISM);
-
-        // sustenance affects things at the end, because it is multiplicative
-        for (int s = you.wearing(EQ_RINGS, RING_SUSTENANCE); s > 0; s--)
-            hunger = hunger * 3 / 5;
     }
+
+    hunger += 4 * you.wearing(EQ_RINGS, RING_HUNGER);
+
+    // randarts
+    hunger += you.scan_artefacts(ARTP_METABOLISM);
+
+    // sustenance affects things at the end, because it is multiplicative
+    for (int s = you.wearing(EQ_RINGS, RING_SUSTENANCE); s > 0; s--)
+        hunger = hunger * 3 / 5;
 
     // If Cheibriados has slowed your life processes, you will hunger less.
     if (you_worship(GOD_CHEIBRIADOS) && you.piety >= piety_breakpoint(0))
@@ -1537,42 +1517,38 @@ int player_res_fire(bool calc_unid, bool temp, bool items)
 
     int rf = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (items)
     {
-        if (items)
+        // rings of fire resistance/fire
+        rf += you.wearing(EQ_RINGS, RING_PROTECTION_FROM_FIRE, calc_unid);
+        rf += you.wearing(EQ_RINGS, RING_FIRE, calc_unid);
+
+        // rings of ice
+        rf -= you.wearing(EQ_RINGS, RING_ICE, calc_unid);
+
+        // Staves
+        rf += you.wearing(EQ_STAFF, STAFF_FIRE, calc_unid);
+
+        // body armour:
+        rf += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_ARMOUR);
+        rf += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
+        rf -= you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_ARMOUR);
+        rf += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_HIDE);
+        rf += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
+        rf -= you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_HIDE);
+
+        // ego armours
+        rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_FIRE_RESISTANCE);
+        rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
+
+        // randart weapons:
+        rf += you.scan_artefacts(ARTP_FIRE, calc_unid);
+
+        // dragonskin cloak: 0.5 to draconic resistances
+        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN)
+            && coinflip())
         {
-            // rings of fire resistance/fire
-            rf += you.wearing(EQ_RINGS, RING_PROTECTION_FROM_FIRE, calc_unid);
-            rf += you.wearing(EQ_RINGS, RING_FIRE, calc_unid);
-
-            // rings of ice
-            rf -= you.wearing(EQ_RINGS, RING_ICE, calc_unid);
-
-            // Staves
-            rf += you.wearing(EQ_STAFF, STAFF_FIRE, calc_unid);
-
-            // body armour:
-            rf += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_ARMOUR);
-            rf += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
-            rf -= you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_ARMOUR);
-            rf += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_HIDE);
-            rf += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
-            rf -= you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_HIDE);
-
-            // ego armours
-            rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_FIRE_RESISTANCE);
-            rf += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
-
-            // randart weapons:
-            rf += you.scan_artefacts(ARTP_FIRE, calc_unid);
-
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN)
-                && coinflip())
-            {
-                rf++;
-            }
+            rf++;
         }
     }
 
@@ -1648,15 +1624,11 @@ int player_res_steam(bool calc_unid, bool temp, bool items)
     if (you.species == SP_PALE_DRACONIAN)
         res += 2;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        if (items && you.wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_ARMOUR))
-            res += 2;
+    if (items && you.wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_ARMOUR))
+        res += 2;
 
-        if (items && you.wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_HIDE))
-            res += 2;
-    }
+    if (items && you.wearing(EQ_BODY_ARMOUR, ARM_STEAM_DRAGON_HIDE))
+        res += 2;
 
     res += (rf < 0) ? rf
                     : (rf + 1) / 2;
@@ -1720,40 +1692,36 @@ int player_res_cold(bool calc_unid, bool temp, bool items)
             rc--;
     }
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (items)
     {
-        if (items)
-        {
-            // rings of cold resistance/ice
-            rc += you.wearing(EQ_RINGS, RING_PROTECTION_FROM_COLD, calc_unid);
-            rc += you.wearing(EQ_RINGS, RING_ICE, calc_unid);
+        // rings of cold resistance/ice
+        rc += you.wearing(EQ_RINGS, RING_PROTECTION_FROM_COLD, calc_unid);
+        rc += you.wearing(EQ_RINGS, RING_ICE, calc_unid);
 
-            // rings of fire
-            rc -= you.wearing(EQ_RINGS, RING_FIRE, calc_unid);
+        // rings of fire
+        rc -= you.wearing(EQ_RINGS, RING_FIRE, calc_unid);
 
-            // Staves
-            rc += you.wearing(EQ_STAFF, STAFF_COLD, calc_unid);
+        // Staves
+        rc += you.wearing(EQ_STAFF, STAFF_COLD, calc_unid);
 
-            // body armour:
-            rc += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_ARMOUR);
-            rc += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
-            rc -= you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_ARMOUR);
-            rc += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_HIDE);
-            rc += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
-            rc -= you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_HIDE);
+        // body armour:
+        rc += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_ARMOUR);
+        rc += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
+        rc -= you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_ARMOUR);
+        rc += 2 * you.wearing(EQ_BODY_ARMOUR, ARM_ICE_DRAGON_HIDE);
+        rc += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
+        rc -= you.wearing(EQ_BODY_ARMOUR, ARM_FIRE_DRAGON_HIDE);
 
-            // ego armours
-            rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_COLD_RESISTANCE);
-            rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
+        // ego armours
+        rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_COLD_RESISTANCE);
+        rc += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_RESISTANCE);
 
-            // randart weapons:
-            rc += you.scan_artefacts(ARTP_COLD, calc_unid);
+        // randart weapons:
+        rc += you.scan_artefacts(ARTP_COLD, calc_unid);
 
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                rc++;
-        }
+        // dragonskin cloak: 0.5 to draconic resistances
+        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+            rc++;
     }
 
     // species:
@@ -1781,7 +1749,7 @@ bool player::res_corr(bool calc_unid, bool items) const
     if (form == TRAN_JELLY || form == TRAN_WISP)
         return 1;
 
-    if (items && !suppressed())
+    if (items)
     {
         // dragonskin cloak: 0.5 to draconic resistances
         if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN)
@@ -1830,25 +1798,21 @@ int player_res_electricity(bool calc_unid, bool temp, bool items)
 {
     int re = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (items)
     {
-        if (items)
-        {
-            // staff
-            re += you.wearing(EQ_STAFF, STAFF_AIR, calc_unid);
+        // staff
+        re += you.wearing(EQ_STAFF, STAFF_AIR, calc_unid);
 
-            // body armour:
-            re += you.wearing(EQ_BODY_ARMOUR, ARM_STORM_DRAGON_ARMOUR);
-            re += you.wearing(EQ_BODY_ARMOUR, ARM_STORM_DRAGON_HIDE);
+        // body armour:
+        re += you.wearing(EQ_BODY_ARMOUR, ARM_STORM_DRAGON_ARMOUR);
+        re += you.wearing(EQ_BODY_ARMOUR, ARM_STORM_DRAGON_HIDE);
 
-            // randart weapons:
-            re += you.scan_artefacts(ARTP_ELECTRICITY, calc_unid);
+        // randart weapons:
+        re += you.scan_artefacts(ARTP_ELECTRICITY, calc_unid);
 
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                re++;
-        }
+        // dragonskin cloak: 0.5 to draconic resistances
+        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+            re++;
     }
 
     // mutations:
@@ -1914,33 +1878,29 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 
     int rp = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (items)
     {
-        if (items)
-        {
-            // rings of poison resistance
-            rp += you.wearing(EQ_RINGS, RING_POISON_RESISTANCE, calc_unid);
+        // rings of poison resistance
+        rp += you.wearing(EQ_RINGS, RING_POISON_RESISTANCE, calc_unid);
 
-            // Staves
-            rp += you.wearing(EQ_STAFF, STAFF_POISON, calc_unid);
+        // Staves
+        rp += you.wearing(EQ_STAFF, STAFF_POISON, calc_unid);
 
-            // ego armour:
-            rp += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_POISON_RESISTANCE);
+        // ego armour:
+        rp += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_POISON_RESISTANCE);
 
-            // body armour:
-            rp += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
-            rp += you.wearing(EQ_BODY_ARMOUR, ARM_SWAMP_DRAGON_ARMOUR);
-            rp += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
-            rp += you.wearing(EQ_BODY_ARMOUR, ARM_SWAMP_DRAGON_HIDE);
+        // body armour:
+        rp += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_ARMOUR);
+        rp += you.wearing(EQ_BODY_ARMOUR, ARM_SWAMP_DRAGON_ARMOUR);
+        rp += you.wearing(EQ_BODY_ARMOUR, ARM_GOLD_DRAGON_HIDE);
+        rp += you.wearing(EQ_BODY_ARMOUR, ARM_SWAMP_DRAGON_HIDE);
 
-            // randart weapons:
-            rp += you.scan_artefacts(ARTP_POISON, calc_unid);
+        // randart weapons:
+        rp += you.scan_artefacts(ARTP_POISON, calc_unid);
 
-            // dragonskin cloak: 0.5 to draconic resistances
-            if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                rp++;
-        }
+        // dragonskin cloak: 0.5 to draconic resistances
+        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+            rp++;
     }
 
     // mutations:
@@ -2019,18 +1979,14 @@ int player_res_sticky_flame(bool calc_unid, bool temp, bool items)
     if (you.species == SP_MOTTLED_DRACONIAN)
         rsf++;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        if (items && you.wearing(EQ_BODY_ARMOUR, ARM_MOTTLED_DRAGON_ARMOUR))
-            rsf++;
-        if (items && you.wearing(EQ_BODY_ARMOUR, ARM_MOTTLED_DRAGON_HIDE))
-            rsf++;
+    if (items && you.wearing(EQ_BODY_ARMOUR, ARM_MOTTLED_DRAGON_ARMOUR))
+        rsf++;
+    if (items && you.wearing(EQ_BODY_ARMOUR, ARM_MOTTLED_DRAGON_HIDE))
+        rsf++;
 
-        // dragonskin cloak: 0.5 to draconic resistances
-        if (items && calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-            rsf++;
-    }
+    // dragonskin cloak: 0.5 to draconic resistances
+    if (items && calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+        rsf++;
 
     if (you.form == TRAN_WISP)
         rsf++;
@@ -2045,12 +2001,8 @@ int player_spec_death()
 {
     int sd = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        sd += you.wearing(EQ_STAFF, STAFF_DEATH);
-    }
+    // Staves
+    sd += you.wearing(EQ_STAFF, STAFF_DEATH);
 
     // species:
     if (you.species == SP_MUMMY)
@@ -2072,15 +2024,11 @@ int player_spec_fire()
 {
     int sf = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // staves:
-        sf += you.wearing(EQ_STAFF, STAFF_FIRE);
+    // staves:
+    sf += you.wearing(EQ_STAFF, STAFF_FIRE);
 
-        // rings of fire:
-        sf += you.wearing(EQ_RINGS, RING_FIRE);
-    }
+    // rings of fire:
+    sf += you.wearing(EQ_RINGS, RING_FIRE);
 
     if (you.species == SP_LAVA_ORC && temperature_effect(LORC_FIRE_BOOST))
         sf++;
@@ -2095,15 +2043,11 @@ int player_spec_cold()
 {
     int sc = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // staves:
-        sc += you.wearing(EQ_STAFF, STAFF_COLD);
+    // staves:
+    sc += you.wearing(EQ_STAFF, STAFF_COLD);
 
-        // rings of ice:
-        sc += you.wearing(EQ_RINGS, RING_ICE);
-    }
+    // rings of ice:
+    sc += you.wearing(EQ_RINGS, RING_ICE);
 
     if (you.species == SP_LAVA_ORC
         && (temperature_effect(LORC_LAVA_BOOST)
@@ -2119,12 +2063,8 @@ int player_spec_earth()
 {
     int se = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        se += you.wearing(EQ_STAFF, STAFF_EARTH);
-    }
+    // Staves
+    se += you.wearing(EQ_STAFF, STAFF_EARTH);
 
     return se;
 }
@@ -2133,12 +2073,8 @@ int player_spec_air()
 {
     int sa = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        sa += you.wearing(EQ_STAFF, STAFF_AIR);
-    }
+    // Staves
+    sa += you.wearing(EQ_STAFF, STAFF_AIR);
 
     return sa;
 }
@@ -2147,12 +2083,8 @@ int player_spec_conj()
 {
     int sc = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        sc += you.wearing(EQ_STAFF, STAFF_CONJURATION);
-    }
+    // Staves
+    sc += you.wearing(EQ_STAFF, STAFF_CONJURATION);
 
     return sc;
 }
@@ -2161,13 +2093,9 @@ int player_spec_hex()
 {
     int sh = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Unrands
-        if (player_equip_unrand(UNRAND_BOTONO))
-            sh++;
-    }
+    // Unrands
+    if (player_equip_unrand(UNRAND_BOTONO))
+        sh++;
 
     return sh;
 }
@@ -2182,12 +2110,8 @@ int player_spec_summ()
 {
     int ss = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        ss += you.wearing(EQ_STAFF, STAFF_SUMMONING);
-    }
+    // Staves
+    ss += you.wearing(EQ_STAFF, STAFF_SUMMONING);
 
     return ss;
 }
@@ -2196,15 +2120,11 @@ int player_spec_poison()
 {
     int sp = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        sp += you.wearing(EQ_STAFF, STAFF_POISON);
+    // Staves
+    sp += you.wearing(EQ_STAFF, STAFF_POISON);
 
-        if (player_equip_unrand(UNRAND_OLGREB))
-            sp++;
-    }
+    if (player_equip_unrand(UNRAND_OLGREB))
+        sp++;
 
     return sp;
 }
@@ -2213,12 +2133,8 @@ int player_energy()
 {
     int pe = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Staves
-        pe += you.wearing(EQ_STAFF, STAFF_ENERGY);
-    }
+    // Staves
+    pe += you.wearing(EQ_STAFF, STAFF_ENERGY);
 
     return pe;
 }
@@ -2280,34 +2196,30 @@ int player_prot_life(bool calc_unid, bool temp, bool items)
             pl += 3;
     }
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (items)
     {
-        if (items)
-        {
-            if (you.wearing(EQ_AMULET, AMU_WARDING, calc_unid))
-                pl++;
+        if (you.wearing(EQ_AMULET, AMU_WARDING, calc_unid))
+            pl++;
 
-            // rings
-            pl += you.wearing(EQ_RINGS, RING_LIFE_PROTECTION, calc_unid);
+        // rings
+        pl += you.wearing(EQ_RINGS, RING_LIFE_PROTECTION, calc_unid);
 
-            // armour (checks body armour only)
-            pl += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_POSITIVE_ENERGY);
+        // armour (checks body armour only)
+        pl += you.wearing_ego(EQ_ALL_ARMOUR, SPARM_POSITIVE_ENERGY);
 
-            // pearl dragon counts
-            pl += you.wearing(EQ_BODY_ARMOUR, ARM_PEARL_DRAGON_ARMOUR);
-            pl += you.wearing(EQ_BODY_ARMOUR, ARM_PEARL_DRAGON_HIDE);
+        // pearl dragon counts
+        pl += you.wearing(EQ_BODY_ARMOUR, ARM_PEARL_DRAGON_ARMOUR);
+        pl += you.wearing(EQ_BODY_ARMOUR, ARM_PEARL_DRAGON_HIDE);
 
-            // randart wpns
-            pl += you.scan_artefacts(ARTP_NEGATIVE_ENERGY, calc_unid);
+        // randart wpns
+        pl += you.scan_artefacts(ARTP_NEGATIVE_ENERGY, calc_unid);
 
-            // dragonskin cloak: 0.5 to draconic resistances
-            // this one is dubious (no pearl draconians)
-            if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
-                pl++;
+        // dragonskin cloak: 0.5 to draconic resistances
+        // this one is dubious (no pearl draconians)
+        if (calc_unid && player_equip_unrand(UNRAND_DRAGONSKIN) && coinflip())
+            pl++;
 
-            pl += you.wearing(EQ_STAFF, STAFF_DEATH, calc_unid);
-        }
+        pl += you.wearing(EQ_STAFF, STAFF_DEATH, calc_unid);
     }
 
     // undead/demonic power
@@ -2351,8 +2263,8 @@ int player_movement_speed(bool ignore_burden)
     // armour
     if (you.run())
         mv -= 1;
-    if (!you.suppressed())
-        mv += 2 * you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
+
+    mv += 2 * you.wearing_ego(EQ_ALL_ARMOUR, SPARM_PONDEROUSNESS);
 
     // Cheibriados
     if (you_worship(GOD_CHEIBRIADOS))
@@ -2604,16 +2516,12 @@ static int _player_evasion_bonuses(ev_ignore_type evit)
     if (you.duration[DUR_AGILITY])
         evbonus += 5;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        evbonus += you.wearing(EQ_RINGS_PLUS, RING_EVASION);
+    evbonus += you.wearing(EQ_RINGS_PLUS, RING_EVASION);
 
-        if (you.wearing_ego(EQ_WEAPON, SPWPN_EVASION))
-            evbonus += 5;
+    if (you.wearing_ego(EQ_WEAPON, SPWPN_EVASION))
+        evbonus += 5;
 
-        evbonus += you.scan_artefacts(ARTP_EVASION);
-    }
+    evbonus += you.scan_artefacts(ARTP_EVASION);
 
     // mutations
     if (_mut_level(MUT_ICY_BLUE_SCALES, MUTACT_FULL) > 1)
@@ -2775,15 +2683,11 @@ int player_mag_abil(bool is_weighted)
     // Brilliance Potion
     ma += 6 * (you.duration[DUR_BRILLIANCE] ? 1 : 0);
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // Rings
-        ma += 3 * you.wearing(EQ_RINGS, RING_WIZARDRY);
+    // Rings
+    ma += 3 * you.wearing(EQ_RINGS, RING_WIZARDRY);
 
-        // Staves
-        ma += 4 * you.wearing(EQ_STAFF, STAFF_WIZARDRY);
-    }
+    // Staves
+    ma += 4 * you.wearing(EQ_STAFF, STAFF_WIZARDRY);
 
     return ((is_weighted) ? ((ma * you.intel()) / 10) : ma);
 }
@@ -2858,9 +2762,7 @@ int player_sust_abil(bool calc_unid)
 {
     int sa = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-        sa += you.wearing(EQ_RINGS, RING_SUSTAIN_ABILITIES, calc_unid);
+    sa += you.wearing(EQ_RINGS, RING_SUSTAIN_ABILITIES, calc_unid);
 
     if (sa > 2)
         sa = 2;
@@ -3985,10 +3887,8 @@ int check_stealth(void)
         stealth -= penalty;
     }
 
-    if (!you.suppressed())
-        stealth += you.scan_artefacts(ARTP_STEALTH);
+    stealth += you.scan_artefacts(ARTP_STEALTH);
 
-    // Not exactly magical, so not suppressed.
     if (cloak && get_equip_race(*cloak) == ISFLAG_ELVEN)
         stealth += 20;
 
@@ -4013,10 +3913,9 @@ int check_stealth(void)
     // No stealth bonus from boots if you're airborne or in water
     else if (boots)
     {
-        if (!you.suppressed() && get_armour_ego_type(*boots) == SPARM_STEALTH)
+        if (get_armour_ego_type(*boots) == SPARM_STEALTH)
             stealth += 50;
 
-        // Not exactly magical, so not suppressed.
         if (get_equip_race(*boots) == ISFLAG_ELVEN)
             stealth += 20;
     }
@@ -4390,7 +4289,6 @@ void display_char_status()
         STATUS_UMBRA,
         STATUS_CONSTRICTED,
         STATUS_AUGMENTED,
-        STATUS_SUPPRESSED,
         STATUS_SILENCE,
         DUR_SENTINEL_MARK,
         STATUS_RECALL,
@@ -4546,23 +4444,19 @@ int slaying_bonus(weapon_property_type which_affected, bool ranged)
 {
     int ret = 0;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
+    if (which_affected == PWPN_HIT)
     {
-        if (which_affected == PWPN_HIT)
-        {
-            ret += you.wearing(EQ_RINGS_PLUS, RING_SLAYING);
-            ret += you.scan_artefacts(ARTP_ACCURACY);
-            if (you.wearing_ego(EQ_GLOVES, SPARM_ARCHERY))
-                ret += ranged ? 5 : -1;
-        }
-        else if (which_affected == PWPN_DAMAGE)
-        {
-            ret += you.wearing(EQ_RINGS_PLUS2, RING_SLAYING);
-            ret += you.scan_artefacts(ARTP_DAMAGE);
-            if (you.wearing_ego(EQ_GLOVES, SPARM_ARCHERY))
-                ret += ranged ? 3 : -1;
-        }
+        ret += you.wearing(EQ_RINGS_PLUS, RING_SLAYING);
+        ret += you.scan_artefacts(ARTP_ACCURACY);
+        if (you.wearing_ego(EQ_GLOVES, SPARM_ARCHERY))
+            ret += ranged ? 5 : -1;
+    }
+    else if (which_affected == PWPN_DAMAGE)
+    {
+        ret += you.wearing(EQ_RINGS_PLUS2, RING_SLAYING);
+        ret += you.scan_artefacts(ARTP_DAMAGE);
+        if (you.wearing_ego(EQ_GLOVES, SPARM_ARCHERY))
+            ret += ranged ? 3 : -1;
     }
 
     ret += min(you.duration[DUR_SLAYING] / (13 * BASELINE_DELAY), 6);
@@ -4978,12 +4872,8 @@ int get_real_hp(bool trans, bool rotted)
     if (!rotted)
         hitp += you.hp_max_temp;
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        if (trans)
-            hitp += you.scan_artefacts(ARTP_HP);
-    }
+    if (trans)
+        hitp += you.scan_artefacts(ARTP_HP);
 
     // Being berserk makes you resistant to damage. I don't know why.
     if (trans && you.berserk())
@@ -5020,9 +4910,6 @@ int get_real_mp(bool include_items)
                + (you.attribute[ATTR_DIVINE_VIGOUR] * 5)
                - (player_mutation_level(MUT_LOW_MAGIC) * 10);
     enp /= 100;
-
-    if (you.suppressed())
-        include_items = false;
 
     // Now applied after scaling so that power items are more useful -- bwr
     if (include_items)
@@ -6390,7 +6277,7 @@ int player::missile_deflection() const
         return 2;
     if (duration[DUR_REPEL_MISSILES]
         || player_mutation_level(MUT_DISTORTION_FIELD) == 3
-        || (!suppressed() && scan_artefacts(ARTP_RMSL, true)))
+        || scan_artefacts(ARTP_RMSL, true))
     {
         return 1;
     }
@@ -6562,19 +6449,15 @@ int player::armour_class() const
             AC -= ac_value / 2;
     }
 
-    // All effects negated by magical suppression should go in here.
-    if (!suppressed())
-    {
-        AC += wearing(EQ_RINGS_PLUS, RING_PROTECTION) * 100;
+    AC += wearing(EQ_RINGS_PLUS, RING_PROTECTION) * 100;
 
-        if (wearing_ego(EQ_WEAPON, SPWPN_PROTECTION))
-            AC += 500;
+    if (wearing_ego(EQ_WEAPON, SPWPN_PROTECTION))
+        AC += 500;
 
-        if (wearing_ego(EQ_SHIELD, SPARM_PROTECTION))
-            AC += 300;
+    if (wearing_ego(EQ_SHIELD, SPARM_PROTECTION))
+        AC += 300;
 
-        AC += scan_artefacts(ARTP_AC) * 100;
-    }
+    AC += scan_artefacts(ARTP_AC) * 100;
 
     if (duration[DUR_ICY_ARMOUR])
         AC += 400 + skill(SK_ICE_MAGIC, 100) / 3;    // max 13
@@ -7034,19 +6917,15 @@ int player_res_magic(bool calc_unid, bool temp)
         break;
     }
 
-    // All effects negated by magical suppression should go in here.
-    if (!you.suppressed())
-    {
-        // randarts
-        rm += you.scan_artefacts(ARTP_MAGIC, calc_unid);
+    // randarts
+    rm += you.scan_artefacts(ARTP_MAGIC, calc_unid);
 
-        // armour
-        rm += 30 * you.wearing_ego(EQ_ALL_ARMOUR, SPARM_MAGIC_RESISTANCE,
-                                         calc_unid);
+    // armour
+    rm += 30 * you.wearing_ego(EQ_ALL_ARMOUR, SPARM_MAGIC_RESISTANCE,
+                                     calc_unid);
 
-        // rings of magic resistance
-        rm += 40 * you.wearing(EQ_RINGS, RING_PROTECTION_FROM_MAGIC, calc_unid);
-    }
+    // rings of magic resistance
+    rm += 40 * you.wearing(EQ_RINGS, RING_PROTECTION_FROM_MAGIC, calc_unid);
 
     // Mutations
     rm += 30 * player_mutation_level(MUT_MAGIC_RESISTANCE);
@@ -7551,8 +7430,7 @@ bool player::can_see_invisible(bool calc_unid, bool items) const
     if (crawl_state.game_is_arena())
         return true;
 
-    // All effects negated by magical suppression should go in here.
-    if (items && !suppressed())
+    if (items)
     {
         if (wearing(EQ_RINGS, RING_SEE_INVISIBLE, calc_unid)
             // armour: (checks head armour only)
