@@ -37,6 +37,8 @@ ENDMAP
 # The idea here is to keep the stone giant on the island until the player is
 # ready to deal with it, and therefore proceed to the Depths.
 NAME: grunt_enter_depths_giant_problem
+# Don't generate lava monsters:
+TAGS: no_monster_gen
 ORIENT: float
 PLACE: D:$
 SUBST: L = l.
