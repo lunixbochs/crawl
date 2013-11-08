@@ -2436,6 +2436,12 @@ void swap_with_monster(monster* mon_to_swap)
     ASSERT(mon.alive());
     const coord_def newpos = mon.pos();
 
+    if (stasis_blocks_effect(true, true, "%s emits a piercing whistle.",
+                             20, "%s makes your neck tingle."))
+    {
+        return;
+    }
+
     // Be nice: no swapping into uninhabitable environments.
     if (!you.is_habitable(newpos) || !mon.is_habitable(you.pos()))
     {
@@ -2465,6 +2471,7 @@ void swap_with_monster(monster* mon_to_swap)
         {
             you.attribute[ATTR_HELD] = 0;
             you.redraw_quiver = true;
+            you.redraw_evasion = true;
         }
     }
 
@@ -2481,6 +2488,7 @@ void swap_with_monster(monster* mon_to_swap)
             mprf("The %s rips apart!", (net == NON_ITEM) ? "web" : "net");
             you.attribute[ATTR_HELD] = 0;
             you.redraw_quiver = true;
+            you.redraw_evasion = true;
         }
         else
         {
