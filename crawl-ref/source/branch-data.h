@@ -44,16 +44,6 @@ const Branch branches[NUM_BRANCHES] =
       true, WHITE, ETC_ELVEN_BRICK,
       'E', true, 0 },
 
-#if TAG_MAJOR_VERSION == 34
-    { BRANCH_DWARF, BRANCH_ELF, -1, -1, 0, 17,
-      0, 0,
-      DNGN_ENTER_DWARVEN_HALL, DNGN_RETURN_FROM_DWARVEN_HALL,
-      "Dwarven Hall", "the Dwarven Hall", "Dwarf",
-      NULL,
-      true, BROWN, BROWN,
-      'K', false, 0 },
-#endif
-
     { BRANCH_LAIR, BRANCH_DUNGEON, 8, 13, 8, 10,
       0, 0,
       DNGN_ENTER_LAIR, DNGN_RETURN_FROM_LAIR,
@@ -101,6 +91,14 @@ const Branch branches[NUM_BRANCHES] =
       NULL,
       true, GREEN, BROWN,
       'M', true, -5 },
+
+    { BRANCH_DEPTHS, BRANCH_DUNGEON, 16, 16, 6, 16,
+      0, 0,
+      DNGN_ENTER_DEPTHS, DNGN_RETURN_FROM_DEPTHS,
+      "Depths", "the Depths", "Depths",
+      NULL,
+      true, LIGHTGREY, BROWN,
+      'U', false, 0 },
 
     { BRANCH_VAULTS, BRANCH_DEPTHS, 2, 5, 5, 19,
       0, 0,
@@ -286,21 +284,4 @@ const Branch branches[NUM_BRANCHES] =
       false, LIGHTGREY, BROWN, // set per-map
       '8', false, 0 },
 
-#if TAG_MAJOR_VERSION == 34
-    { BRANCH_UNUSED, NUM_BRANCHES, -1, -1, 0, 0,
-      BFLAG_NO_XLEV_TRAVEL | BFLAG_NO_ITEMS, 0,
-      DNGN_ENTER_PORTAL_VAULT, DNGN_EXIT_PORTAL_VAULT,
-      "Void", "a void", "Void",
-      NULL,
-      false, LIGHTGREY, BROWN,
-      '9', false, 0 },
-#endif
-
-    { BRANCH_DEPTHS, BRANCH_DUNGEON, 16, 16, 6, 16,
-      0, 0,
-      DNGN_ENTER_DEPTHS, DNGN_RETURN_FROM_DEPTHS,
-      "Depths", "the Depths", "Depths",
-      NULL,
-      true, LIGHTGREY, BROWN,
-      'U', false, 0 },
 };

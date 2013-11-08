@@ -2765,16 +2765,6 @@ static string _status_mut_abilities(int sw)
             case MUT_CLUMSY:
                 Dex_change -= level * 2;
                 break;
-#if TAG_MAJOR_VERSION == 34
-            case MUT_STRONG_STIFF:
-                Str_change += level;
-                Dex_change -= level;
-                break;
-            case MUT_FLEXIBLE_WEAK:
-                Str_change -= level;
-                Dex_change += level;
-                break;
-#endif
             case MUT_FRAIL:
                 snprintf(info, INFO_SIZE, "-%d%% hp", level*10);
                 current = info;

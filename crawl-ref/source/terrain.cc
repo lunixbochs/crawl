@@ -151,9 +151,6 @@ bool feat_is_travelable_stair(dungeon_feature_type feat)
     case DNGN_ENTER_GEHENNA:
     case DNGN_ENTER_COCYTUS:
     case DNGN_ENTER_TARTARUS:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_ENTER_DWARVEN_HALL:
-#endif
     case DNGN_ENTER_ORCISH_MINES:
     case DNGN_ENTER_LAIR:
     case DNGN_ENTER_SLIME_PITS:
@@ -170,9 +167,6 @@ bool feat_is_travelable_stair(dungeon_feature_type feat)
     case DNGN_ENTER_SPIDER_NEST:
     case DNGN_ENTER_FOREST:
     case DNGN_ENTER_DEPTHS:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_RETURN_FROM_DWARVEN_HALL:
-#endif
     case DNGN_RETURN_FROM_ORCISH_MINES:
     case DNGN_RETURN_FROM_LAIR:
     case DNGN_RETURN_FROM_SLIME_PITS:
@@ -248,9 +242,6 @@ command_type feat_stair_direction(dungeon_feature_type feat)
     case DNGN_STONE_STAIRS_UP_III:
     case DNGN_ESCAPE_HATCH_UP:
     case DNGN_EXIT_DUNGEON:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_RETURN_FROM_DWARVEN_HALL:
-#endif
     case DNGN_RETURN_FROM_ORCISH_MINES:
     case DNGN_RETURN_FROM_LAIR:
     case DNGN_RETURN_FROM_SLIME_PITS:
@@ -290,9 +281,6 @@ command_type feat_stair_direction(dungeon_feature_type feat)
     case DNGN_ENTER_PANDEMONIUM:
     case DNGN_EXIT_PANDEMONIUM:
     case DNGN_TRANSIT_PANDEMONIUM:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_ENTER_DWARVEN_HALL:
-#endif
     case DNGN_ENTER_ORCISH_MINES:
     case DNGN_ENTER_LAIR:
     case DNGN_ENTER_SLIME_PITS:
@@ -1601,36 +1589,28 @@ static const char *dngn_feature_names[] =
 
 "enter_dis", "enter_gehenna", "enter_cocytus",
 "enter_tartarus", "enter_abyss", "exit_abyss",
-#if TAG_MAJOR_VERSION > 34
 "abyssal_stair",
-#endif
 "stone_arch", "enter_pandemonium", "exit_pandemonium",
 "transit_pandemonium", "exit_dungeon", "exit_through_abyss",
 "exit_hell", "enter_hell", "enter_labyrinth",
 "teleporter", "enter_portal_vault", "exit_portal_vault",
 "expired_portal",
 
-#if TAG_MAJOR_VERSION == 34
-"enter_dwarven_hall",
-#endif
 "enter_orcish_mines", "enter_lair",
-"enter_slime_pits", "enter_vaults", "enter_crypt",
-"enter_hall_of_blades", "enter_zot", "enter_temple",
-"enter_snake_pit", "enter_elven_halls", "enter_tomb",
-"enter_swamp", "enter_shoals", "enter_spider_nest",
-"enter_forest", "enter_depths",
+"enter_slime_pits", "enter_depths", "enter_vaults",
+"enter_crypt", "enter_hall_of_blades", "enter_zot",
+"enter_temple", "enter_snake_pit", "enter_elven_halls",
+"enter_tomb", "enter_swamp", "enter_shoals",
+"enter_spider_nest", "enter_forest",
 
-#if TAG_MAJOR_VERSION == 34
-"return_from_dwarven_hall",
-#endif
 "return_from_orcish_mines",
 "return_from_lair", "return_from_slime_pits",
-"return_from_vaults", "return_from_crypt",
-"return_from_hall_of_blades", "return_from_zot",
+"return_from_depths", "return_from_vaults",
+"return_from_crypt", "return_from_hall_of_blades", "return_from_zot",
 "return_from_temple", "return_from_snake_pit",
 "return_from_elven_halls", "return_from_tomb",
 "return_from_swamp", "return_from_shoals", "return_from_spider_nest",
-"return_from_forest", "return_from_depths",
+"return_from_forest",
 
 "altar_zin", "altar_the_shining_one", "altar_kikubaaqudgha",
 "altar_yredelemnul", "altar_xom", "altar_vehumet",
@@ -1640,18 +1620,10 @@ static const char *dngn_feature_names[] =
 "altar_ashenzari", "",
 
 "fountain_blue", "fountain_sparkling", "fountain_blood",
-#if TAG_MAJOR_VERSION == 34
-"dry_fountain_blue", "dry_fountain_sparkling", "dry_fountain_blood",
-#endif
 "dry_fountain",
 
 "explore_horizon",
 "unknown_altar", "unknown_portal",
-
-#if TAG_MAJOR_VERSION == 34
-"abyssal_stair",
-"badly_sealed_door",
-#endif
 
 "sealed_stair_up",
 "sealed_stair_down",

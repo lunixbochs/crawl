@@ -1963,21 +1963,12 @@ static const char *enchant_names[] =
     "charm", "sticky_flame", "glowing_shapeshifter", "shapeshifter", "tp",
     "sleep_wary", "submerged", "short_lived", "paralysis", "sick",
     "sleepy", "held", "battle_frenzy",
-#if TAG_MAJOR_VERSION == 34
-    "temp_pacif",
-#endif
     "petrifying",
     "petrified", "lowered_mr", "soul_ripe", "slowly_dying", "eat_items",
     "aquatic_land", "spore_production",
-#if TAG_MAJOR_VERSION == 34
-    "slouch",
-#endif
     "swift", "tide",
     "insane", "silenced", "awaken_forest", "exploding", "bleeding",
     "tethered", "severed", "antimagic",
-#if TAG_MAJOR_VERSION == 34
-    "fading_away",
-#endif
     "preparing_resurrect", "regen",
     "magic_res", "mirror_dam", "stoneskin", "fear inspiring", "temporarily pacified",
     "withdrawn", "attached", "guardian_timer", "flight",

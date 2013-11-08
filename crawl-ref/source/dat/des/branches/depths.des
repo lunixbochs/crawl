@@ -14,11 +14,9 @@
 ##########################################################################
 
 NAME: grunt_enter_depths_snipers
-TAGS: depths_entry no_pool_fixup
+TAGS: no_pool_fixup
 ORIENT: float
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 KMONS: O = vault guard
 KFEAT: O = enter_depths
 MONS: centaur warrior, yaktaur
@@ -40,10 +38,7 @@ ENDMAP
 # ready to deal with it, and therefore proceed to the Depths.
 NAME: grunt_enter_depths_giant_problem
 ORIENT: float
-TAGS: depths_entry
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 SUBST: L = l.
 KMONS: O = patrolling stone giant
 KFEAT: O = enter_depths
@@ -65,10 +60,7 @@ ENDMAP
 
 NAME: grunt_enter_depths_hoard
 ORIENT: float
-TAGS: depths_entry
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 KFEAT: O = enter_depths
 MONS: dragon / ice dragon
 MAP
@@ -83,10 +75,7 @@ ENDMAP
 
 NAME: grunt_enter_depths_magical_seal
 ORIENT: float
-TAGS: depths_entry
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 KMONS: O = ogre mage band / necromancer band
 KFEAT: O = enter_depths
 MONS: wizard / deep elf mage / orc sorcerer / kobold demonologist / \
@@ -107,10 +96,7 @@ ENDMAP
 
 NAME: gammafunk_enter_depths_forms
 ORIENT: float
-TAGS: depths_entry
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 KFEAT: O = enter_depths
 MONS: boggart band w:20 / giant orange brain, shapeshifter w:5 / rakshasa
 MAP
@@ -129,10 +115,7 @@ ENDMAP
 
 NAME: gammafunk_enter_depths_critters
 ORIENT: float
-TAGS: depths_entry
-: if dgn.br_exists("Depths") then
 PLACE: D:$
-: end
 KFEAT: O = enter_depths
 MONS: giant amoeba / brain worm / spiny worm w:5, slime creature band
 NSUBST: . = 2:1 / *:.
@@ -151,10 +134,8 @@ ENDMAP
 
 NAME: gammafunk_enter_depths_grave
 ORIENT: float
-TAGS: depths_entry patrolling
-: if dgn.br_exists("Depths") then
+TAGS: patrolling
 PLACE: D:$
-: end
 NSUBST: . = 1:2 / 4:1 / *:.
 SUBST: . = .....--__tG
 KMONS: t = w:2 col:darkgrey plant name:withered name_adjective \
@@ -187,10 +168,8 @@ ENDMAP
 
 NAME: gammafunk_enter_depths_ironcross
 ORIENT: float
-TAGS: depths_entry patrolling
-: if dgn.br_exists("Depths") then
+TAGS: patrolling
 PLACE: D:$
-: end
 KFEAT: O = enter_depths
 MONS: vault guard, ironbrand convoker, vault sentinel
 SHUFFLE: 123

@@ -522,16 +522,6 @@ MAGIC:    60
 AC:       5
 BOOL:     elec
 
-# TAG_MAJOR_VERSION == 34
-NAME:    crossbow "Sniper"
-OBJ:     OBJ_WEAPONS/WPN_CROSSBOW
-PLUS:    +10/+0
-COLOUR:  ETC_DARK
-TILE:    urand_sniper
-TILE_EQ: sniper
-BRAND:   SPWPN_VENOM
-BOOL:    seeinv, nogen
-
 NAME:    longbow "Piercer"
 OBJ:     OBJ_WEAPONS/WPN_LONGBOW
 PLUS:    +2/+10
@@ -540,17 +530,6 @@ TILE:    urand_piercer
 TILE_EQ: great_bow
 BRAND:   SPWPN_PENETRATION
 EV:      -2
-
-# TAG_MAJOR_VERSION == 34
-ENUM:    BLOWGUN_ASSASSIN
-NAME:    blowgun of the Assassin
-OBJ:     OBJ_WEAPONS/WPN_BLOWGUN
-PLUS:    +6/+6
-COLOUR:  WHITE
-TILE:    urand_blowgun
-TILE_EQ: blowgun
-STEALTH: 60
-BOOL:    inv, tilerim, nogen
 
 NAME:    lance "Wyrmbane"
 OBJ:     OBJ_WEAPONS/WPN_SPEAR
@@ -594,38 +573,6 @@ COLOUR:   LIGHTGREY
 TILE:     urand_undeadhunter
 TILE_EQ:  undeadhunter
 BOOL:     life
-
-# TAG_MAJOR_VERSION == 34
-NAME:    whip "Snakebite"
-OBJ:     OBJ_WEAPONS/WPN_WHIP
-PLUS:    +5/+10
-COLOUR:  DARKGREY
-TILE:    urand_snakebite
-TILE_EQ: snakebite
-BRAND:   SPWPN_VENOM
-BOOL:    poison, tilerim, nogen
-
-# TAG_MAJOR_VERSION == 34
-NAME:     knife of Accuracy
-OBJ:      OBJ_WEAPONS/WPN_DAGGER
-TYPE:     knife
-PLUS:     +27/-1
-COLOUR:   LIGHTCYAN
-TILE:     urand_knife_of_accuracy
-TILE_EQ:  knife_of_accuracy
-BOOL:     tilerim, nogen
-
-# TAG_MAJOR_VERSION == 34
-# A play on the spell of the same name.  Colour taken from crystal walls.
-ENUM:     CRYSTAL_SPEAR
-NAME:     Lehudib's crystal spear
-OBJ:      OBJ_WEAPONS/WPN_SPEAR
-PLUS:     +6/+6
-COLOUR:   GREEN
-TILE:     urand_crystal_spear
-TILE_EQ:  crystal_spear
-INT:      3
-BOOL:     nogen
 
 NAME:     captain's cutlass
 OBJ:      OBJ_WEAPONS/WPN_SABRE

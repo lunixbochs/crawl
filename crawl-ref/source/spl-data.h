@@ -923,21 +923,6 @@ struct spell_desc
      false
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_FULSOME_DISTILLATION, "Fulsome Distillation",
-     SPTYP_TRANSMUTATION | SPTYP_NECROMANCY,
-     SPFLAG_CORPSE_VIOLATING,
-     1,
-     0,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     true
-},
-#endif
-
 {
     SPELL_POISON_ARROW, "Poison Arrow",
      SPTYP_CONJURATION | SPTYP_POISON,
@@ -990,21 +975,6 @@ struct spell_desc
      true,
      false
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_CIGOTUVIS_DEGENERATION, "Cigotuvi's Degeneration",
-     SPTYP_TRANSMUTATION | SPTYP_NECROMANCY,
-     SPFLAG_DIR_OR_TARGET | SPFLAG_NOT_SELF | SPFLAG_CHAOTIC,
-     5,
-     200,
-     LOS_RADIUS, LOS_RADIUS,
-     0,
-     NULL,
-     false,
-     false
-},
-#endif
 
 {
     SPELL_STING, "Sting",
@@ -1200,21 +1170,6 @@ struct spell_desc
      false,
      true
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_INSULATION, "Insulation",
-     SPTYP_CHARMS | SPTYP_AIR,
-     SPFLAG_NONE,
-     4,
-     200,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     true
-},
-#endif
 
 {
     SPELL_CURE_POISON, "Cure Poison",
@@ -1607,21 +1562,6 @@ struct spell_desc
      false
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SEE_INVISIBLE, "See Invisible",
-     SPTYP_CHARMS,
-     SPFLAG_HELPFUL,
-     4,
-     200,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     true
-},
-#endif
-
 {
     SPELL_PHASE_SHIFT, "Phase Shift",
      SPTYP_TRANSLOCATION,
@@ -1738,21 +1678,6 @@ struct spell_desc
      false,
      false
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_EVAPORATE, "Evaporate",
-     SPTYP_FIRE | SPTYP_TRANSMUTATION,
-     SPFLAG_DIR_OR_TARGET | SPFLAG_AREA | SPFLAG_ALLOW_SELF,
-     2,   // XXX: level 2 or 3, what should it be now? -- bwr
-     50,
-     6, 6,
-     0,
-     NULL,
-     true,
-     false
-},
-#endif
 
 {
     SPELL_LRD, "Lee's Rapid Deconstruction",
@@ -1962,21 +1887,6 @@ struct spell_desc
      true,
      false
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_VAMPIRE_SUMMON, "Vampire Summon",
-     SPTYP_SUMMONING,
-     SPFLAG_UNHOLY | SPFLAG_MONSTER,
-     3,
-     0,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     false
-},
-#endif
 
 {
     SPELL_BRAIN_FEED, "Brain Feed",
@@ -2447,21 +2357,6 @@ struct spell_desc
      false
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SUMMON_RAKSHASA, "Summon Rakshasa",
-     SPTYP_SUMMONING,
-     SPFLAG_MONSTER,
-     5,
-     0,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     false
-},
-#endif
-
 {
     SPELL_MISLEAD, "Mislead",
      SPTYP_HEXES,
@@ -2930,21 +2825,6 @@ struct spell_desc
      false
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SUMMON_TWISTER, "Summon Twister",
-     SPTYP_SUMMONING | SPTYP_AIR,
-     SPFLAG_UNCLEAN | SPFLAG_MONSTER,
-     9,
-     0,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     false
-},
-#endif
-
 {
     SPELL_DAZZLING_SPRAY, "Dazzling Spray",
      SPTYP_CONJURATION | SPTYP_HEXES,
@@ -3076,21 +2956,6 @@ struct spell_desc
      false
 },
 
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SHAFT_SELF, "Shaft Self",
-     SPTYP_EARTH,
-     SPFLAG_ESCAPE,
-     1,
-     0,
-     -1, -1,
-     100,
-     NULL,
-     false,
-     true
-},
-#endif
-
 {
     SPELL_AWAKEN_VINES, "Awaken Vines",
      SPTYP_HEXES,
@@ -3220,21 +3085,6 @@ struct spell_desc
      false,
      true
 },
-
-#if TAG_MAJOR_VERSION == 34
-{
-    SPELL_SONG_OF_SHIELDING, "Song of Shielding",
-     SPTYP_CHARMS,
-     SPFLAG_BATTLE,
-     4,
-     100,
-     -1, -1,
-     0,
-     NULL,
-     false,
-     true
-},
-#endif
 
 {
     SPELL_SPECTRAL_WEAPON, "Spectral Weapon",

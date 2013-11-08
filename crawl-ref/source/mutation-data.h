@@ -271,18 +271,6 @@
   "clumsy"
 },
 
-#if TAG_MAJOR_VERSION == 34
-{ MUT_TELEPORT_CONTROL,               0,  1, false, false, false,
-  "teleport control",
-
-  {"You can control translocations.", "", ""},
-  {"You feel controlled.", "", ""},
-  {"You feel random.", "", ""},
-
-  "teleport control"
-},
-#endif
-
 { MUT_TELEPORT,                       3,  3,  true, false, false,
   "teleportitis",
 
@@ -452,44 +440,6 @@
 
   "blink"
 },
-
-#if TAG_MAJOR_VERSION == 34
-{ MUT_STRONG_STIFF,                  0,  3, false,  true, false,
-  NULL,
-
-  {"Your muscles are strong, but stiff (Str +1, Dex -1).",
-   "Your muscles are very strong, but stiff (Str +2, Dex -2).",
-   "Your muscles are extremely strong, but stiff (Str +3, Dex -3)."},
-
-  {"Your muscles feel sore.",
-   "Your muscles feel sore.",
-   "Your muscles feel sore."},
-
-  {"Your muscles feel loose.",
-   "Your muscles feel loose.",
-   "Your muscles feel loose."},
-
-  "strong stiff"
-},
-
-{ MUT_FLEXIBLE_WEAK,                 0,  3, false,  true, false,
-  NULL,
-
-  {"Your muscles are flexible, but weak (Str -1, Dex +1).",
-   "Your muscles are very flexible, but weak (Str -2, Dex +2).",
-   "Your muscles are extremely flexible, but weak (Str -3, Dex +3)."},
-
-  {"Your muscles feel loose.",
-   "Your muscles feel loose.",
-   "Your muscles feel loose."},
-
-  {"Your muscles feel sore.",
-   "Your muscles feel sore.",
-   "Your muscles feel sore."},
-
-  "flexible weak"
-},
-#endif
 
 { MUT_SCREAM,                         6,  3,  true, false, false,
   "screaming",
@@ -1225,18 +1175,6 @@
   "pseudopods"
 },
 
-#if TAG_MAJOR_VERSION == 34
-{ MUT_FOOD_JELLY,                     0,  1, false,  true, false,
-  "spawn jellies when eating",
-
-  {"You occasionally spawn a jelly by eating.", "", ""},
-  {"You feel more connected to the slimes.", "", ""},
-  {"Your connection to the slimes vanishes.", "", ""},
-
-  "jelly spawner"
-},
-#endif
-
 { MUT_ACIDIC_BITE,                    0,  1, false,  true,  true,
   "acidic bite",
 
@@ -1529,28 +1467,6 @@
 
   "petrification resistance"
 },
-
-#if TAG_MAJOR_VERSION == 34
-{ MUT_TRAMPLE_RESISTANCE,                  0,  1, false, false, false,
-  "trample resistance",
-
-  {"You are resistant to trampling.", "", ""},
-  {"You feel steady.", "", ""},
-  {"You feel unsteady..", "", ""},
-
-  "trample resistance"
-},
-
-{ MUT_CLING,                               0,  1, false, false, true,
-  "cling",
-
-  {"You can cling to walls.", "", ""},
-  {"You feel sticky.", "", ""},
-  {"You feel slippery.", "", ""},
-
-  "cling"
-},
-#endif
 
 { MUT_EXOSKELETON,                         0,  2, false,  true,  true,
   "exoskeleton",

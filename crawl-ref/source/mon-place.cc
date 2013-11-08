@@ -1648,10 +1648,6 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
         mon->set_ghost(ghost);
         mon->uglything_init();
     }
-#if TAG_MAJOR_VERSION == 34
-    else if (mon->type == MONS_LABORATORY_RAT)
-        mon->type = MONS_RAT;
-#endif
     else if (mons_class_is_animated_weapon(mon->type))
     {
         ghost_demon ghost;
@@ -1923,17 +1919,6 @@ static void _roll_zombie_ac_ev(monster* mon)
 
 void define_zombie(monster* mon, monster_type ztype, monster_type cs)
 {
-#if TAG_MAJOR_VERSION == 34
-    // Upgrading monster enums is a losing battle, they sneak through too many
-    // channels, like env props, etc.  So convert them on placement, too.
-    if (cs == MONS_ZOMBIE_SMALL || cs == MONS_ZOMBIE_LARGE)
-        cs = MONS_ZOMBIE;
-    if (cs == MONS_SKELETON_SMALL || cs == MONS_SKELETON_LARGE)
-        cs = MONS_SKELETON;
-    if (cs == MONS_SIMULACRUM_SMALL || cs == MONS_SIMULACRUM_LARGE)
-        cs = MONS_SIMULACRUM;
-#endif
-
     ASSERT(ztype != MONS_NO_MONSTER);
     ASSERT(!invalid_monster_type(ztype));
     ASSERT(mons_class_is_zombified(cs));
@@ -3729,10 +3714,6 @@ static void _get_vault_mon_list(vector<mons_spec> &list)
 
         mons_spec spec;
 
-#if TAG_MAJOR_VERSION == 34
-        if ((int)type == -1)
-            type = MONS_NO_MONSTER;
-#endif
         if (type == MONS_NO_MONSTER && base != MONS_NO_MONSTER)
         {
             spec.place = level_id::from_packed_place(base);

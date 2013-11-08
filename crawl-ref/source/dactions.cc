@@ -41,9 +41,7 @@ static const char *daction_names[] =
     // Actions not needing a counter.
     "old enslaved souls go poof",
     "holy beings allow another conversion attempt",
-#if TAG_MAJOR_VERSION > 34
     "slimes allow another conversion attempt",
-#endif
     "holy beings go neutral",
     "Trog's gifts go hostile",
     "shuffle decks",
@@ -52,9 +50,6 @@ static const char *daction_names[] =
     "Pikel's slaves go good-neutral",
     "corpses rot",
     "Tomb loses -cTele",
-#if TAG_MAJOR_VERSION == 34
-    "slimes allow another conversion attempt",
-#endif
     "hogs to humans",
     "end spirit howl",
 };

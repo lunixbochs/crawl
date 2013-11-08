@@ -831,11 +831,6 @@ string monster_info::_core_name() const
     case MONS_ZOMBIE:
     case MONS_SKELETON:
     case MONS_SIMULACRUM:
-#if TAG_MAJOR_VERSION == 34
-    case MONS_ZOMBIE_SMALL:     case MONS_ZOMBIE_LARGE:
-    case MONS_SKELETON_SMALL:   case MONS_SKELETON_LARGE:
-    case MONS_SIMULACRUM_SMALL: case MONS_SIMULACRUM_LARGE:
-#endif
     case MONS_SPECTRAL_THING:   case MONS_PILLAR_OF_SALT:
     case MONS_CHIMERA:
         nametype = base_type;
@@ -997,26 +992,14 @@ string monster_info::common_name(description_level_type desc) const
     switch (type)
     {
     case MONS_ZOMBIE:
-#if TAG_MAJOR_VERSION == 34
-    case MONS_ZOMBIE_SMALL:
-    case MONS_ZOMBIE_LARGE:
-#endif
         if (!is(MB_NAME_ZOMBIE))
             ss << (nocore ? "" : " ") << "zombie";
         break;
     case MONS_SKELETON:
-#if TAG_MAJOR_VERSION == 34
-    case MONS_SKELETON_SMALL:
-    case MONS_SKELETON_LARGE:
-#endif
         if (!is(MB_NAME_ZOMBIE))
             ss << (nocore ? "" : " ") << "skeleton";
         break;
     case MONS_SIMULACRUM:
-#if TAG_MAJOR_VERSION == 34
-    case MONS_SIMULACRUM_SMALL:
-    case MONS_SIMULACRUM_LARGE:
-#endif
         if (!is(MB_NAME_ZOMBIE))
             ss << (nocore ? "" : " ") << "simulacrum";
         break;
@@ -1073,10 +1056,6 @@ string monster_info::mimic_name() const
         s = "inept ";
     if (type == MONS_RAVENOUS_ITEM_MIMIC || type == MONS_RAVENOUS_FEATURE_MIMIC)
         s = "ravenous ";
-#if TAG_MAJOR_VERSION == 34
-    if (type == MONS_MONSTROUS_ITEM_MIMIC)
-        s = "monstrous ";
-#endif
 
     if (props.exists("feat_type"))
         s += feat_type_name(get_mimic_feature());

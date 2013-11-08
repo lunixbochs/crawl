@@ -293,9 +293,6 @@ static tileidx_t _tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_EXIT_PANDEMONIUM;
 
     // branch entry stairs
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_ENTER_DWARVEN_HALL:
-#endif
     case DNGN_ENTER_HALL_OF_BLADES:
     case DNGN_ENTER_FOREST:
         return TILE_DNGN_ENTER;
@@ -329,9 +326,6 @@ static tileidx_t _tileidx_feature_base(dungeon_feature_type feat)
         return TILE_DNGN_ENTER_ZOT_CLOSED;
 
     // branch exit stairs
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_RETURN_FROM_DWARVEN_HALL:
-#endif
     case DNGN_RETURN_FROM_HALL_OF_BLADES:
     case DNGN_RETURN_FROM_FOREST:
         return TILE_DNGN_RETURN;
@@ -1669,9 +1663,6 @@ static tileidx_t _tileidx_monster_base(int type, bool in_water, int colour,
     // trolls ('T')
     case MONS_TROLL:
         return TILEP_MONS_TROLL;
-#if TAG_MAJOR_VERSION == 34
-    case MONS_ROCK_TROLL:
-#endif
     case MONS_IRON_TROLL:
         return TILEP_MONS_IRON_TROLL;
     case MONS_DEEP_TROLL:
@@ -2754,9 +2745,6 @@ static tileidx_t _tileidx_monster_no_props(const monster_info& mon)
         case MONS_ITEM_MIMIC:
             return tileidx_item(*mon.get_mimic_item()) | TILE_FLAG_MIMIC;
         case MONS_RAVENOUS_ITEM_MIMIC:
-#if TAG_MAJOR_VERSION == 34
-        case MONS_MONSTROUS_ITEM_MIMIC:
-#endif
             return tileidx_item(*mon.get_mimic_item()) | TILE_FLAG_MIMIC_RAVEN;
 
         // Feature mimics get drawn with the dungeon, see tileidx_feature.
@@ -3171,10 +3159,6 @@ static tileidx_t _tileidx_weapon_base(const item_def &item)
             return TILE_WPN_GLAIVE_ORC;
         return TILE_WPN_GLAIVE;
 
-#if TAG_MAJOR_VERSION == 34
-    case WPN_STAFF:
-        return TILE_WPN_STAFF;
-#endif
     case WPN_QUARTERSTAFF:
         return TILE_WPN_QUARTERSTAFF;
 
@@ -4093,9 +4077,6 @@ static tileidx_t _tileidx_corpse(const item_def &item)
     // trolls ('T')
     case MONS_TROLL:
         return TILE_CORPSE_TROLL;
-#if TAG_MAJOR_VERSION == 34
-    case MONS_ROCK_TROLL:
-#endif
     case MONS_IRON_TROLL:
         return TILE_CORPSE_IRON_TROLL;
     case MONS_DEEP_TROLL:
@@ -5151,13 +5132,7 @@ tileidx_t tileidx_skill(skill_type skill, int train)
     case SK_ARMOUR:         ch = TILEG_ARMOUR_ON; break;
     case SK_DODGING:        ch = TILEG_DODGING_ON; break;
     case SK_STEALTH:        ch = TILEG_STEALTH_ON; break;
-#if TAG_MAJOR_VERSION == 34
-    case SK_STABBING:       ch = TILEG_STABBING_ON; break;
-#endif
     case SK_SHIELDS:        ch = TILEG_SHIELDS_ON; break;
-#if TAG_MAJOR_VERSION == 34
-    case SK_TRAPS:          ch = TILEG_TRAPS_ON; break;
-#endif
     case SK_UNARMED_COMBAT: ch = TILEG_UNARMED_COMBAT_ON; break;
     case SK_SPELLCASTING:   ch = TILEG_SPELLCASTING_ON; break;
     case SK_CONJURATIONS:   ch = TILEG_CONJURATIONS_ON; break;
@@ -5657,10 +5632,6 @@ tileidx_t tileidx_known_brand(const item_def &item)
             return TILE_BRAND_PARALYSIS;
         case SPMSL_SLOW:
             return TILE_BRAND_SLOWING;
-#if TAG_MAJOR_VERSION == 34
-        case SPMSL_SICKNESS:
-            return TILE_BRAND_SICKNESS;
-#endif
         case SPMSL_FRENZY:
             return TILE_BRAND_FRENZY;
         case SPMSL_SLEEP:

@@ -784,19 +784,19 @@ ITEM:    dagger unrand:vampires_tooth / dagger unrand:dagger_of_chilly_death /\
          staff of poison unrand:staff_of_olgreb / scythe unrand:finisher     /\
          quarterstaff unrand:elemental_staff / mace unrand:devastator        /\
          staff of energy unrand:staff_of_wucad_mu                            /\
-         glaive unrand:glaive_of_prune / spear unrand:lehudibs_crystal_spear /\
+         glaive unrand:glaive_of_prune                                       /\
          spear unrand:spear_of_the_botono / long sword unrand:singing_sword  /\
          battleaxe unrand:wrath_of_trog / glaive unrand:glaive_of_the_guard  /\
          trident unrand:trident_of_the_octopus_king / spear unrand:wyrmbane  /\
          scythe unrand:scythe_of_curses / giant club unrand:skullcrusher     /\
-         great mace unrand:undeadhunter / whip unrand:snakebite              /\
+         great mace unrand:undeadhunter /                                    /\
          mace unrand:sceptre_of_torment / mace unrand:mace_of_variability    /\
          mace unrand:mace_of_brilliance / morningstar unrand:eos             /\
          sling unrand:punk / longbow unrand:bow_of_krishna_"sharnga"         /\
-         crossbow unrand:hellfire / crossbow unrand:sniper                   /\
+         crossbow unrand:hellfire                                            /\
          longbow unrand:piercer / longbow unrand:storm_bow                   /\
          long sword unrand:autumn_katana / sabre unrand:captains_cutlass     /\
-         randart demon blade / blowgun unrand:blowgun_of_the_assassin
+         randart demon blade
 SHUFFLE: def
 : trove.setup_features(_G)
 MAP

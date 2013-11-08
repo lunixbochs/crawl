@@ -26,12 +26,6 @@ int branch_ood_cap(branch_type branch)
     switch (branch)
     {
     case BRANCH_DUNGEON:
-#if TAG_MAJOR_VERSION == 34
-        // Compat: saves without Depths have a 27-level Dungeon,
-        // and use the old D monster table.
-        if (!brentry[BRANCH_DEPTHS].is_valid())
-            return 31;
-#endif
         return 20;
     case BRANCH_DEPTHS:
         return 14;
@@ -46,30 +40,11 @@ int branch_ood_cap(branch_type branch)
     }
 }
 
-// XXX: Make these go away when TAG_MAJOR_VERSION is gone.
-static const pop_entry *_pop_for_branch(branch_type branch)
-{
-#if TAG_MAJOR_VERSION == 34
-    if (branch == BRANCH_DUNGEON && !brentry[BRANCH_DEPTHS].is_valid())
-        return pop_d_old;
-#endif
-    return population[branch].pop;
-}
-
-static const int _pop_count_for_branch(branch_type branch)
-{
-#if TAG_MAJOR_VERSION == 34
-    if (branch == BRANCH_DUNGEON && !brentry[BRANCH_DEPTHS].is_valid())
-        return ARRAYSZ(pop_d_old) - 1;
-#endif
-    return population[branch].count;
-}
-
 // NOTE: The lower the level the earlier a monster may appear.
 int mons_depth(monster_type mcls, branch_type branch)
 {
     // legacy function, until ZotDef is ported
-    for (const pop_entry *pe = _pop_for_branch(branch); pe->value; pe++)
+    for (const pop_entry *pe = population[branch].pop; pe->value; pe++)
         if (pe->value == mcls)
         {
             if (pe->distrib == UP)
@@ -87,7 +62,7 @@ int mons_depth(monster_type mcls, branch_type branch)
 // To be axed once ZotDef is ported.
 int mons_rarity(monster_type mcls, branch_type branch)
 {
-    for (const pop_entry *pe = _pop_for_branch(branch); pe->value; pe++)
+    for (const pop_entry *pe = population[branch].pop; pe->value; pe++)
         if (pe->value == mcls)
         {
             // A rough and wrong conversion of new-style linear rarities to
@@ -114,10 +89,7 @@ monster_type pick_monster_no_rarity(branch_type branch)
     if (!population[branch].count)
         return MONS_0;
 
-    const pop_entry *pe = _pop_for_branch(branch);
-    const int count = _pop_count_for_branch(branch);
-
-    return pe[random2(count)].value;
+    return population[branch].pop[random2(population[branch].count)].value;
 }
 
 monster_type pick_monster_by_hash(branch_type branch, uint32_t hash)
@@ -125,10 +97,7 @@ monster_type pick_monster_by_hash(branch_type branch, uint32_t hash)
     if (!population[branch].count)
         return MONS_0;
 
-    const pop_entry *pe = _pop_for_branch(branch);
-    const int count = _pop_count_for_branch(branch);
-
-    return pe[hash % count].value;
+    return population[branch].pop[hash % population[branch].count].value;
 }
 
 monster_type pick_monster(level_id place, mon_pick_vetoer veto)
@@ -137,14 +106,13 @@ monster_type pick_monster(level_id place, mon_pick_vetoer veto)
     if (!place.is_valid())
         die("trying to pick a monster from %s", place.describe().c_str());
 #endif
-    return pick_monster_from(_pop_for_branch(place.branch), place.depth, veto);
+    return pick_monster_from(population[place.branch].pop, place.depth, veto);
 }
 
 monster_type pick_monster(level_id place, monster_picker &picker, mon_pick_vetoer veto)
 {
     ASSERT(place.is_valid());
-    return picker.pick_with_veto(_pop_for_branch(place.branch), place.depth,
-                                 MONS_0, veto);
+    return picker.pick_with_veto(population[place.branch].pop, place.depth, MONS_0, veto);
 }
 
 monster_type pick_monster_from(const pop_entry *fpop, int depth,
@@ -206,8 +174,7 @@ monster_type pick_monster_all_branches(int absdepth0, monster_picker &picker,
         if (depth < 1 || depth > branch_ood_cap((branch_type)br))
             continue;
 
-        for (const pop_entry *pop = _pop_for_branch((branch_type)br);
-             pop->value; pop++)
+        for (const pop_entry *pop = population[br].pop; pop->value; pop++)
         {
             if (depth < pop->minr || depth > pop->maxr)
                 continue;

@@ -199,11 +199,7 @@ enum mon_resist_flags
     MR_LAST_MULTI, // must be >= any multi, < any boolean, exact value doesn't matter
 
     MR_RES_ASPHYX        = 1 << 24,
-#if TAG_MAJOR_VERSION == 34
-    MR_OLD_RES_ACID      = 1 << 25,
-#else
     // unused 1 << 25,
-#endif
     MR_RES_STICKY_FLAME  = 1 << 26,
     // unused 1 << 27,
     MR_RES_STEAM         = 1 << 28,

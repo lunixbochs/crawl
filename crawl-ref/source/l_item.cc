@@ -299,9 +299,6 @@ static const char *amulet_types[] =
 {
     "rage", "clarity", "warding", "resist corrosion",
     "gourmand", "conservation",
-#if TAG_MAJOR_VERSION == 34
-    "controlled flight",
-#endif
     "inaccuracy",
     "resist mutation", "guardian spirit", "faith", "stasis",
 };
@@ -336,14 +333,6 @@ static int l_item_do_subtype(lua_State *ls)
                    s = "porridge";
                 else if (item->sub_type == POT_BERSERK_RAGE)
                    s = "berserk";
-#if TAG_MAJOR_VERSION == 34
-                else if (item->sub_type == POT_GAIN_STRENGTH
-                         || item->sub_type == POT_GAIN_DEXTERITY
-                         || item->sub_type == POT_GAIN_INTELLIGENCE)
-                {
-                   s = "gain ability";
-                }
-#endif
                 else if (item->sub_type == POT_CURE_MUTATION)
                    s = "cure mutation";
             }

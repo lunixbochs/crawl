@@ -291,11 +291,6 @@ int book_rarity(uint8_t which_book)
     case BOOK_DESTRUCTION:
         return 30;
 
-#if TAG_MAJOR_VERSION == 34
-    case BOOK_STALKING:
-        return 100;
-#endif
-
     default:
         return 1;
     }

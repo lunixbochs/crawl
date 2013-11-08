@@ -1848,9 +1848,6 @@ static const char *delay_names[] =
     "jewellery_on", "memorise", "butcher", "bottle_blood", "weapon_swap",
     "passwall", "drop_item", "multidrop", "ascending_stairs",
     "descending_stairs",
-#if TAG_MAJOR_VERSION == 34
-    "recite",
-#endif
     "run", "rest", "travel", "macro",
     "macro_process_key", "interruptible", "uninterruptible", "shaft self",
 };

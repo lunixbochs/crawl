@@ -737,12 +737,6 @@ void item_colour(item_def &item)
             }
             break;
 
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_EBONY_CASKET:
-            item.colour = DARKGREY;
-            break;
-#endif
-
         case MISC_QUAD_DAMAGE:
             item.colour = ETC_DARK;
             break;
@@ -1567,14 +1561,6 @@ bool is_weapon_brand_ok(int type, int brand, bool strict)
             return false;
         break;
 
-#if TAG_MAJOR_VERSION == 34
-    // Removed brands.
-    case SPWPN_RETURNING:
-    case SPWPN_REACHING:
-    case SPWPN_ORC_SLAYING:
-        return false;
-#endif
-
     case SPWPN_ACID:
     case SPWPN_CONFUSE:
     case SPWPN_FORBID_BRAND:
@@ -1886,17 +1872,8 @@ bool is_missile_brand_ok(int type, int brand, bool strict)
     case SPMSL_SLOW:
     case SPMSL_SLEEP:
     case SPMSL_CONFUSION:
-#if TAG_MAJOR_VERSION == 34
-    case SPMSL_SICKNESS:
-#endif
     case SPMSL_FRENZY:
         return (type == MI_NEEDLE);
-
-#if TAG_MAJOR_VERSION == 34
-    case SPMSL_BLINDING:
-        // possible on ex-pies
-        return (type == MI_TOMAHAWK && !strict);
-#endif
 
     default:
         if (type == MI_NEEDLE)
@@ -2718,11 +2695,6 @@ static void _generate_potion_item(item_def& item, int force_type,
     }
 
     if (item.sub_type == POT_BENEFICIAL_MUTATION
-#if TAG_MAJOR_VERSION == 34
-        || item.sub_type == POT_GAIN_STRENGTH
-        || item.sub_type == POT_GAIN_DEXTERITY
-        || item.sub_type == POT_GAIN_INTELLIGENCE
-#endif
         || item.sub_type == POT_EXPERIENCE
         || item.sub_type == POT_RESTORE_ABILITIES)
     {
@@ -2862,17 +2834,7 @@ static void _generate_book_item(item_def& item, bool allow_uniques,
         if (one_chance_in(4))
             item.plus = SK_SPELLCASTING + random2(NUM_SKILLS - SK_SPELLCASTING);
         else
-#if TAG_MAJOR_VERSION == 34
-        {
-            item.plus = random2(SK_UNARMED_COMBAT);
-            if (item.plus == SK_STABBING)
-                item.plus = SK_UNARMED_COMBAT;
-            if (item.plus == SK_TRAPS)
-                item.plus = SK_STEALTH;
-        }
-#else
             item.plus = random2(SK_UNARMED_COMBAT + 1);
-#endif
         // Set number of bonus skill points.
         item.plus2 = random_range(2000, 3000);
     }
@@ -2923,14 +2885,7 @@ static void _generate_staff_item(item_def& item, bool allow_uniques, int force_t
 
     if (force_type == OBJ_RANDOM)
     {
-#if TAG_MAJOR_VERSION == 34
-        do
-            item.sub_type = random2(NUM_STAVES);
-        while (item.sub_type == STAFF_ENCHANTMENT
-               || item.sub_type == STAFF_CHANNELING);
-#else
         item.sub_type = random2(NUM_STAVES);
-#endif
 
         // staves of energy are 25% less common, wizardry/power
         // are more common
@@ -3102,9 +3057,7 @@ static void _generate_misc_item(item_def& item, int force_type, int force_ego)
              || item.sub_type == MISC_HORN_OF_GERYON
              || item.sub_type == MISC_DECK_OF_PUNISHMENT
              || item.sub_type == MISC_QUAD_DAMAGE
-#if TAG_MAJOR_VERSION == 34
-             || item.sub_type == MISC_BUGGY_EBONY_CASKET
-#endif
+
              // Pure decks are rare in the dungeon.
              || (item.sub_type == MISC_DECK_OF_ESCAPE
                     || item.sub_type == MISC_DECK_OF_DESTRUCTION
@@ -3481,18 +3434,8 @@ static bool _armour_is_visibly_special(const item_def &item)
 
 jewellery_type get_random_amulet_type()
 {
-#if TAG_MAJOR_VERSION == 34
-    int res;
-    do
-        res = (AMU_FIRST_AMULET + random2(NUM_JEWELLERY - AMU_FIRST_AMULET));
-    // Do not generate cFly
-    while (res == AMU_CONTROLLED_FLIGHT);
-
-    return jewellery_type(res);
-#else
     return static_cast<jewellery_type>(AMU_FIRST_AMULET
            + random2(NUM_JEWELLERY - AMU_FIRST_AMULET));
-#endif
 }
 
 static jewellery_type _get_raw_random_ring_type()
@@ -3706,15 +3649,6 @@ void makeitem_tests()
             item.special = SPWPN_NORMAL;
         else
             item.special = random2(NUM_REAL_SPECIAL_WEAPONS);
-#if TAG_MAJOR_VERSION == 34
-        if (item.special == SPWPN_ORC_SLAYING
-            || item.special == SPWPN_REACHING
-            || item.special == SPWPN_RETURNING
-            || item.special == SPWPN_CONFUSE)
-        {
-            item.special = SPWPN_FORBID_BRAND;
-        }
-#endif
         _generate_weapon_item(item,
                               coinflip(),
                               coinflip() ? OBJ_RANDOM : random2(NUM_WEAPONS),

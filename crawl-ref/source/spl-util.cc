@@ -1152,12 +1152,6 @@ bool spell_is_useless(spell_type spell, bool transient)
         if (you_worship(GOD_SHINING_ONE) && !player_under_penance())
             return true;
         break;
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_INSULATION:
-        if (player_res_electricity(false, transient, transient))
-            return true;
-        break;
-#endif
     case SPELL_REPEL_MISSILES:
         if (player_mutation_level(MUT_DISTORTION_FIELD) == 3
             || !you.suppressed() && you.scan_artefacts(ARTP_RMSL, true))

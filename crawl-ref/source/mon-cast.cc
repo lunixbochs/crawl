@@ -1057,9 +1057,6 @@ bool setup_mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_VAMPIRIC_DRAINING:
     case SPELL_INJURY_MIRROR:
     case SPELL_MAJOR_HEALING:
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_VAMPIRE_SUMMON:
-#endif
     case SPELL_SHADOW_CREATURES:       // summon anything appropriate for level
     case SPELL_FAKE_RAKSHASA_SUMMON:
     case SPELL_FAKE_MARA_SUMMON:
@@ -1130,9 +1127,6 @@ bool setup_mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_OLGREBS_TOXIC_RADIANCE:
     case SPELL_SHATTER:
     case SPELL_FRENZY:
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_SUMMON_TWISTER:
-#endif
     case SPELL_BATTLESPHERE:
     case SPELL_SPECTRAL_WEAPON:
     case SPELL_WORD_OF_RECALL:
@@ -1141,9 +1135,6 @@ bool setup_mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
     case SPELL_BLINK_ALLIES_ENCIRCLE:
     case SPELL_MASS_CONFUSION:
     case SPELL_ENGLACIATION:
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_SHAFT_SELF:
-#endif
     case SPELL_AWAKEN_VINES:
     case SPELL_CONTROL_WINDS:
     case SPELL_WALL_OF_BRAMBLES:
@@ -1770,10 +1761,6 @@ static bool _ms_waste_of_time(const monster* mon, spell_type monspell)
             ret = true;
         break;
 
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_SUMMON_TWISTER:
-    case SPELL_SHAFT_SELF:
-#endif
     case SPELL_NO_SPELL:
         ret = true;
         break;
@@ -3989,9 +3976,6 @@ void mons_cast(monster* mons, bolt &pbolt, spell_type spell_cast,
             " squirts a massive cloud of ink into the water!");
         return;
 
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_VAMPIRE_SUMMON:
-#endif
     case SPELL_SUMMON_SMALL_MAMMAL:
         sumcount2 = 1 + random2(3);
 

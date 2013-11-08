@@ -777,9 +777,6 @@ static bool _is_upwards_exit_stair(const coord_def &c)
     case DNGN_STONE_STAIRS_UP_II:
     case DNGN_STONE_STAIRS_UP_III:
     case DNGN_EXIT_HELL:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_RETURN_FROM_DWARVEN_HALL:
-#endif
     case DNGN_RETURN_FROM_ORCISH_MINES:
     case DNGN_RETURN_FROM_LAIR:
     case DNGN_RETURN_FROM_SLIME_PITS:
@@ -823,9 +820,6 @@ static bool _is_exit_stair(const coord_def &c)
     case DNGN_STONE_STAIRS_UP_III:
     case DNGN_ESCAPE_HATCH_UP:
     case DNGN_EXIT_HELL:
-#if TAG_MAJOR_VERSION == 34
-    case DNGN_RETURN_FROM_DWARVEN_HALL:
-#endif
     case DNGN_RETURN_FROM_ORCISH_MINES:
     case DNGN_RETURN_FROM_LAIR:
     case DNGN_RETURN_FROM_SLIME_PITS:
@@ -4765,10 +4759,6 @@ static void _dgn_give_mon_spec_items(mons_spec &mspec,
 monster* dgn_place_monster(mons_spec &mspec, coord_def where,
                            bool force_pos, bool generate_awake, bool patrolling)
 {
-#if TAG_MAJOR_VERSION == 34
-    if ((int)mspec.type == -1) // or rebuild the des cache
-        return 0;
-#endif
     if (mspec.type == MONS_NO_MONSTER)
         return 0;
 

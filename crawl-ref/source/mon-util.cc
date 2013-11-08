@@ -965,11 +965,7 @@ bool mons_is_mimic(monster_type mc)
 
 bool mons_is_item_mimic(monster_type mc)
 {
-#if TAG_MAJOR_VERSION == 34
-    return mc >= MONS_INEPT_ITEM_MIMIC && mc <= MONS_MONSTROUS_ITEM_MIMIC;
-#else
     return mc >= MONS_INEPT_ITEM_MIMIC && mc <= MONS_RAVENOUS_ITEM_MIMIC;
-#endif
 }
 
 bool mons_is_feat_mimic(monster_type mc)

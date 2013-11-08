@@ -1165,42 +1165,11 @@ VISUAL:For a moment, you lose track of @the_monster@.
 
 VISUAL:For a moment, @the_monster@ blends into the shadows.
 %%%%
-# TAG_MAJOR_VERSION == 34
-Stabbing player ghost
-
-@The_monster@ says @to_foe@, "Would you mind turning around for a second?"
-
-@The_monster@ points and says, "Look! Behind you!"
-
-@The_monster@ says, "They never saw it coming."
-
-@The_monster@ says @to_foe@, "This won't hurt a bit."
-
-@The_monster@ says, "I have assassinated emperors and kings... you are beneath me."
-
-@The_monster@ says @to_foe@, "You'd better not stain my armour with your blood."
-%%%%
 Shields player ghost
 
 @The_monster@ says, "What's that? Someone is blocking your path? And your attacks too?"
 
 @The_monster@ says, "You can hit me, but you can't hurt me."
-%%%%
-Traps player ghost
-
-@The_monster@ says @to_foe@, "I bet you don't even know how a teleportation trap works."
-
-VISUAL:@The_monster@ quickly assembles and disassembles an arrow trap before your eyes, then grins. @player_only@
-
-w:1
-VISUAL SPELL:@The_monster@ produces a bizarre clockwork butterfly, ethereal and luminous, from @possessive@ pack, and hurls it at you - so perfect is its making that it comes to life and darts away before touching you.
-
-w:1
-@The_monster@ regards you luminously, comprehending your nature, and seems resigned. @Subjective@ shouts, "Do you know what I know, @foe@..."
-
-@The_monster@ rises to @possessive@ full height, drawing on the power of @possessive@ mind.
-
-@The_monster@ regards you with anger at your presumption in entering @possessive@ workshop - the Dungeon.
 %%%%
 Unarmed Combat player ghost
 

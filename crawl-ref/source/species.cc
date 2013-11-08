@@ -59,20 +59,13 @@ species_type get_species(const int index)
 
 static const char * Species_Abbrev_List[NUM_SPECIES] =
 {
-      "Hu", "HE", "DE",
-#if TAG_MAJOR_VERSION == 34
-      "SE",
-#endif
-      "Ha", "HO", "Ko", "Mu", "Na", "Og", "Tr",
+      "Hu", "HE", "DE", "Ha", "HO", "Ko", "Mu", "Na", "Og", "Tr",
       // the draconians
       "Dr", "Dr", "Dr", "Dr", "Dr", "Dr", "Dr", "Dr", "Dr", "Dr",
       "Ce", "Dg", "Sp", "Mi", "Ds", "Gh", "Te", "Mf", "Vp", "DD",
       "Fe", "Op", "Dj", "LO", "Gr", "Fo",
       // placeholders
-      "El", "HD", "OM", "GE", "Gn", "MD",
-#if TAG_MAJOR_VERSION > 34
-      "SE",
-#endif
+      "El", "HD", "OM", "GE", "Gn", "MD", "SE",
 };
 
 const char *get_species_abbrev(species_type which_species)
@@ -166,9 +159,6 @@ string species_name(species_type speci, bool genus, bool adj)
             {
             case SP_HIGH_ELF:   res = "High Elf";   break;
             case SP_DEEP_ELF:   res = "Deep Elf";   break;
-#if TAG_MAJOR_VERSION == 34
-            case SP_SLUDGE_ELF: res = "Sludge Elf"; break;
-#endif
             default:            res = "Elf";        break;
             }
         }
@@ -413,10 +403,6 @@ bool is_valid_species(species_type species)
 
 bool is_species_valid_choice(species_type species)
 {
-#if TAG_MAJOR_VERSION == 34
-    if (species == SP_SLUDGE_ELF)
-        return false;
-#endif
     if ((species == SP_LAVA_ORC || species == SP_DJINNI)
         && Version::ReleaseType != VER_ALPHA)
     {

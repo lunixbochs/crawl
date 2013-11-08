@@ -3509,12 +3509,6 @@ mons_spec mons_list::pick_monster(mons_spec_slot &slot)
             pick = *i;
     }
 
-#if TAG_MAJOR_VERSION == 34
-    // Force rebuild of the des cache to drop this check.
-    if ((int)pick.type < -1)
-        pick = (monster_type)(-100 - (int)pick.type);
-#endif
-
     if (slot.fix_slot)
     {
         slot.mlist.clear();
@@ -4618,9 +4612,6 @@ static int _str_to_ego(item_spec &spec, string ego_str)
         "freezing",
         "holy_wrath",
         "electrocution",
-#if TAG_MAJOR_VERSION == 34
-        "orc_slaying",
-#endif
         "dragon_slaying",
         "venom",
         "protection",
@@ -4633,15 +4624,8 @@ static int _str_to_ego(item_spec &spec, string ego_str)
         "pain",
         "anti-magic",
         "distortion",
-#if TAG_MAJOR_VERSION == 34
-        "reaching",
-        "returning",
-#endif
         "chaos",
         "evasion",
-#if TAG_MAJOR_VERSION == 34
-        "confuse",
-#endif
         "penetration",
         "reaping",
         NULL
@@ -4665,9 +4649,6 @@ static int _str_to_ego(item_spec &spec, string ego_str)
         "slow",
         "sleep",
         "confusion",
-#if TAG_MAJOR_VERSION == 34
-        "sickness",
-#endif
         "wrath",
         NULL
     };

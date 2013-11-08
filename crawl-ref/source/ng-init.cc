@@ -42,11 +42,6 @@ static uint8_t _random_potion_description()
     // nature and colour correspond to primary and secondary in
     // itemname.cc.
 
-#if TAG_MAJOR_VERSION == 34
-    if (PCOLOUR(desc) == PDC_CLEAR) // only water can be clear, re-roll
-        return _random_potion_description();
-#endif
-
     return desc;
 }
 

@@ -261,9 +261,7 @@ static const char* _prop_name[] =
     "SInv",
     "+Inv",
     "+Fly",
-#if TAG_MAJOR_VERSION > 34
     "+Fog",
-#endif
     "+Blnk",
     "+Rage",
     "Noisy",
@@ -284,13 +282,8 @@ static const char* _prop_name[] =
     "BAcc",
     "BDam",
     "RMsl",
-#if TAG_MAJOR_VERSION == 34
-    "+Fog",
-#endif
     "Regen",
-#if TAG_MAJOR_VERSION == 34
-    "Unused",
-#endif
+    "NoUpg",
 };
 
 #define ARTP_VAL_BOOL 0
@@ -314,9 +307,7 @@ static int8_t _prop_type[] =
     ARTP_VAL_BOOL, //EYESIGHT
     ARTP_VAL_BOOL, //INVISIBLE
     ARTP_VAL_BOOL, //FLIGHT
-#if TAG_MAJOR_VERSION > 34
     ARTP_VAL_BOOL, //FOG
-#endif
     ARTP_VAL_BOOL, //BLINK
     ARTP_VAL_BOOL, //BERSERK
     ARTP_VAL_POS,  //NOISES
@@ -337,13 +328,8 @@ static int8_t _prop_type[] =
     ARTP_VAL_ANY,  //BASE_ACC
     ARTP_VAL_ANY,  //BASE_DAM
     ARTP_VAL_BOOL, //RMSL
-#if TAG_MAJOR_VERSION == 34
-    ARTP_VAL_BOOL, //FOG
-#endif
     ARTP_VAL_BOOL, //REGEN
-#if TAG_MAJOR_VERSION == 34
-    ARTP_VAL_BOOL, //UNUSED
-#endif
+    ARTP_VAL_BOOL, //NO_UPGRADE
 };
 
 static void _tweak_randart(item_def &item)
@@ -1137,9 +1123,6 @@ static void _debug_acquirement_stats(FILE *ostat)
             "freezing",
             "holy wrath",
             "electrocution",
-#if TAG_MAJOR_VERSION == 34
-            "orc slaying",
-#endif
             "dragon slaying",
             "venom",
             "protection",
@@ -1152,19 +1135,13 @@ static void _debug_acquirement_stats(FILE *ostat)
             "pain",
             "antimagic",
             "distortion",
-#if TAG_MAJOR_VERSION == 34
-            "reaching",
-            "returning",
-#endif
             "chaos",
             "evasion",
             "confusion",
             "penetration",
             "reaping",
             "acid",
-#if TAG_MAJOR_VERSION == 34
             "confuse",
-#endif
             "debug randart",
         };
         COMPILE_CHECK(ARRAYSZ(names) == NUM_SPECIAL_WEAPONS);
@@ -1397,7 +1374,6 @@ static void _debug_rap_stats(FILE *ostat)
          0, //ARTP_BASE_ACC
          0, //ARTP_BASE_DAM
          1, //ARTP_RMSL
-         1, //ARTP_FOG
          1, //ARTP_REGENERATION
          -1
     };
@@ -1548,6 +1524,7 @@ static void _debug_rap_stats(FILE *ostat)
         "ARTP_RMSL"
         "ARTP_FOG",
         "ARTP_REGENERATION",
+        "ARTP_NO_UPGRADE",
     };
 
     fprintf(ostat, "                            All    Good   Bad\n");

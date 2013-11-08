@@ -84,9 +84,6 @@ enum brand_type // item_def.special
     SPWPN_FREEZING,
     SPWPN_HOLY_WRATH,
     SPWPN_ELECTROCUTION,
-#if TAG_MAJOR_VERSION == 34
-    SPWPN_ORC_SLAYING,
-#endif
     SPWPN_DRAGON_SLAYING,
     SPWPN_VENOM,
     SPWPN_PROTECTION,
@@ -99,27 +96,18 @@ enum brand_type // item_def.special
     SPWPN_PAIN,
     SPWPN_ANTIMAGIC,
     SPWPN_DISTORTION,
-#if TAG_MAJOR_VERSION == 34
-    SPWPN_REACHING,
-    SPWPN_RETURNING,
-#endif
     SPWPN_CHAOS,
     SPWPN_EVASION,
 
     MAX_PAN_LORD_BRANDS = SPWPN_EVASION,
 
-#if TAG_MAJOR_VERSION == 34
-    SPWPN_CONFUSE, // XXX not a real weapon brand, only for Confusing Touch
-#endif
     SPWPN_PENETRATION,
     SPWPN_REAPING,
 
     NUM_REAL_SPECIAL_WEAPONS,
 
     SPWPN_ACID,    // acid bite only for the moment
-#if TAG_MAJOR_VERSION != 34
     SPWPN_CONFUSE, // Confusing Touch only for the moment
-#endif
     SPWPN_DEBUG_RANDART,
     NUM_SPECIAL_WEAPONS,
 };
@@ -197,9 +185,6 @@ enum jewellery_type
     AMU_RESIST_CORROSION,
     AMU_THE_GOURMAND,
     AMU_CONSERVATION,
-#if TAG_MAJOR_VERSION == 34
-    AMU_CONTROLLED_FLIGHT,
-#endif
     AMU_INACCURACY,
     AMU_RESIST_MUTATION,
     AMU_GUARDIAN_SPIRIT,
@@ -226,9 +211,6 @@ enum misc_item_type
     MISC_HORN_OF_GERYON,
     MISC_BOX_OF_BEASTS,
     MISC_CRYSTAL_BALL_OF_ENERGY,
-#if TAG_MAJOR_VERSION == 34
-    MISC_BUGGY_EBONY_CASKET,
-#endif
     MISC_DISC_OF_STORMS,
 
     // pure decks
@@ -386,9 +368,6 @@ enum special_missile_type // to separate from weapons in general {dlb}
     SPMSL_SLOW,
     SPMSL_SLEEP,
     SPMSL_CONFUSION,
-#if TAG_MAJOR_VERSION == 34
-    SPMSL_SICKNESS,
-#endif
     SPMSL_FRENZY,
     NUM_REAL_SPECIAL_MISSILES,
     SPMSL_BLINDING,
@@ -411,15 +390,9 @@ enum stave_type
     STAFF_ENERGY,
     STAFF_DEATH,
     STAFF_CONJURATION,
-#if TAG_MAJOR_VERSION == 34
-    STAFF_ENCHANTMENT,
-#endif
     STAFF_SUMMONING,
     STAFF_AIR,
     STAFF_EARTH,
-#if TAG_MAJOR_VERSION == 34
-    STAFF_CHANNELING,
-#endif
     NUM_STAVES,
 };
 

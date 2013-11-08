@@ -764,9 +764,6 @@ static const char* dur_names[] =
     "divine shield",
     "regeneration",
     "swiftness",
-#if TAG_MAJOR_VERSION == 34
-    "controlled flight",
-#endif
     "teleport",
     "control teleport",
     "breath weapon",
@@ -774,9 +771,6 @@ static const char* dur_names[] =
     "death channel",
     "deflect missiles",
     "phase shift",
-#if TAG_MAJOR_VERSION == 34
-    "see invisible",
-#endif
     "weapon brand",
     "demonic guardian",
     "pbd",
@@ -785,9 +779,6 @@ static const char* dur_names[] =
     "stoneskin",
     "gourmand",
     "bargain",
-#if TAG_MAJOR_VERSION == 34
-    "insulation",
-#endif
     "resistance",
     "slaying",
     "stealth",
@@ -817,18 +808,9 @@ static const char* dur_names[] =
     "petrifying",
     "shrouded",
     "tornado cooldown",
-#if TAG_MAJOR_VERSION == 34
-    "nausea",
-#endif
     "ambrosia",
-#if TAG_MAJOR_VERSION == 34
-    "temporary mutations",
-#endif
     "disjunction",
     "vehumet gift",
-#if TAG_MAJOR_VERSION == 34
-    "battlesphere",
-#endif
     "sentinel's mark",
     "sickening",
     "drowning",
@@ -841,9 +823,6 @@ static const char* dur_names[] =
     "spirit howl",
     "infused",
     "song of slaying",
-#if TAG_MAJOR_VERSION == 34
-    "song of shielding",
-#endif
     "toxic radiance",
     "reciting",
     "grasping roots",
@@ -851,9 +830,6 @@ static const char* dur_names[] =
     "fire vulnerability",
     "elixir health",
     "elixir magic",
-#if TAG_MAJOR_VERSION == 34
-    "antennae extend",
-#endif
 };
 
 void wizard_edit_durations(void)

@@ -2151,9 +2151,6 @@ bool item_is_evokable(const item_def &item, bool reach, bool known,
         }
 
         if (item.sub_type != MISC_LANTERN_OF_SHADOWS
-#if TAG_MAJOR_VERSION == 34
-            && item.sub_type != MISC_BUGGY_EBONY_CASKET
-#endif
             && item.sub_type != MISC_RUNE_OF_ZOT)
         {
             return true;

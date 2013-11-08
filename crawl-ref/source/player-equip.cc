@@ -1363,12 +1363,6 @@ static void _equip_jewellery_effect(item_def &item, bool unmeld)
         }
         break;
 
-#if TAG_MAJOR_VERSION == 34
-    case AMU_CONTROLLED_FLIGHT:
-        ident = ID_KNOWN_TYPE;
-        break;
-#endif
-
     case AMU_GUARDIAN_SPIRIT:
         if (you.spirit_shield() < 2 && !unmeld)
         {

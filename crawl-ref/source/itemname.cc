@@ -410,10 +410,6 @@ static const char* _missile_brand_name(special_missile_type brand, mbn_type t)
         return (t == MBN_TERSE ? "sleep" : "sleeping");
     case SPMSL_CONFUSION:
         return (t == MBN_TERSE ? "conf" : "confusion");
-#if TAG_MAJOR_VERSION == 34
-    case SPMSL_SICKNESS:
-        return (t == MBN_TERSE ? "sick" : "sickness");
-#endif
     case SPMSL_FRENZY:
         return "frenzy";
     case SPMSL_RETURNING:
@@ -424,10 +420,6 @@ static const char* _missile_brand_name(special_missile_type brand, mbn_type t)
         return (t == MBN_TERSE ? "penet" : "penetration");
     case SPMSL_DISPERSAL:
         return (t == MBN_TERSE ? "disperse" : "dispersal");
-#if TAG_MAJOR_VERSION == 34
-    case SPMSL_BLINDING:
-        return (t == MBN_TERSE ? "blind" : "blinding");
-#endif
     case SPMSL_NORMAL:
         return "";
     default:
@@ -486,9 +478,6 @@ const char* weapon_brand_name(const item_def& item, bool terse)
     case SPWPN_CHAOS: return terse ? " (chaos)" : " of chaos";
 
     // buggy brands
-#if TAG_MAJOR_VERSION == 34
-    case SPWPN_CONFUSE: return terse ? " (confuse)" : " of confusion";
-#endif
     default: return terse ? " (buggy)" : " of bugginess";
     }
 }
@@ -647,11 +636,6 @@ static const char* potion_type_name(int potiontype)
     case POT_MIGHT:             return "might";
     case POT_AGILITY:           return "agility";
     case POT_BRILLIANCE:        return "brilliance";
-#if TAG_MAJOR_VERSION == 34
-    case POT_GAIN_STRENGTH:     return "gain strength";
-    case POT_GAIN_DEXTERITY:    return "gain dexterity";
-    case POT_GAIN_INTELLIGENCE: return "gain intelligence";
-#endif
     case POT_FLIGHT:            return "flight";
     case POT_POISON:            return "poison";
     case POT_SLOWING:           return "slowing";
@@ -744,9 +728,6 @@ static const char* jewellery_type_name(int jeweltype)
     case AMU_RESIST_CORROSION:  return "amulet of resist corrosion";
     case AMU_THE_GOURMAND:      return "amulet of the gourmand";
     case AMU_CONSERVATION:      return "amulet of conservation";
-#if TAG_MAJOR_VERSION == 34
-    case AMU_CONTROLLED_FLIGHT: return "amulet of controlled flight";
-#endif
     case AMU_INACCURACY:        return "amulet of inaccuracy";
     case AMU_RESIST_MUTATION:   return "amulet of resist mutation";
     case AMU_GUARDIAN_SPIRIT:   return "amulet of guardian spirit";
@@ -937,9 +918,6 @@ static const char* misc_type_name(int type, bool known)
 
     case MISC_CRYSTAL_BALL_OF_ENERGY:    return "crystal ball of energy";
     case MISC_BOX_OF_BEASTS:             return "box of beasts";
-#if TAG_MAJOR_VERSION == 34
-    case MISC_BUGGY_EBONY_CASKET:        return "removed ebony casket";
-#endif
     case MISC_FAN_OF_GALES:              return "fan of gales";
     case MISC_LAMP_OF_FIRE:              return "lamp of fire";
     case MISC_LANTERN_OF_SHADOWS:        return "lantern of shadows";
@@ -1029,9 +1007,6 @@ static const char* _book_type_name(int booktype)
     case BOOK_POWER:                  return "Power";
     case BOOK_CANTRIPS:               return "Cantrips";
     case BOOK_PARTY_TRICKS:           return "Party Tricks";
-#if TAG_MAJOR_VERSION == 34
-    case BOOK_STALKING:               return "Stalking";
-#endif
     case BOOK_DEBILITATION:           return "Debilitation";
     case BOOK_DRAGON:                 return "the Dragon";
     case BOOK_BURGLARY:               return "Burglary";
@@ -1086,9 +1061,6 @@ static const char* staff_type_name(int stafftype)
     case STAFF_ENERGY:      return "energy";
     case STAFF_DEATH:       return "death";
     case STAFF_CONJURATION: return "conjuration";
-#if TAG_MAJOR_VERSION == 34
-    case STAFF_ENCHANTMENT: return "enchantment";
-#endif
     case STAFF_AIR:         return "air";
     case STAFF_EARTH:       return "earth";
     case STAFF_SUMMONING:   return "summoning";
@@ -1394,9 +1366,6 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
         buff << ammo_name(static_cast<missile_type>(item_typ));
 
         if (brand != SPMSL_NORMAL
-#if TAG_MAJOR_VERSION == 34
-            && brand != SPMSL_BLINDING
-#endif
             && !basename && !qualname && !dbname)
         {
             if (terse)
@@ -1569,9 +1538,6 @@ string item_def::name_aux(description_level_type desc, bool terse, bool ident,
 
             static const char *potion_colours[] =
             {
-#if TAG_MAJOR_VERSION == 34
-                "clear",
-#endif
                 "blue", "black", "silvery", "cyan", "purple", "orange",
                 "inky", "red", "yellow", "green", "brown", "pink", "white"
             };
@@ -2291,28 +2257,6 @@ void check_item_knowledge(bool unknown_items)
             if (i == OBJ_JEWELLERY && j >= NUM_RINGS && j < AMU_FIRST_AMULET)
                 continue;
 
-#if TAG_MAJOR_VERSION == 34
-            // Water is never interesting either. [1KB]
-            if (i == OBJ_POTIONS
-                && (j == POT_WATER
-                 || j == POT_FIZZING
-                 || j == POT_GAIN_STRENGTH
-                 || j == POT_GAIN_DEXTERITY
-                 || j == POT_GAIN_INTELLIGENCE))
-            {
-                continue;
-            }
-
-            if (i == OBJ_JEWELLERY && j == AMU_CONTROLLED_FLIGHT)
-                continue;
-
-            if (i == OBJ_STAVES && j == STAFF_ENCHANTMENT)
-                continue;
-
-            if (i == OBJ_STAVES && j == STAFF_CHANNELING)
-                continue;
-#endif
-
             if (unknown_items ? you.type_ids[i][j] != ID_KNOWN_TYPE
                               : you.type_ids[i][j] == ID_KNOWN_TYPE)
             {
@@ -2953,11 +2897,6 @@ bool is_good_item(const item_def &item)
         switch (item.sub_type)
         {
         case POT_CURE_MUTATION:
-#if TAG_MAJOR_VERSION == 34
-        case POT_GAIN_STRENGTH:
-        case POT_GAIN_INTELLIGENCE:
-        case POT_GAIN_DEXTERITY:
-#endif
         case POT_EXPERIENCE:
             return true;
         default:
@@ -3253,11 +3192,6 @@ bool is_useless_item(const item_def &item, bool temp)
             return you.species == SP_FORMICID;
 
         case POT_CURE_MUTATION:
-#if TAG_MAJOR_VERSION == 34
-        case POT_GAIN_STRENGTH:
-        case POT_GAIN_INTELLIGENCE:
-        case POT_GAIN_DEXTERITY:
-#endif
             if (you.species == SP_VAMPIRE)
                 return temp && you.hunger_state < HS_SATIATED;
             if (you.form == TRAN_LICH)
@@ -3360,12 +3294,6 @@ bool is_useless_item(const item_def &item, bool temp)
         case RING_PROTECTION_FROM_FIRE:
             return you.species == SP_DJINNI;
 
-#if TAG_MAJOR_VERSION == 34
-        case AMU_CONTROLLED_FLIGHT:
-            return (player_genus(GENPC_DRACONIAN)
-                    || (you.species == SP_TENGU && you.experience_level >= 5));
-#endif
-
         case RING_WIZARDRY:
             return you_worship(GOD_TROG);
 
@@ -3464,10 +3392,6 @@ bool is_useless_item(const item_def &item, bool temp)
     case OBJ_MISCELLANY:
         switch (item.sub_type)
         {
-#if TAG_MAJOR_VERSION == 34
-        case MISC_BUGGY_EBONY_CASKET:
-            return item_type_known(item);
-#endif
         case MISC_HORN_OF_GERYON:
             return item.plus2;
         default:

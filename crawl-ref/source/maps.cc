@@ -1269,12 +1269,6 @@ static bool _load_map_index(const string& cache, const string &base,
         return false;
     }
 
-#if TAG_MAJOR_VERSION == 34
-    // Throw out pre-ORDER: indices entirely.
-    if (minor < TAG_MINOR_MAP_ORDER)
-        return false;
-#endif
-
     const int nmaps = unmarshallShort(inf);
     const int nexist = vdefs.size();
     vdefs.resize(nexist + nmaps, map_def());

@@ -1438,16 +1438,6 @@ static spret_type _do_cast(spell_type spell, int powc,
     case SPELL_MEPHITIC_CLOUD:
         return stinking_cloud(powc, beam, fail);
 
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_EVAPORATE:
-        mpr("Sorry, this spell is gone!");
-        return SPRET_ABORT;
-
-    case SPELL_CIGOTUVIS_DEGENERATION:
-        mpr("Sorry, this spell has degenerated away!");
-        return SPRET_ABORT;
-#endif
-
     case SPELL_POISONOUS_CLOUD:
         return cast_big_c(powc, CLOUD_POISON, &you, beam, fail);
 
@@ -1646,13 +1636,6 @@ static spret_type _do_cast(spell_type spell, int powc,
 
     // Self-enchantments. (Spells that can only affect the player.)
     // Resistances.
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_INSULATION:
-    case SPELL_SEE_INVISIBLE:
-        mpr("Sorry, this spell is gone!");
-        return SPRET_ABORT;
-#endif
-
     case SPELL_CONTROL_TELEPORT:
         return cast_teleport_control(powc, fail);
 
@@ -1741,12 +1724,6 @@ static spret_type _do_cast(spell_type spell, int powc,
     case SPELL_SONG_OF_SLAYING:
         return cast_song_of_slaying(powc, fail);
 
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_SONG_OF_SHIELDING:
-        mpr("Sorry, this spell is gone!");
-        return SPRET_ABORT;
-#endif
-
     // other
     case SPELL_BORGNJORS_REVIVIFICATION:
         return cast_revivification(powc, fail);
@@ -1787,12 +1764,6 @@ static spret_type _do_cast(spell_type spell, int powc,
 
     case SPELL_CORPSE_ROT:
         return cast_corpse_rot(fail);
-
-#if TAG_MAJOR_VERSION == 34
-    case SPELL_FULSOME_DISTILLATION:
-        mpr("Sorry, this spell is gone!");
-        return SPRET_ABORT;
-#endif
 
     case SPELL_GOLUBRIAS_PASSAGE:
         return cast_golubrias_passage(beam.target, fail);

@@ -173,9 +173,6 @@ static const char* _jewellery_base_ability_string(int subtype)
     case AMU_RESIST_CORROSION:   return "rCorr";
     case AMU_THE_GOURMAND:       return "Gourm";
     case AMU_CONSERVATION:       return "Cons";
-#if TAG_MAJOR_VERSION == 34
-    case AMU_CONTROLLED_FLIGHT:  return "cFly";
-#endif
     case AMU_RESIST_MUTATION:    return "rMut";
     case AMU_GUARDIAN_SPIRIT:    return "Spirit";
     case AMU_FAITH:              return "Faith";
@@ -517,9 +514,6 @@ static const char *trap_names[] =
     "teleport", "alarm", "blade",
     "bolt", "net", "Zot", "needle",
     "shaft", "passage", "pressure plate", "web",
-#if TAG_MAJOR_VERSION == 34
-    "gas",
-#endif
 };
 
 string trap_name(trap_type trap)
@@ -1162,11 +1156,6 @@ static string _describe_ammo(const item_def &item)
         case SPMSL_CONFUSION:
             description += "It is tipped with a substance that causes confusion.";
             break;
-#if TAG_MAJOR_VERSION == 34
-        case SPMSL_SICKNESS:
-            description += "It has been contaminated by something likely to cause disease.";
-            break;
-#endif
         case SPMSL_FRENZY:
             description += "It is tipped with a substance that causes a mindless "
                 "rage, making people attack friend and foe alike.";

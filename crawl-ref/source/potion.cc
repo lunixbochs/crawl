@@ -200,23 +200,6 @@ bool potion_effect(potion_type pot_eff, int pow, bool drank_it, bool was_known,
         break;
     }
 
-#if TAG_MAJOR_VERSION == 34
-    case POT_GAIN_STRENGTH:
-        if (mutate(MUT_STRONG, "potion of gain strength", true, false, false, true))
-            learned_something_new(HINT_YOU_MUTATED);
-        break;
-
-    case POT_GAIN_DEXTERITY:
-        if (mutate(MUT_AGILE, "potion of gain dexterity", true, false, false, true))
-            learned_something_new(HINT_YOU_MUTATED);
-        break;
-
-    case POT_GAIN_INTELLIGENCE:
-        if (mutate(MUT_CLEVER, "potion of gain intelligence", true, false, false, true))
-            learned_something_new(HINT_YOU_MUTATED);
-        break;
-#endif
-
     case POT_FLIGHT:
         if (!flight_allowed())
             break;
@@ -346,10 +329,6 @@ bool potion_effect(potion_type pot_eff, int pow, bool drank_it, bool was_known,
             xom_is_stimulated(50 / xom_factor);
         break;
 
-#if TAG_MAJOR_VERSION == 34
-    case POT_WATER:
-    case POT_FIZZING:
-#endif
     case NUM_POTIONS:
         if (you.species == SP_VAMPIRE)
             mpr("Blech - this tastes like water.");

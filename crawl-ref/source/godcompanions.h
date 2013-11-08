@@ -40,8 +40,4 @@ bool recall_offlevel_ally(mid_t mid);
 
 void wizard_list_companions();
 
-#if TAG_MAJOR_VERSION == 34
-void fixup_bad_companions();
-#endif
-
 #endif

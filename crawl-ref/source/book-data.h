@@ -174,7 +174,7 @@
     SPELL_NO_SPELL,
     SPELL_NO_SPELL,
 },
-#if TAG_MAJOR_VERSION > 34
+
 {   // Book of Battle
     SPELL_INFUSION,
     SPELL_SHROUD_OF_GOLUBRIA,
@@ -185,7 +185,7 @@
     SPELL_NO_SPELL,
     SPELL_NO_SPELL,
 },
-#endif
+
 {   // Book of Clouds
     SPELL_MEPHITIC_CLOUD,
     SPELL_CONJURE_FLAME,
@@ -297,19 +297,6 @@
     SPELL_NO_SPELL,
 },
 
-#if TAG_MAJOR_VERSION == 34
-{   // Book of Battle (replacing Morphology)
-    SPELL_INFUSION,
-    SPELL_SHROUD_OF_GOLUBRIA,
-    SPELL_SONG_OF_SLAYING,
-    SPELL_SPECTRAL_WEAPON,
-    SPELL_REGENERATION,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-},
-#endif
-
 {   // Book of Geomancy
     SPELL_SANDBLAST,
     SPELL_STONESKIN,
@@ -375,19 +362,6 @@
     SPELL_NO_SPELL,
     SPELL_NO_SPELL,
 },
-
-#if TAG_MAJOR_VERSION == 34
-{   // Book of Stalking
-    SPELL_PASSWALL,
-    SPELL_PETRIFY,
-    SPELL_DIG,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-    SPELL_NO_SPELL,
-},
-#endif
 
 {   // Book of Debilitation
     SPELL_CORONA,

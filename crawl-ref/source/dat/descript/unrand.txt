@@ -174,19 +174,9 @@ Elemental Staff
 
 This powerful staff used to belong to the leader of the Guild of Five Elements.
 %%%%
-# TAG_MAJOR_VERSION == 34
-crossbow "Sniper"
-
-A crossbow made of some black material.
-%%%%
 longbow "Piercer"
 
 An exceptionally large metal longbow.
-%%%%
-# TAG_MAJOR_VERSION == 34
-blowgun of the Assassin
-
-It is designed for easy concealment, but still packs a nasty punch.
 %%%%
 lance "Wyrmbane"
 
@@ -224,11 +214,6 @@ whip "Snakebite"
 
 A double-ended whip made from the cured hides of the Lair of Beasts' deadly
 black mambas.
-%%%%
-# TAG_MAJOR_VERSION == 34
-knife of Accuracy
-
-It is almost unerringly accurate.
 %%%%
 Lehudib's crystal spear
 
