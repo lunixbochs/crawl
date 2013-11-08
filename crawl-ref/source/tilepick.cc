@@ -4647,10 +4647,6 @@ tileidx_t tileidx_cloud(const cloud_info &cl, bool disturbance)
                 ch = TILE_CLOUD_INK;
                 break;
 
-            case CLOUD_GLOOM:
-                ch = TILE_CLOUD_GLOOM;
-                break;
-
             case CLOUD_TORNADO:
                 ch = get_tornado_phase(cl.pos) ? TILE_CLOUD_RAGING_WINDS_0
                                                : TILE_CLOUD_RAGING_WINDS_1;
@@ -4692,7 +4688,7 @@ tileidx_t tileidx_cloud(const cloud_info &cl, bool disturbance)
     // CLOUD_FOREST_FIRE and CLOUD_HOLY_FLAMES: are not in the above switch.
     // CLOUD_GLOOM: is this one used? Its tile doesn't look like a could.
     // CLOUD_INK: special cloud with a specific check in tileview.cc.
-    if (disturbance && type != CLOUD_FOREST_FIRE  && type != CLOUD_GLOOM
+    if (disturbance && type != CLOUD_FOREST_FIRE
         && type != CLOUD_INK && type != CLOUD_HOLY_FLAMES)
     {
         ch += tile_main_count(ch);
