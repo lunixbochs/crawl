@@ -175,8 +175,6 @@ Chupacabra
 
 Yeti
 
-Drop Bear
-
 %%%%
 _flower_name_
 
@@ -737,6 +735,8 @@ the Ban
 the Castellan
 
 the Komtur
+
+the Voivode
 
 the Rabble
 

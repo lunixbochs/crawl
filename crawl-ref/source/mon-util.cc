@@ -1433,7 +1433,7 @@ bool mons_class_leaves_hide(monster_type mc)
         return true;
     switch (mc)
     {
-    case MONS_DRAGON:
+    case MONS_FIRE_DRAGON:
     case MONS_ICE_DRAGON:
     case MONS_STEAM_DRAGON:
     case MONS_MOTTLED_DRAGON:
@@ -3309,7 +3309,7 @@ static bool _mons_has_ranged_ability(const monster* mon)
     case MONS_ACID_BLOB:
     case MONS_BURNING_BUSH:
     case MONS_DRACONIAN:
-    case MONS_DRAGON:
+    case MONS_FIRE_DRAGON:
     case MONS_ICE_DRAGON:
     case MONS_HELL_HOUND:
     case MONS_LINDWURM:

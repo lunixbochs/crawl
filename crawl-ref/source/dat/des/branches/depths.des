@@ -64,7 +64,7 @@ NAME: grunt_enter_depths_hoard
 ORIENT: float
 PLACE: D:$
 KFEAT: O = enter_depths
-MONS: dragon / ice dragon
+MONS: fire dragon / ice dragon
 MAP
   cccccc
  cc$$$$ccc

@@ -2057,10 +2057,11 @@ enum monster_type                      // menv[].type
     MONS_SWAMP_DRAKE,
     MONS_WIND_DRAKE,
     MONS_DEATH_DRAKE,
+    MONS_DRAGON,                // genus
     MONS_STEAM_DRAGON,
     MONS_MOTTLED_DRAGON,
     MONS_SWAMP_DRAGON,
-    MONS_DRAGON,
+    MONS_FIRE_DRAGON,
     MONS_ICE_DRAGON,
     MONS_SHADOW_DRAGON,
     MONS_STORM_DRAGON,
