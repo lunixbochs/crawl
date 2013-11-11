@@ -185,7 +185,7 @@ enum ability_type
     ABIL_CONVERT_TO_BEOGH,
 
     // Zot Defence abilities
-    ABIL_MAKE_FUNGUS = 400,
+    ABIL_MAKE_FUNGUS = 1000,
     ABIL_MIN_ZOTDEF = ABIL_MAKE_FUNGUS,
     ABIL_MAKE_PLANT,
     ABIL_MAKE_OKLOB_SAPLING,
@@ -440,6 +440,7 @@ enum book_type
     BOOK_DREAMS,
     BOOK_ALCHEMY,
     BOOK_BEASTS,
+        MAX_NORMAL_BOOK = BOOK_BEASTS,
     BOOK_NORMAL_UNUSED_1,
     BOOK_NORMAL_UNUSED_2,
     BOOK_NORMAL_UNUSED_3,
@@ -450,18 +451,17 @@ enum book_type
     BOOK_NORMAL_UNUSED_8,
     BOOK_NORMAL_UNUSED_9,
     BOOK_NORMAL_UNUSED_10,
-    MAX_NORMAL_BOOK = BOOK_NORMAL_UNUSED_10,
 
     MIN_RARE_BOOK,
     BOOK_ANNIHILATIONS = MIN_RARE_BOOK,
     BOOK_GRAND_GRIMOIRE,
     BOOK_NECRONOMICON,
+        MAX_RARE_BOOK = BOOK_NECRONOMICON,
     BOOK_RARE_UNUSED_1,
     BOOK_RARE_UNUSED_2,
     BOOK_RARE_UNUSED_3,
-    MAX_RARE_BOOK = BOOK_RARE_UNUSED_3,
 
-    MAX_FIXED_BOOK = MAX_RARE_BOOK,
+    MAX_FIXED_BOOK = BOOK_RARE_UNUSED_3,
 
     BOOK_RANDART_LEVEL,
     BOOK_RANDART_THEME,
@@ -1235,16 +1235,16 @@ enum dungeon_feature_type
     DNGN_SLIMY_WALL,
     DNGN_STONE_WALL,
     DNGN_PERMAROCK_WALL,               // for undiggable walls
-        DNGN_MAXOPAQUE = 99,
+        DNGN_MAXOPAQUE = DNGN_PERMAROCK_WALL,
     DNGN_CLEAR_ROCK_WALL = 100,        // transparent walls
         // Lowest grid value which can be seen through.
         DNGN_MINSEE = DNGN_CLEAR_ROCK_WALL,
     DNGN_CLEAR_STONE_WALL,
     DNGN_CLEAR_PERMAROCK_WALL,
-        DNGN_MAXWALL = 149,
+        DNGN_MAXWALL = DNGN_CLEAR_PERMAROCK_WALL,
     DNGN_GRATE = 150,
     DNGN_TREE,
-        DNGN_MAX_NONREACH = 199,
+        DNGN_MAX_NONREACH = DNGN_TREE,
 
     DNGN_OPEN_SEA = 200,               // Shoals equivalent for permarock
     DNGN_LAVA_SEA,                     // Gehenna equivalent for permarock
@@ -1252,7 +1252,7 @@ enum dungeon_feature_type
     DNGN_GRANITE_STATUE,
     DNGN_MALIGN_GATEWAY,
         // Highest solid grid value.
-        DNGN_MAXSOLID = 249,
+        DNGN_MAXSOLID = DNGN_MALIGN_GATEWAY,
 
     DNGN_LAVA            = 250,
         DNGN_MINMOVE = DNGN_LAVA, // Can be moved through.
@@ -1338,7 +1338,7 @@ enum dungeon_feature_type
     DNGN_ENTER_SHOALS,
     DNGN_ENTER_SPIDER_NEST,
     DNGN_ENTER_FOREST,
-        DNGN_ENTER_LAST_BRANCH = 449,
+        DNGN_ENTER_LAST_BRANCH = DNGN_ENTER_FOREST,
 
     // Exits from various branches
     // Order must be the same as above
@@ -1359,7 +1359,7 @@ enum dungeon_feature_type
     DNGN_RETURN_FROM_SHOALS,
     DNGN_RETURN_FROM_SPIDER_NEST,
     DNGN_RETURN_FROM_FOREST,
-        DNGN_RETURN_FROM_LAST_BRANCH = 499,
+        DNGN_RETURN_FROM_LAST_BRANCH = DNGN_RETURN_FROM_FOREST,
 
     // Order of altars must match order of gods (god_type)
     DNGN_UNKNOWN_ALTAR = 500,
