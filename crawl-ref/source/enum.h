@@ -252,9 +252,6 @@ enum actor_type
 enum attribute_type
 {
     ATTR_DIVINE_LIGHTNING_PROTECTION,
-#if TAG_MAJOR_VERSION == 34
-    ATTR_DIVINE_REGENERATION,
-#endif
     ATTR_DIVINE_DEATH_CHANNEL,
     ATTR_CARD_COUNTDOWN,
     ATTR_BANISHMENT_IMMUNITY,   // banishment immunity until
