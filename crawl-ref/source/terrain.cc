@@ -1568,33 +1568,81 @@ string stair_climb_verb(dungeon_feature_type feat)
 
 static const char *dngn_feature_names[] =
 {
-"unseen", "closed_door", "runed_door", "sealed_door",
-"mangrove", "metal_wall", "green_crystal_wall", "rock_wall",
+"unseen", "closed_door", "runed_door", "sealed_door", "mangrove",
+"", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+
+"metal_wall", "green_crystal_wall", "rock_wall",
 "slimy_wall", "stone_wall", "permarock_wall",
-"clear_rock_wall", "clear_stone_wall", "clear_permarock_wall", "iron_grate",
-"tree", "open_sea", "endless_lava", "orcish_idol",
-"granite_statue", "malign_gateway", "", "", "", "", "", "", "", "", "",
+"", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+
+// DGN_MINSEE
+"clear_rock_wall", "clear_stone_wall", "clear_permarock_wall",
+"", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+
+"iron_grate", "tree", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+
+"open_sea", "endless_lava", "orcish_idol",
+"granite_statue", "malign_gateway", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
 // DNGN_MINMOVE
-"lava", "deep_water",
+"lava", "deep_water", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
 // DNGN_MINWALK
 "shallow_water", "floor", "open_door",
+
+"fountain_blue", "fountain_sparkling", "fountain_blood",
+"dry_fountain",
+
 "trap_mechanical", "trap_teleport", "shaft", "trap_web",
-"undiscovered_trap", "enter_shop", "abandoned_shop",
+"trap_alarm", "trap_zot", "undiscovered_trap",
+
+"enter_shop", "abandoned_shop",
 
 "stone_stairs_down_i", "stone_stairs_down_ii",
-"stone_stairs_down_iii", "escape_hatch_down", "stone_stairs_up_i",
-"stone_stairs_up_ii", "stone_stairs_up_iii", "escape_hatch_up",
+"stone_stairs_down_iii", "escape_hatch_down", "sealed_stair_down",
 
+"stone_stairs_up_i", "stone_stairs_up_ii",
+"stone_stairs_up_iii", "escape_hatch_up", "sealed_stair_up",
+
+"unknown_portal",
 "enter_dis", "enter_gehenna", "enter_cocytus",
 "enter_tartarus", "enter_abyss", "exit_abyss",
 "abyssal_stair",
 "stone_arch", "enter_pandemonium", "exit_pandemonium",
 "transit_pandemonium", "exit_dungeon", "exit_through_abyss",
 "exit_hell", "enter_hell", "enter_labyrinth",
-"teleporter", "enter_portal_vault", "exit_portal_vault",
-"expired_portal",
+"teleporter", "passage_of_golubria",
+"enter_portal_vault", "exit_portal_vault", "expired_portal",
+"", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
 "enter_orcish_mines", "enter_lair",
 "enter_slime_pits", "enter_depths", "enter_vaults",
@@ -1602,6 +1650,10 @@ static const char *dngn_feature_names[] =
 "enter_temple", "enter_snake_pit", "enter_elven_halls",
 "enter_tomb", "enter_swamp", "enter_shoals",
 "enter_spider_nest", "enter_forest",
+"", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
 "return_from_orcish_mines",
 "return_from_lair", "return_from_slime_pits",
@@ -1611,26 +1663,26 @@ static const char *dngn_feature_names[] =
 "return_from_elven_halls", "return_from_tomb",
 "return_from_swamp", "return_from_shoals", "return_from_spider_nest",
 "return_from_forest",
+"", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
+
+"unknown_altar",
 "altar_zin", "altar_the_shining_one", "altar_kikubaaqudgha",
 "altar_yredelemnul", "altar_xom", "altar_vehumet",
 "altar_okawaru", "altar_makhleb", "altar_sif_muna", "altar_trog",
 "altar_nemelex_xobeh", "altar_elyvilon", "altar_lugonu",
 "altar_beogh", "altar_jiyva", "altar_fedhas", "altar_cheibriados",
-"altar_ashenzari", "",
-
-"fountain_blue", "fountain_sparkling", "fountain_blood",
-"dry_fountain",
+"altar_ashenzari",
+"",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
+"", "", "", "", "", "", "", "", "", "",
 
 "explore_horizon",
-"unknown_altar", "unknown_portal",
 
-"sealed_stair_up",
-"sealed_stair_down",
-
-"trap_alarm",
-"trap_zot",
-"passage_of_golubria",
 };
 
 dungeon_feature_type dungeon_feature_by_name(const string &name)
