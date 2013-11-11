@@ -252,7 +252,9 @@ enum actor_type
 enum attribute_type
 {
     ATTR_DIVINE_LIGHTNING_PROTECTION,
+#if TAG_MAJOR_VERSION == 34
     ATTR_DIVINE_REGENERATION,
+#endif
     ATTR_DIVINE_DEATH_CHANNEL,
     ATTR_CARD_COUNTDOWN,
     ATTR_BANISHMENT_IMMUNITY,   // banishment immunity until
@@ -1126,6 +1128,7 @@ enum level_state_type
 enum dungeon_char_type
 {
     DCHAR_WALL,
+    DCHAR_PERMAWALL,
     DCHAR_WALL_MAGIC,
     DCHAR_FLOOR,
     DCHAR_FLOOR_MAGIC,
@@ -1479,6 +1482,7 @@ enum duration_type
     DUR_FIRE_VULN,
     DUR_ELIXIR_HEALTH,
     DUR_ELIXIR_MAGIC,
+    DUR_TROGS_HAND,
     NUM_DURATIONS
 };
 

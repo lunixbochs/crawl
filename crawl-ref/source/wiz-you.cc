@@ -830,6 +830,7 @@ static const char* dur_names[] =
     "fire vulnerability",
     "elixir health",
     "elixir magic",
+    "trogs hand",
 };
 
 void wizard_edit_durations(void)

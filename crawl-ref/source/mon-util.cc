@@ -3446,7 +3446,8 @@ static gender_type _mons_class_gender(monster_type mc)
         || mc == MONS_QUEEN_ANT
         || mc == MONS_QUEEN_BEE
         || mc == MONS_HARPY
-        || mc == MONS_SPHINX)
+        || mc == MONS_SPHINX
+        || mc == MONS_WATER_NYMPH)
     {
         gender = GENDER_FEMALE;
     }
@@ -4299,7 +4300,10 @@ mon_body_shape get_mon_shape(const monster_type mc)
     switch (mons_base_char(mc))
     {
     case 'a': // ants
-        return MON_SHAPE_INSECT;
+        if (mons_genus(mc) == MONS_FORMICID)
+            return MON_SHAPE_HUMANOID;
+        else
+            return MON_SHAPE_INSECT;
     case 'b': // bats and butterflies
         if (mc == MONS_BUTTERFLY)
             return MON_SHAPE_INSECT_WINGED;

@@ -1269,7 +1269,7 @@ static int _player_bonus_regen()
     // Trog's Hand is handled separately so that it will bypass slow healing,
     // and it overrides the spell.
     if (you.duration[DUR_REGENERATION]
-        && !you.attribute[ATTR_DIVINE_REGENERATION])
+        && !you.duration[DUR_TROGS_HAND])
     {
         rr += 100;
     }
@@ -1368,7 +1368,7 @@ int player_regen()
         rr = 0;
 
     // Trog's Hand.  This circumvents the slow healing effect.
-    if (you.attribute[ATTR_DIVINE_REGENERATION])
+    if (you.duration[DUR_TROGS_HAND])
         rr += 100;
 
     return rr;
@@ -1384,8 +1384,13 @@ int player_hunger_rate(bool temp)
     if (you.species == SP_TROLL)
         hunger += 3;            // in addition to the +3 for fast metabolism
 
-    if (temp && you.duration[DUR_REGENERATION] && you.hp < you.hp_max)
+    if (temp
+        && (you.duration[DUR_REGENERATION]
+            || you.duration[DUR_TROGS_HAND])
+        && you.hp < you.hp_max)
+    {
         hunger += 4;
+    }
 
     if (temp)
     {
@@ -1871,7 +1876,8 @@ int player_res_poison(bool calc_unid, bool temp, bool items)
 {
     if (you.is_undead == US_SEMI_UNDEAD ? you.hunger_state == HS_STARVING
             : you.is_undead && (temp || you.form != TRAN_LICH)
-              || you.is_artificial())
+        || you.is_artificial()
+        || you.duration[DUR_DIVINE_STAMINA])
     {
         return 3;
     }
@@ -3563,15 +3569,6 @@ void level_change(int source, const char* aux, bool skip_attribute_increase)
                 break;
 
             case SP_FORMICID:
-                if ((you.experience_level == 8)
-                    || (you.experience_level == 16))
-                {
-                    perma_mutate(MUT_ANTENNAE, 1, "level up");
-                    #ifdef USE_TILE
-                        init_player_doll();
-                    #endif
-                }
-
                 if (!(you.experience_level % 4))
                     modify_stat(STAT_STR, 1, false, "level gain");
                 break;
@@ -4000,6 +3997,7 @@ int get_expiration_threshold(duration_type dur)
     case DUR_SHROUD_OF_GOLUBRIA:
     case DUR_INFUSION:
     case DUR_SONG_OF_SLAYING:
+    case DUR_TROGS_HAND:
         return (6 * BASELINE_DELAY);
 
     case DUR_FLIGHT:
@@ -5121,6 +5119,12 @@ bool poison_player(int amount, string source, string source_aux, bool force)
     if (player_res_poison() > 0)
         maybe_id_resist(BEAM_POISON);
 
+    if (you.duration[DUR_DIVINE_STAMINA] > 0)
+    {
+        mpr("Your divine stamina protects you from poison!");
+        return false;
+    }
+
     if (player_res_poison() >= 3)
     {
         dprf("Cannot poison, you are immune!");
@@ -5129,12 +5133,6 @@ bool poison_player(int amount, string source, string source_aux, bool force)
 
     if (!force && !(amount = _maybe_reduce_poison(amount)))
         return false;
-
-    if (!force && you.duration[DUR_DIVINE_STAMINA] > 0)
-    {
-        mpr("Your divine stamina protects you from poison!");
-        return false;
-    }
 
     const int old_value = you.duration[DUR_POISONING];
     if (player_res_poison() < 0)
@@ -5475,7 +5473,7 @@ void dec_disease_player(int delay)
         }
 
         // Trog's Hand.
-        if (you.attribute[ATTR_DIVINE_REGENERATION])
+        if (you.duration[DUR_TROGS_HAND])
             rr += 100;
 
         // Kobolds get a bonus too.
@@ -6935,7 +6933,7 @@ int player_res_magic(bool calc_unid, bool temp)
         rm += 50;
 
     // Trog's Hand
-    if (you.attribute[ATTR_DIVINE_REGENERATION] && temp)
+    if (you.duration[DUR_TROGS_HAND] && temp)
         rm += 70;
 
     // Enchantment effect

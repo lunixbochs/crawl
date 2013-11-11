@@ -2433,12 +2433,17 @@ static void _decrement_durations()
                           coinflip(),
                           "Your deflect missiles spell is about to expire...");
 
-    if (_decrement_a_duration(DUR_REGENERATION, delay,
+    if (_decrement_a_duration(DUR_TROGS_HAND, delay,
                               NULL, coinflip(),
-                              "Your skin is crawling a little less now."))
+                              "You feel the effects of Trog's Hand fading."))
     {
-        remove_regen(you.attribute[ATTR_DIVINE_REGENERATION]);
+        trog_remove_trogs_hand();
     }
+
+    _decrement_a_duration(DUR_REGENERATION, delay,
+                          "Your skin stops crawling.",
+                          coinflip(),
+                          "Your skin is crawling a little less now.");
 
     _decrement_a_duration(DUR_VEHUMET_GIFT, delay);
 
@@ -4502,8 +4507,8 @@ static void _move_player(coord_def move)
     string verb;
     if (you.flight_mode())
         verb = "fly";
-    else if (you.is_wall_clinging())
-        verb = "cling";
+    else if (you.form == TRAN_SPIDER)
+        verb = "crawl";
     else if (you.species == SP_NAGA && !form_changed_physiology())
         verb = "slither";
     else

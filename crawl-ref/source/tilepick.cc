@@ -5347,6 +5347,11 @@ tileidx_t tileidx_ability(const ability_type ability)
     // Deep Dwarves
     case ABIL_RECHARGING:
         return TILEG_ABILITY_RECHARGE;
+    // Formicids
+    case ABIL_DIG:
+        return TILEG_ABILITY_DIG;
+    case ABIL_SHAFT_SELF:
+        return TILEG_ABILITY_SHAFT_SELF;
 
     // Evoking items.
     case ABIL_EVOKE_BERSERK:

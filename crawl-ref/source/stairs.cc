@@ -692,7 +692,7 @@ void down_stairs(dungeon_feature_type force_stair)
             return;
         }
 
-        if (!known_shaft && shaft_dest.depth - you.depth > 1)
+        if (!known_shaft)
         {
             mark_milestone("shaft", "fell down a shaft to "
                                     + short_place_name(shaft_dest) + ".");

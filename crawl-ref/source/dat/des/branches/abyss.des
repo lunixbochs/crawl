@@ -974,7 +974,7 @@ ENDMAP
 ###############################################################################
 
 NAME:  abyss_rune_water_cross
-TAGS:  abyss_rune
+TAGS:  abyss_rune unrand
 KITEM: O = abyssal rune of Zot
 MAP
 ww.ww
@@ -985,7 +985,7 @@ ww.ww
 ENDMAP
 
 NAME:   due_abyss_rune
-TAGS:   abyss_rune
+TAGS:   abyss_rune unrand
 KITEM:  O = abyssal rune of Zot
 KMONS:  OL = lich / w:1 ancient lich
 NSUBST: C = 1:+ / *:cc+
@@ -1009,7 +1009,7 @@ ccLcLcLcc
 ENDMAP
 
 NAME:  evilmike_abyss_rune_tentacle_tunnel
-TAGS:  abyss_rune
+TAGS:  abyss_rune unrand
 KITEM: O = abyssal rune of Zot
 KMONS: K = kraken
 KMONS: T = tentacled monstrosity
@@ -1037,7 +1037,7 @@ ccccccccwwwcccccccc
 ENDMAP
 
 NAME:  evilmike_abyss_rune_siren
-TAGS:  abyss_rune
+TAGS:  abyss_rune unrand
 KITEM: O = abyssal rune of Zot
 SUBST: X = c., c = ccv
 KPROP: l = no_cloud_gen
@@ -1114,7 +1114,7 @@ MAP
 ENDMAP
 
 NAME:   evilmike_abyss_rune_seething_chaos
-TAGS:   abyss_rune
+TAGS:   abyss_rune unrand
 KITEM:  O = abyssal rune of Zot
 MARKER: ! = lua:fog_machine { cloud_type = "seething chaos", \
             pow_min = 8, pow_max = 12, delay_min = 20, delay_max = 30, \
@@ -1140,7 +1140,7 @@ ENDMAP
 
 # Contains 1 to 3 hellephants. 3 is rare.
 NAME:   evilmike_abyss_rune_elephants
-TAGS:   abyss_rune
+TAGS:   abyss_rune unrand
 KITEM:  O = abyssal rune of Zot
 SUBST:  l = .....llllx, L: llllx
 KPROP:  ' = no_tele_into
@@ -1168,7 +1168,7 @@ l.llLLLLLLLll.l
 ENDMAP
 
 NAME:  evilmike_abyss_rune_shrine
-TAGS:  abyss_rune
+TAGS:  abyss_rune unrand
 KITEM: _ = abyssal rune of Zot
 KFEAT: _ = altar_lugonu
 SUBST: c: cbvx
@@ -1184,7 +1184,7 @@ MAP
 ENDMAP
 
 NAME:   evilmike_abyss_rune_ettins
-TAGS:   abyss_rune
+TAGS:   abyss_rune unrand
 KITEM:  O = abyssal rune of Zot
 MONS:   ettin ; giant spiked club ego:distortion | giant club ego:distortion . \
                 giant spiked club ego:chaos | giant club ego:chaos
@@ -1243,7 +1243,7 @@ MAP
 ENDMAP
 
 NAME:  kb_abyss_rune_zappy
-TAGS:  abyss_rune
+TAGS:  abyss_rune unrand
 KITEM: O = abyssal rune of Zot
 MONS:  lightning spire generate_awake
 MAP
@@ -1282,7 +1282,7 @@ MAP
 ENDMAP
 
 NAME:   hangedman_abyss_rune_macabre_mess
-TAGS:   abyss_rune
+TAGS:   abyss_rune unrand
 KMONS:  1 = giant orange brain
 KMONS:  2 = golden eye
 KMONS:  3 = flying skull
@@ -2169,25 +2169,4 @@ MAP
 .....     .....
 .....     .....
  ....      ....
-ENDMAP
-
-NAME:   bh_abyssal_stair
-DEPTH:  Abyss:3-4
-WEIGHT:  1
-MONS:   hydra-thrashing horror-yaktaur chimera
-KFEAT:  >: abyssal_stair
-MAP
-      @
-  xxxx+xxxx
- xx   .   xx
- x    .ll  x
- x ll..>l  x
- x l>.>1.  x
-@+...>l>...+@
- x  .1>.>l x
- x  l>..ll x
- x  ll.    x
- xx   .   xx
-  xxxx+xxx
-      @
 ENDMAP
