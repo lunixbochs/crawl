@@ -291,6 +291,21 @@ int book_rarity(uint8_t which_book)
     case BOOK_DESTRUCTION:
         return 30;
 
+    case BOOK_NORMAL_UNUSED_1:
+    case BOOK_NORMAL_UNUSED_2:
+    case BOOK_NORMAL_UNUSED_3:
+    case BOOK_NORMAL_UNUSED_4:
+    case BOOK_NORMAL_UNUSED_5:
+    case BOOK_NORMAL_UNUSED_6:
+    case BOOK_NORMAL_UNUSED_7:
+    case BOOK_NORMAL_UNUSED_8:
+    case BOOK_NORMAL_UNUSED_9:
+    case BOOK_NORMAL_UNUSED_10:
+    case BOOK_RARE_UNUSED_1:
+    case BOOK_RARE_UNUSED_2:
+    case BOOK_RARE_UNUSED_3:
+        return 100;
+
     default:
         return 1;
     }
