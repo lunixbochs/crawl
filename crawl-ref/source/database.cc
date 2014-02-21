@@ -328,24 +328,9 @@ static void* init_db(void *arg)
 
 void databaseSystemInit()
 {
-    // Note: if you're building contrib libraries initially checked out
-    // before 2011-12-28 and this assertion fails, please make sure you have
-    // the current version ("git submodule sync;git submodule update --init").
-    ASSERT(sqlite3_threadsafe());
-
-    thread_t th[NUM_DB];
-    for (unsigned int i = 0; i < NUM_DB; i++)
-#ifndef DGAMELAUNCH
-        if (thread_create_joinable(&th[i], init_db, (void*)(intptr_t)i))
-#endif
-        {
-            // if thread creation fails, do it serially
-            th[i] = 0;
-            AllDBs[i].init();
-        }
-    for (unsigned int i = 0; i < NUM_DB; i++)
-        if (th[i])
-            thread_join(th[i]);
+    for (unsigned int i = 0; i < NUM_DB; i++) {
+        AllDBs[i].init();
+    }
 }
 
 void databaseSystemShutdown()

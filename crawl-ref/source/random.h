@@ -170,6 +170,7 @@ public:
     int random2avg(int max, int rolls);
 
     defer_rand& operator[] (int i);
+    defer_rand();
 };
 
 template<typename Iterator>

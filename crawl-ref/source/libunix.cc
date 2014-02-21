@@ -436,6 +436,7 @@ void console_startup(void)
 #ifdef CURSES_USE_KEYPAD
     keypad(stdscr, TRUE);
 
+/*
 #ifdef CURSES_SET_ESCDELAY
 #ifdef NCURSES_REENTRANT
     set_escdelay(CURSES_SET_ESCDELAY);
@@ -443,6 +444,7 @@ void console_startup(void)
     ESCDELAY = CURSES_SET_ESCDELAY;
 #endif
 #endif
+*/
 #endif
 
     meta(stdscr, TRUE);
@@ -757,10 +759,6 @@ void gotoxy_sys(int x, int y)
 }
 
 typedef cchar_t char_info;
-static inline bool operator == (const cchar_t &a, const cchar_t &b)
-{
-    return a.attr == b.attr && *a.chars == *b.chars;
-}
 
 static inline char_info character_at(int y, int x)
 {
@@ -770,20 +768,20 @@ static inline char_info character_at(int y, int x)
     return c;
 }
 
-static inline bool valid_char(const cchar_t &c)
+static inline bool valid_char(const cchar_t c)
 {
-    return *c.chars;
+    return c & 255;
 }
 
-static inline void write_char_at(int y, int x, const cchar_t &ch)
+static inline void write_char_at(int y, int x, const cchar_t ch)
 {
     move(y, x);
     add_wchnstr(&ch, 1);
 }
 
-static void flip_colour(cchar_t &ch)
+static void flip_colour(cchar_t ch)
 {
-    const unsigned colour = (ch.attr & A_COLOR);
+    const unsigned colour = ((ch >> 24) & A_COLOR);
     const int pair        = PAIR_NUMBER(colour);
 
     int fg     = pair & 7;
@@ -796,7 +794,7 @@ static void flip_colour(cchar_t &ch)
     }
 
     const int newpair = (fg * 8 + bg);
-    ch.attr = COLOR_PAIR(newpair);
+    ch = ch & ~(255 << 24) | COLOR_PAIR(newpair);
 }
 
 static char_info oldch, oldmangledch;

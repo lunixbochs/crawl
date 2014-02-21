@@ -17,7 +17,7 @@
 
 #if defined(UNIX)
 #include <unistd.h>
-        #define BACKTRACE_SUPPORTED
+//        #define BACKTRACE_SUPPORTED
 #endif
 
 #ifdef BACKTRACE_SUPPORTED
@@ -32,8 +32,6 @@
 #endif
 
 #ifdef BACKTRACE_SUPPORTED
-
-#include <cxxabi.h>
 
 #if !defined(TARGET_OS_MACOSX) && \
     !defined(TARGET_OS_WINDOWS) && \

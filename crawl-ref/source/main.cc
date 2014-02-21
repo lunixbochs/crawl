@@ -8,6 +8,10 @@
 #include <string>
 #include <algorithm>
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #include <errno.h>
 #ifndef TARGET_OS_WINDOWS
 # ifndef __ANDROID__
@@ -478,8 +482,12 @@ NORETURN static void _launch_game()
     run_uncancels();
 
     cursor_control ccon(!Options.use_fake_player_cursor);
+#ifdef EMSCRIPTEN
+    emscripten_set_main_loop(_input, 60, 1);
+#else
     while (true)
         _input();
+#endif
 }
 
 static void _show_commandline_options_help()

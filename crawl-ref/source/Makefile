@@ -116,10 +116,12 @@ endif
 #
 # The GCC and GXX variables are set later.
 #
-AR = ar
-RANLIB = ranlib
-CC = $(GCC)
-CXX = $(GXX)
+
+#AR = ar
+#RANLIB = ranlib
+#CC = $(GCC)
+#CXX = $(GXX)
+CXX += -std=c++0x
 RM = rm -f
 COPY = cp
 COPY_R = cp -r
@@ -258,20 +260,6 @@ LIBLUA := contrib/install/$(ARCH)/lib/liblua.a
 endif
 LIBZ := contrib/install/$(ARCH)/lib/libz.a
 
-ifndef CROSSHOST
-	SQLITE_INCLUDE_DIR := /usr/include
-else
-	# This is totally wrong, works only with some old-style setups, and
-	# on some architectures of Debian/new FHS multiarch -- excluding, for
-	# example, i386.  Fortunately, i386 is rarely cross-compiled to.
-	# There's no support for /usr/local/ too, without thorough handholding.
-	# It's still an improvement over Crawl 0.8 which had no cross-compiling
-	# to non-win32 at all.
-	#
-	# Needs to be replaced by compile checks.  Guessing the paths is fragile,
-	# while the compiler knows them already.
-	SQLITE_INCLUDE_DIR := /usr/$(ARCH)/include
-endif
 SQLITE_LIB := -lsqlite3
 
 #
